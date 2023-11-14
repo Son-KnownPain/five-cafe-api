@@ -6,6 +6,7 @@
 /*.jar
 /*.war
 /*.ear
+glassfish-resources.xml
 
 # NetBeans
 /nbproject/private/

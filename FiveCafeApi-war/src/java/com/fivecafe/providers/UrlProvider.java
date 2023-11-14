@@ -11,25 +11,18 @@ public class UrlProvider {
         return API_PREFIX + PATH;
     }
     
-    public class User implements AuthUrl {
-        public static final String PREFIX = "/user";
+    public class Employee implements AuthUrl {
+        public static final String PREFIX = "/employee";
         
         // NONE SIGN IN
-        public static final String SIGN_UP = "/sign-up";
-        public static final String SIGN_IN = "/sign-in";
-        public static final String FORGOT_PASSWORD = "/forgot-password";
+        public static final String TEST = "/test";
         
         // NEED TO SIGN IN
-        public static final String GET_USER_INFO = "/info";
-        public static final String CHANGE_USER_INFO = "/change-info";
-        public static final String SIGN_OUT = "/sign-out";
+        
         
         @Override
         public List<String> signInUrls() {
             ArrayList<String> signInUrls = new ArrayList<>();
-            signInUrls.add(addApiPrefix(addUserPrefix(GET_USER_INFO)));
-            signInUrls.add(addApiPrefix(addUserPrefix(CHANGE_USER_INFO)));
-            signInUrls.add(addApiPrefix(addUserPrefix(SIGN_OUT)));
             
             return signInUrls;
         }
@@ -46,7 +39,7 @@ public class UrlProvider {
     
     public List<AuthUrl> getAllAuthUrl() {
         ArrayList<AuthUrl> result = new ArrayList<>();
-        result.add(new User());
+        result.add(new Employee());
         return result;
     }
 }

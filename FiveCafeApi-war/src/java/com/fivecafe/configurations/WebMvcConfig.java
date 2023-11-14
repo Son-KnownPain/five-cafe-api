@@ -15,7 +15,7 @@ import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
 @EnableWebMvc // mvc:annoation-driven
-@ComponentScan(basePackages = { "com.nosify" }) // context:component-scan
+@ComponentScan(basePackages = { "com.fivecafe" }) // context:component-scan
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Bean
     public InternalResourceViewResolver configureViewResolver() {
@@ -29,7 +29,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     // welcome file
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-      registry.addViewController("/")
+        registry.addViewController("/")
               .setViewName("index");
     }
     

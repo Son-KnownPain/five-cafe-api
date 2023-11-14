@@ -1,0 +1,27 @@
+# Java with Ant, Spring (WAR), and EJB
+/build/
+/dist/
+/lib/
+/classes/
+/*.jar
+/*.war
+/*.ear
+
+# NetBeans
+/nbproject/private/
+/nb-build/
+/nbbuild/
+/nb-configuration.xml
+
+# Logs
+*.log
+log/
+logs/
+
+# Temporary files
+*.tmp
+*.swp
+
+# OS-specific files
+.DS_Store
+Thumbs.db

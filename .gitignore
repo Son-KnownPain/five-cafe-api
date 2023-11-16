@@ -26,3 +26,5 @@ logs/
 # OS-specific files
 .DS_Store
 Thumbs.db
+/FiveCafeApi-ejb/build/
+/FiveCafeApi-ejb/dist/

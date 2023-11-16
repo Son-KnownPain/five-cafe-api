@@ -28,5 +28,7 @@ public interface ProductCategoriesFacadeLocal {
     List<ProductCategories> findRange(int[] range);
 
     int count();
+
+    public List<ProductCategories> searchProductCategoryByName(String name);
     
 }

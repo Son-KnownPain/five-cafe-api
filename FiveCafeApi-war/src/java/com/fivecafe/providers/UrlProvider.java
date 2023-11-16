@@ -67,6 +67,22 @@ public class UrlProvider {
         }
     }
     
+    public class ProductCategory {
+        public static final String PREFIX = "/pro-category";
+        
+        public static final String INDEX1 = "/index";
+        public static final String INDEX2 = "/";
+        public static final String INDEX3 = "";
+        
+        public static final String ALL = "/all";
+        public static final String STORE = "/store";
+        public static final String UPDATE = "/update";
+        public static final String DELETE = "/delete/{id}";
+        public static final String SEARCH = "/search";
+        
+        
+    }
+    
     public List<AuthUrl> getAllAuthUrl() {
         ArrayList<AuthUrl> result = new ArrayList<>();
         result.add(new Employee());

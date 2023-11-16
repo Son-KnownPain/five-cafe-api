@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -44,6 +45,14 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         configurer.favorPathExtension(false);
+    }
+    
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/**")
+            .allowedOrigins("http://localhost:3000") // Đổi thành địa chỉ ReactJS của bạn
+            .allowedMethods("GET", "POST", "PUT", "DELETE")
+            .allowCredentials(true);
     }
     
     @Bean

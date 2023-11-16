@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -105,30 +106,23 @@ public class RoleApiController {
     }
     
     @DeleteMapping(""+UrlProvider.Role.DELETE)
-    public ResponseEntity<?> delete(@PathVariable("id") String id) {
-        Roles role = rolesFacade.find(id);
+    public ResponseEntity<?> delete(@RequestParam("ids") String ids) {
         
-        if (role == null) {
-            List<String> errors = new ArrayList<>();
-            errors.add("Role ID in path is not exist");
+        String[] idArr = ids.split(",");
+        
+        for (String id : idArr) {
+            Roles role = rolesFacade.find(id);
             
-            InvalidResponse res = new InvalidResponse();
-            res.setSuccess(false);
-            res.setStatus(400);
-            res.setMessage("Request param in path is invalid");
-            res.setInvalid(true);
-            res.setErrors(errors);
-            
-            return ResponseEntity.badRequest().body(res);
+            if (role != null) {
+                rolesFacade.remove(role);
+            }
         }
-        
-        rolesFacade.remove(role);
         
         return ResponseEntity.ok(
                 StandardResponse.builder()
                         .success(true)
                         .status(200)
-                        .message("Successfully delete role")
+                        .message("Successfully delete roles")
                         .build()
         );
     }

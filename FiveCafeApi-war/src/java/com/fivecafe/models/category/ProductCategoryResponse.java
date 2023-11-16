@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.NotEmpty;
 
 @Getter
 @Setter
@@ -19,7 +18,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class ProductCategoryResponse {
-    @NotEmpty(message = "Product category name cannot be empty")
+
+    private int productCategoryID;
     private String name;
     private String description;
     private List<ProductResponse> productList;

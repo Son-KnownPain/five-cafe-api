@@ -74,8 +74,11 @@ public class UrlProvider {
         public static final String INDEX2 = "/";
         public static final String INDEX3 = "";
         
-        public static final String ADD = "/add";
+        public static final String ALL = "/all";
         public static final String STORE = "/store";
+        public static final String UPDATE = "/update";
+        public static final String DELETE = "/delete/{id}";
+        public static final String SEARCH = "/search";
         
         
     }

@@ -13,5 +13,9 @@ import lombok.Setter;
 @Builder
 public class EmployeeRes {
     private int employeeID;
+    private String roleID;
+    private String roleName;
     private String name;
+    private String phone;
+    private String username;
 }

@@ -15,10 +15,12 @@ public class UrlProvider {
         public static final String PREFIX = "/employee";
         
         // NONE SIGN IN
-        public static final String TEST = "/test";
         
         // NEED TO SIGN IN
         public static final String ALL = "/all"; 
+        public static final String STORE = "/store";
+        public static final String UPDATE = "/update";
+        public static final String DELETE = "/delete";
         
         
         @Override

@@ -1,18 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.Employees;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
-/**
- *
- * @author ADMIN
- */
 @Stateless
 public class EmployeesFacade extends AbstractFacade<Employees> implements EmployeesFacadeLocal {
 
@@ -28,4 +22,14 @@ public class EmployeesFacade extends AbstractFacade<Employees> implements Employ
         super(Employees.class);
     }
     
+    @Override
+    public Employees findByUsername(String username) {
+        Query query = em.createNamedQuery("Employees.findByUsername", Employees.class);
+        query.setParameter("username", username);
+        try {
+            return (Employees) query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }

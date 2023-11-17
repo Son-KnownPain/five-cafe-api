@@ -5,9 +5,11 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.MaterialCategories;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -26,6 +28,13 @@ public class MaterialCategoriesFacade extends AbstractFacade<MaterialCategories>
 
     public MaterialCategoriesFacade() {
         super(MaterialCategories.class);
+    }
+    
+    @Override
+    public List<MaterialCategories> searchMaterialCategoryByName(String name){
+        Query query = em.createNamedQuery("MaterialCategories.findByName", MaterialCategories.class);
+        query.setParameter("name", name);
+        return query.getResultList();
     }
     
 }

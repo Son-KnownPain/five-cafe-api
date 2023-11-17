@@ -5,16 +5,5 @@
             index.html
         </welcome-file>
     </welcome-file-list>
-    <ejb-local-ref>
-        <ejb-ref-name>ProductCategoriesFacade</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>com.fivecafe.session_beans.ProductCategoriesFacadeLocal</local>
-        <ejb-link>FiveCafeApi-ejb.jar#ProductCategoriesFacade</ejb-link>
-    </ejb-local-ref>
-    <ejb-local-ref>
-        <ejb-ref-name>ProductCategoriesFacade1</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>com.fivecafe.session_beans.ProductCategoriesFacadeLocal</local>
-        <ejb-link>FiveCafeApi-ejb.jar#ProductCategoriesFacade</ejb-link>
-    </ejb-local-ref>
+   
 </web-app>

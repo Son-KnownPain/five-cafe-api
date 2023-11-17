@@ -104,7 +104,7 @@ public class RoleApiController {
     }
     
     @DeleteMapping(""+UrlProvider.Role.DELETE)
-    public ResponseEntity<?> delete(@RequestParam("ids") String ids) {
+    public ResponseEntity<StandardResponse> delete(@RequestParam("ids") String ids) {
         
         String[] idArr = ids.split(",");
         

@@ -4,8 +4,6 @@
  */
 package com.fivecafe.models.poductcategory;
 
-import com.fivecafe.models.product.ProductResponse;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,5 +20,6 @@ public class UpdateAndDeleteProductCategory {
     private int productCategoryID;
     @NotEmpty(message = "Product category name cannot be empty")
     private String name;
+    @NotEmpty(message = "Product category description cannot be empty")
     private String description;
 }

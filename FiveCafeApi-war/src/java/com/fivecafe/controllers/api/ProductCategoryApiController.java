@@ -40,86 +40,91 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductCategoryApiController {
 
     ProductCategoriesFacadeLocal productCategoriesFacade = lookupProductCategoriesFacadeLocal();
-    
-    @GetMapping(""+UrlProvider.ProductCategory.ALL)
-    public ResponseEntity<DataResponse<List<ProductCategoryResponse>>> allProCategory(){
-        
+
+    @GetMapping("" + UrlProvider.ProductCategory.ALL)
+    public ResponseEntity<DataResponse<List<ProductCategoryResponse>>> allProCategory() {
+
         List<ProductCategories> allProCategories = productCategoriesFacade.findAll();
         List<ProductCategoryResponse> data = new ArrayList<>();
-        
-        for(ProductCategories pc: allProCategories){
+
+        for (ProductCategories pc : allProCategories) {
             data.add(ProductCategoryResponse.builder().productCategoryID(pc.getProductCategoryID()).name(pc.getName()).description(pc.getDescription()).build());
         }
-        
+
         DataResponse<List<ProductCategoryResponse>> proCategories = new DataResponse<>();
-        
+
         proCategories.setSuccess(true);
         proCategories.setStatus(200);
         proCategories.setMessage("Successfully get all product category");
         proCategories.setData(data);
-        
+
         return ResponseEntity.ok(proCategories);
     }
-    
-    @PostMapping(""+UrlProvider.ProductCategory.STORE)
-    public ResponseEntity<StandardResponse> storeProCategory(@Valid @RequestBody CreateProductCategory reqBody, BindingResult br) throws MethodArgumentNotValidException{
-        
-        if(br.hasErrors()){
-            throw new MethodArgumentNotValidException(null, br);
-        } 
-        
-        ProductCategories pro_CateNew = new ProductCategories();
-        
-        pro_CateNew.setName(reqBody.getName());
-        pro_CateNew.setDescription(reqBody.getDescription());
-        
-        productCategoriesFacade.create(pro_CateNew);
-        
-        return ResponseEntity.ok(StandardResponse.builder().success(true).status(200).message("Successfully create new product category").build());
-    }
-    
-    @PutMapping(""+UrlProvider.ProductCategory.UPDATE)
-    public ResponseEntity<StandardResponse> updateProCategory(@Valid @RequestBody UpdateAndDeleteProductCategory reqBody, BindingResult br) throws MethodArgumentNotValidException{
-   
-        if(br.hasErrors()){
+
+    @PostMapping("" + UrlProvider.ProductCategory.STORE)
+    public ResponseEntity<StandardResponse> storeProCategory(@Valid @RequestBody CreateProductCategory reqBody, BindingResult br) throws MethodArgumentNotValidException {
+
+        if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
-        
+
+        ProductCategories pro_CateNew = new ProductCategories();
+
+        pro_CateNew.setName(reqBody.getName());
+        pro_CateNew.setDescription(reqBody.getDescription());
+
+        productCategoriesFacade.create(pro_CateNew);
+
+        return ResponseEntity.ok(StandardResponse.builder().success(true).status(200).message("Successfully create new product category").build());
+    }
+
+    @PutMapping("" + UrlProvider.ProductCategory.UPDATE)
+    public ResponseEntity<StandardResponse> updateProCategory(@Valid @RequestBody UpdateAndDeleteProductCategory reqBody, BindingResult br) throws MethodArgumentNotValidException {
+
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
+        }
+
         ProductCategories pro_CateUpdate = productCategoriesFacade.find(reqBody.getProductCategoryID());
-        
+
         if (pro_CateUpdate == null) {
             br.rejectValue("productCategoryID", "error.productCategoryID", "The product category ID does not exist");
             throw new MethodArgumentNotValidException(null, br);
         }
-        
+
         pro_CateUpdate.setName(reqBody.getName());
         pro_CateUpdate.setDescription(reqBody.getDescription());
-        
+
         productCategoriesFacade.edit(pro_CateUpdate);
-        
+
         return ResponseEntity.ok(StandardResponse.builder().success(true).status(200).message("Successfully updated data").build());
     }
-    
-    @DeleteMapping(""+UrlProvider.ProductCategory.DELETE)
-    public ResponseEntity<?> delete(@PathVariable("id") int id) {
-        ProductCategories pc = productCategoriesFacade.find(id);
-        
-        if (pc == null) {
-            List<String> errors = new ArrayList<>();
-            errors.add("The product category ID in the path does not exist");
-            
-            InvalidResponse res = new InvalidResponse();
-            res.setSuccess(false);
-            res.setStatus(400);
-            res.setMessage("Bad request path ID");
-            res.setInvalid(true);
-            res.setErrors(errors);
-            
-            return ResponseEntity.badRequest().body(res);
+
+    @DeleteMapping("" + UrlProvider.ProductCategory.DELETE)
+    public ResponseEntity<?> deleteProductCategories(@RequestParam("ids") List<Integer> ids) {
+        List<String> errors = new ArrayList<>();
+        List<Integer> deletedIds = new ArrayList<>();
+
+        for (int id : ids) {
+            ProductCategories pc = productCategoriesFacade.find(id);
+
+            if (pc != null) {
+                productCategoriesFacade.remove(pc);
+                deletedIds.add(id);
+            } else {
+                errors.add("The product category ID in the path does not exist");
+
+                InvalidResponse res = new InvalidResponse();
+                res.setSuccess(false);
+                res.setStatus(400);
+                res.setMessage("Bad request path ID");
+                res.setInvalid(true);
+                res.setErrors(errors);
+
+                return ResponseEntity.badRequest().body(res);
+            }
         }
-        
-        productCategoriesFacade.remove(pc);
-        
+
         return ResponseEntity.ok(
                 StandardResponse.builder()
                         .success(true)
@@ -128,13 +133,25 @@ public class ProductCategoryApiController {
                         .build()
         );
     }
-    
-     @GetMapping(""+UrlProvider.ProductCategory.SEARCH)
+
+    @GetMapping("" + UrlProvider.ProductCategory.SEARCH)
     public ResponseEntity searchProductCategoryByName(@RequestParam("q") String name) {
         List<ProductCategories> foundProductCategoryName = productCategoriesFacade.searchProductCategoryByName(name);
+        List<String> errors = new ArrayList<>();
+
         if (foundProductCategoryName.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            errors.add("The product category name you are looking for does not exist");
+
+            InvalidResponse res = new InvalidResponse();
+            res.setSuccess(false);
+            res.setStatus(400);
+            res.setMessage("The requested product category name is invalid");
+            res.setInvalid(true);
+            res.setErrors(errors);
+
+            return ResponseEntity.badRequest().body(res);
         }
+
         return ResponseEntity.ok(
                 StandardResponse.builder()
                         .success(true)
@@ -153,5 +170,5 @@ public class ProductCategoryApiController {
             throw new RuntimeException(ne);
         }
     }
-    
+
 }

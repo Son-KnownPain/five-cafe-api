@@ -1,6 +1,5 @@
 package com.fivecafe.body.materialcategory;
 
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,10 +14,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Builder
 public class CreateMaterialCaterogy {
     @NotEmpty(message = "Material category name cannot be empty")
-    @NotNull
     private String name;
     
-    @NotEmpty
-    @NotNull
+    @NotEmpty(message = "Material category description cannot be empty")
     private String description;
 }

@@ -14,14 +14,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class UpdateAndDeleteMaterialCategory {
-    @NotNull
+    @NotNull(message = "Material category ID is required")
     private int materialCategoryID;
     
     @NotEmpty(message = "Material category name cannot be empty")
-    @NotNull
     private String name;
     
-    @NotNull
-    @NotEmpty
+    
+    @NotEmpty(message = "Material category description cannot be empty")
     private String description;
 }

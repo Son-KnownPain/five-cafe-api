@@ -15,19 +15,18 @@ import org.hibernate.validator.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class UpdateAndDeleteMaterial {
-    @NotNull
+    @NotNull(message = "Material ID is required")
     private int materialID;
     
-    @NotNull
+    @NotNull(message = "Material category ID is required")
     private int materialCategoryID;
     
     @NotEmpty(message = "Material name cannot be empty")
-    @NotNull
     private String name;
     
-    @NotNull
-    @Min(value = 0, message = "Unit must be greather than 0")
+    @NotEmpty(message = "Material unit cannot be empty")
     private String unit;
     
+    @NotEmpty(message = "Material image cannot be empty")
     private String image;
 }

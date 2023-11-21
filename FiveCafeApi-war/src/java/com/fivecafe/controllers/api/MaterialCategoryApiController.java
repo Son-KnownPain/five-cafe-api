@@ -100,16 +100,24 @@ public class MaterialCategoryApiController {
     }
     
     @DeleteMapping(""+UrlProvider.MaterialCategory.DELETE)
-    public ResponseEntity<?> delete(@RequestParam("ids") String ids) {
+    public ResponseEntity<?> delete(@RequestParam("ids") String ids){
         String[] idMat= ids.split(",");
         
         for (String id : idMat){
-            MaterialCategories materialCategories= materialCategoriesFacade.find(id);
+            int idInt;
+            try {
+                idInt = Integer.parseInt(id);
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
+            }
+            MaterialCategories materialCategories= materialCategoriesFacade.find(idInt);
             if(materialCategories != null){
                 materialCategoriesFacade.remove(materialCategories);
             }
         }
-        return ResponseEntity.ok(StandardResponse.builder()
+        return ResponseEntity.ok(
+                StandardResponse.builder()
                         .success(true)
                         .status(200)
                         .message("Successfully delete material category")
@@ -118,7 +126,7 @@ public class MaterialCategoryApiController {
 
     }
     
-    @GetMapping(""+UrlProvider.ProductCategory.SEARCH)
+    @GetMapping(""+UrlProvider.MaterialCategory.SEARCH)
     public ResponseEntity searchMaterialCategoryByName(@RequestParam("q") String name){
         List<MaterialCategories> foundMatCateName= materialCategoriesFacade.searchMaterialCategoryByName(name);
         if(foundMatCateName.isEmpty()){

@@ -10,6 +10,8 @@ import com.fivecafe.models.responses.StandardResponse;
 import com.fivecafe.providers.UrlProvider;
 import com.fivecafe.session_beans.EmployeesFacadeLocal;
 import com.fivecafe.session_beans.RolesFacadeLocal;
+import com.fivecafe.supports.FileSupport;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -17,8 +19,10 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -30,7 +34,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(UrlProvider.API_PREFIX + UrlProvider.Employee.PREFIX)
@@ -69,11 +75,22 @@ public class EmployeeApiController {
         return ResponseEntity.ok(res);
     }
     
-    @PostMapping(""+UrlProvider.Employee.STORE)
-    public ResponseEntity<StandardResponse> store(@Valid @RequestBody CreEmpReq reqBody, BindingResult br) 
+    @PostMapping(value = ""+UrlProvider.Employee.STORE)
+    public ResponseEntity<StandardResponse> store(
+            @RequestPart(value = "image", required = true) MultipartFile image,
+            @RequestPart(value = "data", required = true) @Valid CreEmpReq reqBody,
+            BindingResult br,
+            HttpSession session
+    ) 
             throws MethodArgumentNotValidException 
     {
         if (br.hasErrors()) throw new MethodArgumentNotValidException(null, br);
+        // Validation for iamge
+        if (image == null || image.isEmpty()) {
+            br.rejectValue("image", "error.image", "Image is required");
+            throw new MethodArgumentNotValidException(null, br);
+        }
+        // -----------------
         Roles role = rolesFacade.find(reqBody.getRoleID());
         if (role == null) {
             br.rejectValue("roleID", "error.roleID", "Role ID is not exist");
@@ -88,6 +105,19 @@ public class EmployeeApiController {
         nEmp.setRoleID(role);
         nEmp.setName(reqBody.getName());
         nEmp.setPhone(reqBody.getPhone());
+        try {
+            /**
+             * Handle image
+             */
+            byte[] imageBytes = image.getBytes();
+            String originFileName = image.getOriginalFilename();
+            String newImageFileName = FileSupport.saveFile(session.getServletContext().getRealPath("/"), "employee", imageBytes, originFileName);
+            nEmp.setImage(newImageFileName);
+        } catch (IOException ex) {
+            Logger.getLogger(EmployeeApiController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        // END-----------
+        
         nEmp.setUsername(reqBody.getUsername());
         nEmp.setPassword(passwordEncoder.encode(reqBody.getPassword()));
         

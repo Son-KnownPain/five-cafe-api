@@ -17,4 +17,16 @@
         <local>com.fivecafe.session_beans.ProductCategoriesFacadeLocal</local>
         <ejb-link>FiveCafeApi-ejb.jar#ProductCategoriesFacade</ejb-link>
     </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>ProductsFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>com.fivecafe.session_beans.ProductsFacadeLocal</local>
+        <ejb-link>FiveCafeApi-ejb.jar#ProductsFacade</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>ProductCategoriesFacade2</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>com.fivecafe.session_beans.ProductCategoriesFacadeLocal</local>
+        <ejb-link>FiveCafeApi-ejb.jar#ProductCategoriesFacade</ejb-link>
+    </ejb-local-ref>
 </web-app>

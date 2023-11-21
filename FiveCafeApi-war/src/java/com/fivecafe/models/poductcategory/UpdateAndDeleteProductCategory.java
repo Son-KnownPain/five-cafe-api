@@ -17,6 +17,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class UpdateAndDeleteProductCategory {
+    @NotEmpty(message = "Product category ID cannot be empty")
     private int productCategoryID;
     @NotEmpty(message = "Product category name cannot be empty")
     private String name;

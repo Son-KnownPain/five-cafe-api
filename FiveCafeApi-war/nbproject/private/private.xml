@@ -3,8 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/web/WEB-INF/web.xml</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/web/index.html</file>
+            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/models/poductcategory/UpdateAndDeleteProductCategory.java</file>
+            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/ProductCategoryApiController.java</file>
+            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/ProductApiController.java</file>
+            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/models/product/UpdateProductResponse.java</file>
+            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/models/product/CreateProductResponse.java</file>
         </group>
     </open-files>
 </project-private>

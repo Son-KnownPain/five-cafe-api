@@ -4,6 +4,7 @@
  */
 package com.fivecafe.models.product;
 
+import com.fivecafe.models.poductcategory.ProductCategoryResponse;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ import lombok.Setter;
 @Builder
 public class ProductResponse {
     private int productID;
-    private List<ProductResponse> productList;
+    private int productCategoryID;
     private String name;
     private double price;
     private boolean isSelling;

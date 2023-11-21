@@ -16,6 +16,7 @@ public class EmployeeRes {
     private String roleID;
     private String roleName;
     private String name;
+    private String image;
     private String phone;
     private String username;
 }

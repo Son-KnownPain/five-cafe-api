@@ -5,6 +5,7 @@
 package com.fivecafe.entities;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -13,6 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -21,6 +24,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,9 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "EmployeeSalaries.findAll", query = "SELECT e FROM EmployeeSalaries e"),
     @NamedQuery(name = "EmployeeSalaries.findByEmployeeSalaryID", query = "SELECT e FROM EmployeeSalaries e WHERE e.employeeSalaryID = :employeeSalaryID"),
-    @NamedQuery(name = "EmployeeSalaries.findByDate", query = "SELECT e FROM EmployeeSalaries e WHERE e.date = :date"),
-    @NamedQuery(name = "EmployeeSalaries.findBySalary", query = "SELECT e FROM EmployeeSalaries e WHERE e.salary = :salary"),
-    @NamedQuery(name = "EmployeeSalaries.findByBonus", query = "SELECT e FROM EmployeeSalaries e WHERE e.bonus = :bonus")})
+    @NamedQuery(name = "EmployeeSalaries.findByDate", query = "SELECT e FROM EmployeeSalaries e WHERE e.date = :date")})
 public class EmployeeSalaries implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,14 +50,11 @@ public class EmployeeSalaries implements Serializable {
     @Column(name = "Date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "Salary")
-    private double salary;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "Bonus")
-    private double bonus;
+    @JoinTable(name = "EmployeeSalaryDetails", joinColumns = {
+        @JoinColumn(name = "EmployeeSalaryID", referencedColumnName = "EmployeeSalaryID")}, inverseJoinColumns = {
+        @JoinColumn(name = "TimeKeepingID", referencedColumnName = "TimeKeepingID")})
+    @ManyToMany
+    private Collection<EmployeeTimeKeepings> employeeTimeKeepingsCollection;
     @JoinColumn(name = "EmployeeID", referencedColumnName = "EmployeeID")
     @ManyToOne(optional = false)
     private Employees employeeID;
@@ -67,11 +66,9 @@ public class EmployeeSalaries implements Serializable {
         this.employeeSalaryID = employeeSalaryID;
     }
 
-    public EmployeeSalaries(Integer employeeSalaryID, Date date, double salary, double bonus) {
+    public EmployeeSalaries(Integer employeeSalaryID, Date date) {
         this.employeeSalaryID = employeeSalaryID;
         this.date = date;
-        this.salary = salary;
-        this.bonus = bonus;
     }
 
     public Integer getEmployeeSalaryID() {
@@ -90,20 +87,13 @@ public class EmployeeSalaries implements Serializable {
         this.date = date;
     }
 
-    public double getSalary() {
-        return salary;
+    @XmlTransient
+    public Collection<EmployeeTimeKeepings> getEmployeeTimeKeepingsCollection() {
+        return employeeTimeKeepingsCollection;
     }
 
-    public void setSalary(double salary) {
-        this.salary = salary;
-    }
-
-    public double getBonus() {
-        return bonus;
-    }
-
-    public void setBonus(double bonus) {
-        this.bonus = bonus;
+    public void setEmployeeTimeKeepingsCollection(Collection<EmployeeTimeKeepings> employeeTimeKeepingsCollection) {
+        this.employeeTimeKeepingsCollection = employeeTimeKeepingsCollection;
     }
 
     public Employees getEmployeeID() {

@@ -1,6 +1,5 @@
 package com.fivecafe.body.material;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

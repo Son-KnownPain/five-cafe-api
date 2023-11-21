@@ -18,7 +18,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -94,17 +93,22 @@ public class MaterialApiController {
     
     @PutMapping(""+UrlProvider.Material.UPDATE)
     public ResponseEntity<StandardResponse> update(
-            @Valid @RequestBody UpdateAndDeleteMaterial reqBody, BindingResult br) throws MethodArgumentNotValidException{
-        
-         MaterialCategories materialCaterogies = materialCategoriesFacade.find(reqBody.getMaterialCategoryID());
+            @Valid @RequestBody UpdateAndDeleteMaterial reqBody, BindingResult br) throws MethodArgumentNotValidException
+    {
         if(br.hasErrors()){
             throw new MethodArgumentNotValidException(null, br);
         }
         
         Materials matUpdate = materialsFacade.find(reqBody.getMaterialID());
+        MaterialCategories materialCaterogies = materialCategoriesFacade.find(reqBody.getMaterialCategoryID());
         
+        if(materialCaterogies == null){
+            br.rejectValue("materialCategoryID", "error.materialCategoryID", "MaterialCategoryID is not exist");
+        }
         if(matUpdate == null){
             br.rejectValue("materialID", "error.materialID", "The material ID does not exist");
+        }
+        if(br.hasErrors()){
             throw new MethodArgumentNotValidException(null, br);
         }
         
@@ -150,19 +154,19 @@ public class MaterialApiController {
         );
     }
     
-    @GetMapping(""+UrlProvider.Material.SEARCH)
-    public ResponseEntity searchMaterialByName(@RequestParam("m") String name){
-        List<Materials> foundMatName= materialsFacade.searchMaterialByName(name);
-        if(foundMatName.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(
-                StandardResponse.builder()
-                        .success(true)
-                        .status(200)
-                        .message("Successfully search material")
-                        .build());
-    }
+//    @GetMapping(""+UrlProvider.Material.SEARCH)
+//    public ResponseEntity searchMaterialByName(@RequestParam("m") String name){
+//        List<Materials> foundMatName= materialsFacade.searchMaterialByName(name);
+//        if(foundMatName.isEmpty()){
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//        return ResponseEntity.ok(
+//                StandardResponse.builder()
+//                        .success(true)
+//                        .status(200)
+//                        .message("Successfully search material")
+//                        .build());
+//    }
     
     
     private MaterialsFacadeLocal lookupMaterialsFacadeLocal() {

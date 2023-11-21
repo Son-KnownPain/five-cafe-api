@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.fivecafe.controllers.api;
 
 import com.fivecafe.entities.ProductCategories;
@@ -15,8 +11,6 @@ import com.fivecafe.models.responses.StandardResponse;
 import com.fivecafe.providers.UrlProvider;
 import com.fivecafe.session_beans.ProductCategoriesFacadeLocal;
 import com.fivecafe.session_beans.ProductsFacadeLocal;
-import com.fivecafe.supports.FileSupport;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -26,7 +20,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -37,9 +30,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(UrlProvider.API_PREFIX + UrlProvider.Product.PREFIX + "")
@@ -204,32 +195,32 @@ public class ProductApiController {
         );
     }
     
-    @GetMapping(""+UrlProvider.Product.SEARCH)
-    public ResponseEntity searchProduct(@RequestParam("q") String name){
-        List<Products> findProduct = productsFacade.searchProductByName(name);
-        List<String> error = new ArrayList<>();
-        
-        if (findProduct.isEmpty()) {
-            error.add("The product name you are looking for does not exist");
-
-            InvalidResponse res = new InvalidResponse();
-            res.setSuccess(false);
-            res.setStatus(400);
-            res.setMessage("The requested product name is invalid");
-            res.setInvalid(true);
-            res.setErrors(error);
-
-            return ResponseEntity.badRequest().body(res);
-        }
-        
-        return ResponseEntity.ok(
-                StandardResponse.builder()
-                        .success(true)
-                        .status(200)
-                        .message("Successfully search product")
-                        .build()
-        );       
-    }
+//    @GetMapping(""+UrlProvider.Product.SEARCH)
+//    public ResponseEntity searchProduct(@RequestParam("q") String name){
+//        List<Products> findProduct = productsFacade.searchProductByName(name);
+//        List<String> error = new ArrayList<>();
+//        
+//        if (findProduct.isEmpty()) {
+//            error.add("The product name you are looking for does not exist");
+//
+//            InvalidResponse res = new InvalidResponse();
+//            res.setSuccess(false);
+//            res.setStatus(400);
+//            res.setMessage("The requested product name is invalid");
+//            res.setInvalid(true);
+//            res.setErrors(error);
+//
+//            return ResponseEntity.badRequest().body(res);
+//        }
+//        
+//        return ResponseEntity.ok(
+//                StandardResponse.builder()
+//                        .success(true)
+//                        .status(200)
+//                        .message("Successfully search product")
+//                        .build()
+//        );       
+//    }
 
     private ProductsFacadeLocal lookupProductsFacadeLocal() {
         try {

@@ -107,7 +107,7 @@ public class MaterialCategoryApiController {
             int idInt;
             try {
                 idInt = Integer.parseInt(id);
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 e.printStackTrace();
                 continue;
             }
@@ -126,19 +126,19 @@ public class MaterialCategoryApiController {
 
     }
     
-    @GetMapping(""+UrlProvider.MaterialCategory.SEARCH)
-    public ResponseEntity searchMaterialCategoryByName(@RequestParam("q") String name){
-        List<MaterialCategories> foundMatCateName= materialCategoriesFacade.searchMaterialCategoryByName(name);
-        if(foundMatCateName.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(
-                StandardResponse.builder()
-                        .success(true)
-                        .status(200)
-                        .message("Successfully search material category")
-                        .build());
-    }
+//    @GetMapping(""+UrlProvider.MaterialCategory.SEARCH)
+//    public ResponseEntity searchMaterialCategoryByName(@RequestParam("q") String name){
+//        List<MaterialCategories> foundMatCateName= materialCategoriesFacade.searchMaterialCategoryByName(name);
+//        if(foundMatCateName.isEmpty()){
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//        return ResponseEntity.ok(
+//                StandardResponse.builder()
+//                        .success(true)
+//                        .status(200)
+//                        .message("Successfully search material category")
+//                        .build());
+//    }
 
     private MaterialCategoriesFacadeLocal lookupMaterialCategoriesFacadeLocal() {
         try {

@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Bills.findByBillID", query = "SELECT b FROM Bills b WHERE b.billID = :billID"),
     @NamedQuery(name = "Bills.findByEmployeeID", query = "SELECT b FROM Bills b WHERE b.employeeID = :employeeID"),
     @NamedQuery(name = "Bills.findByCreatedDate", query = "SELECT b FROM Bills b WHERE b.createdDate = :createdDate"),
-    @NamedQuery(name = "Bills.findByTableCode", query = "SELECT b FROM Bills b WHERE b.tableCode = :tableCode")})
+    @NamedQuery(name = "Bills.findByCardCode", query = "SELECT b FROM Bills b WHERE b.cardCode = :cardCode")})
 public class Bills implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,8 +61,8 @@ public class Bills implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 10)
-    @Column(name = "TableCode")
-    private String tableCode;
+    @Column(name = "CardCode")
+    private String cardCode;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bills")
     private Collection<BillDetails> billDetailsCollection;
     @JoinColumn(name = "BillStatusID", referencedColumnName = "BillStatusID")
@@ -79,11 +79,11 @@ public class Bills implements Serializable {
         this.billID = billID;
     }
 
-    public Bills(Integer billID, int employeeID, Date createdDate, String tableCode) {
+    public Bills(Integer billID, int employeeID, Date createdDate, String cardCode) {
         this.billID = billID;
         this.employeeID = employeeID;
         this.createdDate = createdDate;
-        this.tableCode = tableCode;
+        this.cardCode = cardCode;
     }
 
     public Integer getBillID() {
@@ -110,12 +110,12 @@ public class Bills implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public String getTableCode() {
-        return tableCode;
+    public String getCardCode() {
+        return cardCode;
     }
 
-    public void setTableCode(String tableCode) {
-        this.tableCode = tableCode;
+    public void setCardCode(String cardCode) {
+        this.cardCode = cardCode;
     }
 
     @XmlTransient

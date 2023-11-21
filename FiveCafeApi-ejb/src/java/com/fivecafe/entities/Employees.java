@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Employees.findByEmployeeID", query = "SELECT e FROM Employees e WHERE e.employeeID = :employeeID"),
     @NamedQuery(name = "Employees.findByName", query = "SELECT e FROM Employees e WHERE e.name = :name"),
     @NamedQuery(name = "Employees.findByPhone", query = "SELECT e FROM Employees e WHERE e.phone = :phone"),
+    @NamedQuery(name = "Employees.findByImage", query = "SELECT e FROM Employees e WHERE e.image = :image"),
     @NamedQuery(name = "Employees.findByUsername", query = "SELECT e FROM Employees e WHERE e.username = :username"),
     @NamedQuery(name = "Employees.findByPassword", query = "SELECT e FROM Employees e WHERE e.password = :password")})
 public class Employees implements Serializable {
@@ -60,6 +61,11 @@ public class Employees implements Serializable {
     private String phone;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "Image")
+    private String image;
+    @Basic(optional = false)
+    @NotNull
     @Size(min = 1, max = 20)
     @Column(name = "Username")
     private String username;
@@ -71,6 +77,8 @@ public class Employees implements Serializable {
     @JoinColumn(name = "RoleID", referencedColumnName = "RoleID")
     @ManyToOne(optional = false)
     private Roles roleID;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "employeeID")
+    private Collection<Outbounds> outboundsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "employeeID")
     private Collection<EmployeeSalaries> employeeSalariesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "employeeID")
@@ -85,10 +93,11 @@ public class Employees implements Serializable {
         this.employeeID = employeeID;
     }
 
-    public Employees(Integer employeeID, String name, String phone, String username, String password) {
+    public Employees(Integer employeeID, String name, String phone, String image, String username, String password) {
         this.employeeID = employeeID;
         this.name = name;
         this.phone = phone;
+        this.image = image;
         this.username = username;
         this.password = password;
     }
@@ -117,6 +126,14 @@ public class Employees implements Serializable {
         this.phone = phone;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -139,6 +156,15 @@ public class Employees implements Serializable {
 
     public void setRoleID(Roles roleID) {
         this.roleID = roleID;
+    }
+
+    @XmlTransient
+    public Collection<Outbounds> getOutboundsCollection() {
+        return outboundsCollection;
+    }
+
+    public void setOutboundsCollection(Collection<Outbounds> outboundsCollection) {
+        this.outboundsCollection = outboundsCollection;
     }
 
     @XmlTransient

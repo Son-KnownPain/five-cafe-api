@@ -100,7 +100,7 @@ public class MaterialCategoryApiController {
     }
     
     @DeleteMapping(""+UrlProvider.MaterialCategory.DELETE)
-    public ResponseEntity<?> delete(@RequestParam("id") String ids){
+    public ResponseEntity<?> delete(@RequestParam("ids") String ids) {
         String[] idMat= ids.split(",");
         
         for (String id : idMat){

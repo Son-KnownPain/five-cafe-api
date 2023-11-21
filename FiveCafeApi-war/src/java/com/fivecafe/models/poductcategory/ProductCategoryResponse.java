@@ -18,9 +18,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ProductCategoryResponse {
-
     private int productCategoryID;
     private String name;
     private String description;
-    private List<ProductResponse> productList;
 }

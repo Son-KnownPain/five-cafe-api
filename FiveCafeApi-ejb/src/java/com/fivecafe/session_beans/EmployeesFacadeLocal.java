@@ -28,5 +28,7 @@ public interface EmployeesFacadeLocal {
     List<Employees> findRange(int[] range);
 
     int count();
+
+    public Employees findByUsername(String username);
     
 }

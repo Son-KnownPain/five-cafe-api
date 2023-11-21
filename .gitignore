@@ -28,3 +28,5 @@ logs/
 Thumbs.db
 /FiveCafeApi-ejb/build/
 /FiveCafeApi-ejb/dist/
+/FiveCafeApi-war/dist/
+/FiveCafeApi-war/build/

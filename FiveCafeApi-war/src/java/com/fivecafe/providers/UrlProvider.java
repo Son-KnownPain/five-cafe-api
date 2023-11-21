@@ -15,10 +15,12 @@ public class UrlProvider {
         public static final String PREFIX = "/employee";
         
         // NONE SIGN IN
-        public static final String TEST = "/test";
         
         // NEED TO SIGN IN
         public static final String ALL = "/all"; 
+        public static final String STORE = "/store";
+        public static final String UPDATE = "/update";
+        public static final String DELETE = "/delete";
         
         
         @Override
@@ -77,9 +79,23 @@ public class UrlProvider {
         public static final String ALL = "/all";
         public static final String STORE = "/store";
         public static final String UPDATE = "/update";
-        public static final String DELETE = "/delete/{id}";
+        public static final String DELETE = "/delete";
         public static final String SEARCH = "/search";
         
+    }
+    
+    public class Product {
+        public static final String PREFIX = "/product";
+        
+        public static final String INDEX1 = "/index";
+        public static final String INDEX2 = "/";
+        public static final String INDEX3 = "";
+        
+        public static final String ALL = "/all";
+        public static final String STORE = "/store";
+        public static final String UPDATE = "/update";
+        public static final String DELETE = "/delete";
+        public static final String SEARCH = "/search";
         
     }
     

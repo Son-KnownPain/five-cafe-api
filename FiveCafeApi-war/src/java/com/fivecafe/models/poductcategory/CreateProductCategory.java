@@ -19,5 +19,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class CreateProductCategory {
     @NotEmpty(message = "Product category name cannot be empty")
     private String name;
+    @NotEmpty(message = "Product category description cannot be empty")
     private String description;
 }

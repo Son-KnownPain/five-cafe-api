@@ -5,9 +5,11 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.ProductCategories;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -28,4 +30,10 @@ public class ProductCategoriesFacade extends AbstractFacade<ProductCategories> i
         super(ProductCategories.class);
     }
     
+    @Override
+    public List<ProductCategories> searchProductCategoryByName(String name) {
+        Query query = em.createNamedQuery("ProductCategories.findByName", ProductCategories.class);
+        query.setParameter("name", name);
+        return query.getResultList();
+    }
 }

@@ -4,19 +4,17 @@
  */
 package com.fivecafe.session_beans;
 
-import com.fivecafe.entities.Products;
-import java.util.List;
+import com.fivecafe.entities.BDStatuses;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 /**
  *
  * @author ADMIN
  */
 @Stateless
-public class ProductsFacade extends AbstractFacade<Products> implements ProductsFacadeLocal {
+public class BDStatusesFacade extends AbstractFacade<BDStatuses> implements BDStatusesFacadeLocal {
 
     @PersistenceContext(unitName = "FiveCafeApi-ejbPU")
     private EntityManager em;
@@ -26,14 +24,8 @@ public class ProductsFacade extends AbstractFacade<Products> implements Products
         return em;
     }
 
-    public ProductsFacade() {
-        super(Products.class);
+    public BDStatusesFacade() {
+        super(BDStatuses.class);
     }
     
-    @Override
-    public List<Products> searchProductByName(String name) {
-        Query query = em.createNamedQuery("Products.findByName", Products.class);
-        query.setParameter("name", name);
-        return query.getResultList();
-    }
 }

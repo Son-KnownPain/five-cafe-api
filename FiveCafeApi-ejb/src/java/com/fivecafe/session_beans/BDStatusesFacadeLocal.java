@@ -4,7 +4,7 @@
  */
 package com.fivecafe.session_beans;
 
-import com.fivecafe.entities.Products;
+import com.fivecafe.entities.BDStatuses;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -13,22 +13,20 @@ import javax.ejb.Local;
  * @author ADMIN
  */
 @Local
-public interface ProductsFacadeLocal {
+public interface BDStatusesFacadeLocal {
 
-    void create(Products products);
+    void create(BDStatuses bDStatuses);
 
-    void edit(Products products);
+    void edit(BDStatuses bDStatuses);
 
-    void remove(Products products);
+    void remove(BDStatuses bDStatuses);
 
-    Products find(Object id);
+    BDStatuses find(Object id);
 
-    List<Products> findAll();
+    List<BDStatuses> findAll();
 
-    List<Products> findRange(int[] range);
+    List<BDStatuses> findRange(int[] range);
 
     int count();
-
-    public List<Products> searchProductByName(String name);
     
 }

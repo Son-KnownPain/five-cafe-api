@@ -6,7 +6,7 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2023-11-21T14:31:10")
+@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2023-11-22T07:56:20")
 @StaticMetamodel(Roles.class)
 public class Roles_ { 
 

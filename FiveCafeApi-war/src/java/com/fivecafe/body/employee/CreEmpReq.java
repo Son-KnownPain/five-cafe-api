@@ -33,4 +33,7 @@ public class CreEmpReq {
     @NotEmpty(message = "Password is required")
     @Size(min = 8, max = 100, message = "Password must be greater than 8 characters and less than 100 characters")
     private String password;
+    
+    // No validation
+    private String image;
 }

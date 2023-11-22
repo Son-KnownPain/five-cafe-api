@@ -23,6 +23,8 @@ public class CreateMaterial {
     @NotEmpty(message = "Material unit cannot be empty")
     private String unit;
     
-    @NotEmpty(message = "Material image cannot be empty")
+    @NotNull(message = "Quantity in stock is required")
+    private int quantityInStock;
+    
     private String image;
 }

@@ -36,7 +36,7 @@ public class FileSupport {
              */
             
             // ->> UPLOAD TO DEV NOT AT DIST
-            String subDirectoryPath = "D:\\== ProjectBasic\\JavaWeb\\Spring\\Enterprise\\EnterpriseAppAssignment\\EnterpriseAppAssignment-war\\web\\resources\\images";
+            String subDirectoryPath = "C:\\Users\\PC HP\\OneDrive\\Documents\\GitHub\\five-cafe-api\\FiveCafeApi-war\\web\\resources\\images";
             if (part != null) {
                 subDirectoryPath += File.separator + part;
             }

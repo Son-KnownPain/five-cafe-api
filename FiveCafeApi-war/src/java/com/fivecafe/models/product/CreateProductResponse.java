@@ -5,6 +5,7 @@
 package com.fivecafe.models.product;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,20 +20,19 @@ import org.hibernate.validator.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class CreateProductResponse {
+
+    @NotNull
+    private int productCategoryID;
+
     @NotEmpty(message = "Product name cannot be empty")
     private String name;
-    
-    @NotEmpty(message = "Price cannot be empty")
-    @Min(value = 0, message = "Price must be greather than 0")
+
+    @NotNull
     private double price;
-    
-    @NotEmpty(message = "Is selling cannot be empty")
-    @Pattern(regexp = "^(true|false)$", message = "The value must be 'true' or 'false'.")
+
+    @NotNull
     private boolean isSelling;
-    
-    @NotEmpty(message = "Image cannot be empty")
+
     private String image;
-    
-    @NotEmpty(message = "Product category ID cannot be empty")
-    private int productCategoryID;
+
 }

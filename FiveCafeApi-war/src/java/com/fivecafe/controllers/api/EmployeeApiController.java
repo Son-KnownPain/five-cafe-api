@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -49,7 +49,7 @@ public class EmployeeApiController {
     EmployeesFacadeLocal employeesFacade = lookupEmployeesFacadeLocal();
     
     @GetMapping(""+UrlProvider.Employee.ALL)
-    public ResponseEntity<DataResponse<List<EmployeeRes>>> all() {
+    public ResponseEntity<DataResponse<List<EmployeeRes>>> all(HttpServletRequest request) {
         List<Employees> allEmps = employeesFacade.findAll();
         
         List<EmployeeRes> data = new ArrayList<>();
@@ -60,6 +60,7 @@ public class EmployeeApiController {
                     .roleID(emp.getRoleID().getRoleID())
                     .roleName(emp.getRoleID().getRoleName())
                     .name(emp.getName())
+                    .image(FileSupport.perfectImg(request, "employee", emp.getImage()))
                     .phone(emp.getPhone())
                     .username(emp.getUsername())
                     .build()
@@ -77,8 +78,8 @@ public class EmployeeApiController {
     
     @PostMapping(value = ""+UrlProvider.Employee.STORE)
     public ResponseEntity<StandardResponse> store(
-            @RequestPart(value = "image", required = true) MultipartFile image,
-            @RequestPart(value = "data", required = true) @Valid CreEmpReq reqBody,
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @RequestPart(value = "data", required = false) @Valid CreEmpReq reqBody,
             BindingResult br,
             HttpSession session
     ) 
@@ -132,8 +133,13 @@ public class EmployeeApiController {
         );
     }
     
-    @PutMapping(""+UrlProvider.Employee.UPDATE)
-    public ResponseEntity<StandardResponse> update(@Valid @RequestBody UpdEmpReq reqBody, BindingResult br) 
+    @PostMapping(""+UrlProvider.Employee.UPDATE)
+    public ResponseEntity<StandardResponse> update(
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @RequestPart(value = "data", required = false) @Valid UpdEmpReq reqBody,
+            BindingResult br,
+            HttpSession session
+    ) 
             throws MethodArgumentNotValidException 
     {
         // Validation
@@ -161,6 +167,18 @@ public class EmployeeApiController {
         emp.setRoleID(role);
         emp.setName(reqBody.getName());
         emp.setPhone(reqBody.getPhone());
+        if (image != null && !image.isEmpty()) {
+            try {
+               FileSupport.deleteFile(session.getServletContext().getRealPath("/"), "employee", emp.getImage());
+                
+               byte[] imageBytes = image.getBytes();
+               String originFileName = image.getOriginalFilename();
+               String newImageFileName = FileSupport.saveFile(session.getServletContext().getRealPath("/"), "employee", imageBytes, originFileName);
+               emp.setImage(newImageFileName);
+           } catch (IOException ex) {
+               Logger.getLogger(EmployeeApiController.class.getName()).log(Level.SEVERE, null, ex);
+           }
+        }
         emp.setUsername(reqBody.getUsername());
         if (reqBody.getPassword() != null && !reqBody.getPassword().isEmpty()) {
             if (reqBody.getPassword().length() >= 8 && reqBody.getPassword().length() <= 100) {
@@ -183,7 +201,7 @@ public class EmployeeApiController {
     }
     
     @DeleteMapping("" + UrlProvider.Employee.DELETE)
-    public ResponseEntity<?> delete(@RequestParam("ids") String ids) {
+    public ResponseEntity<?> delete(@RequestParam("ids") String ids, HttpSession session) {
         String[] idArr = ids.split(",");
         
         for (String id : idArr) {
@@ -191,6 +209,12 @@ public class EmployeeApiController {
                 Employees emp = employeesFacade.find(Integer.parseInt(id));
             
                 if (emp != null) {
+                    try {
+                        FileSupport.deleteFile(session.getServletContext().getRealPath("/"), "employee", emp.getImage());
+
+                    } catch (IOException ex) {
+                        Logger.getLogger(EmployeeApiController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     employeesFacade.remove(emp);
                 }
             } catch (NumberFormatException e) {

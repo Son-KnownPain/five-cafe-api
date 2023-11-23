@@ -4,6 +4,7 @@
  */
 package com.fivecafe.models.poductcategory;
 
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class UpdateAndDeleteProductCategory {
-    @NotEmpty(message = "Product category ID cannot be empty")
+    @NotNull(message = "Product category ID cannot be empty")
     private int productCategoryID;
     @NotEmpty(message = "Product category name cannot be empty")
     private String name;

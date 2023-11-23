@@ -55,7 +55,7 @@ public class MaterialCategoryApiController {
         return ResponseEntity.ok(res);
     }
     
-    @PostMapping(""+UrlProvider.Role.STORE)
+    @PostMapping(""+UrlProvider.MaterialCategory.STORE)
     public ResponseEntity<StandardResponse> store(@Valid @RequestBody CreateMaterialCaterogy reqBody, BindingResult br) throws MethodArgumentNotValidException{
         if(br.hasErrors()){
             throw new MethodArgumentNotValidException(null, br);

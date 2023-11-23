@@ -16,6 +16,7 @@ public class MaterialResponse {
     private int materialCategoryID;
     private String name;
     private String unit;
+    private int quantityInStock;
     private String image;
     
     

@@ -9,11 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(UrlProvider.API_PREFIX + UrlProvider.Employee.PREFIX)
 public class SupplierApiController {
     
-    SuppliersFacade suppliersFacade= lookupSuppliersFacadeLocal();
-    
-
-    private SuppliersFacade lookupSuppliersFacadeLocal() {
-        throw new UnsupportedOperationException("Not supported yet."); 
-    }
+   
     
 }

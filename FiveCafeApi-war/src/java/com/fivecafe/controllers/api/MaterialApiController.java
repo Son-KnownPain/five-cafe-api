@@ -10,6 +10,8 @@ import com.fivecafe.models.responses.StandardResponse;
 import com.fivecafe.providers.UrlProvider;
 import com.fivecafe.session_beans.MaterialCategoriesFacadeLocal;
 import com.fivecafe.session_beans.MaterialsFacadeLocal;
+import com.fivecafe.supports.FileSupport;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -17,6 +19,7 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -25,10 +28,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(UrlProvider.API_PREFIX + UrlProvider.Material.PREFIX + "")
@@ -49,6 +53,7 @@ public class MaterialApiController {
                     .materialCategoryID(materials.getMaterialCategoryID().getMaterialCategoryID())
                     .name(materials.getName())
                     .unit(materials.getUnit())
+                    .quantityInStock(materials.getQuantityInStock())
                     .image(materials.getImage())
                     .build());
         }
@@ -63,8 +68,19 @@ public class MaterialApiController {
     }
     
     @PostMapping(""+UrlProvider.Material.STORE)
-    public ResponseEntity<StandardResponse> store(@Valid @RequestBody CreateMaterial reqBody, BindingResult br) throws MethodArgumentNotValidException{
-       
+    public ResponseEntity<StandardResponse> store(
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @Valid @RequestPart(value = "data", required = false) CreateMaterial reqBody,
+            BindingResult br,
+            HttpSession session
+    ) throws MethodArgumentNotValidException{
+        if(br.hasErrors()) throw new MethodArgumentNotValidException(null, br);
+        // Validation for iamge
+        if(image == null || image.isEmpty()){
+            br.rejectValue("image", "error.image", "Image is required");
+            throw new MethodArgumentNotValidException(null, br);
+        }
+           
         MaterialCategories materialCaterogies = materialCategoriesFacade.find(reqBody.getMaterialCategoryID());
         if(materialCaterogies == null){
             br.rejectValue("materialCategoryID", "error.materialCategoryID", "MaterialCategoryID is not exist");
@@ -78,8 +94,16 @@ public class MaterialApiController {
         matAdd.setMaterialCategoryID(materialCaterogies);
         matAdd.setName(reqBody.getName());
         matAdd.setUnit(reqBody.getUnit());
-        matAdd.setImage(reqBody.getImage());
-        
+        matAdd.setQuantityInStock(reqBody.getQuantityInStock());
+        try {
+            byte[] imageBytes =image.getBytes();
+            String orginFileName = image.getOriginalFilename();
+            String newImageFileName = FileSupport.saveFile(session.getServletContext().getRealPath("/"),"material",imageBytes, orginFileName);
+            matAdd.setImage(newImageFileName);
+        } catch (IOException ex) {
+            Logger.getLogger(EmployeeApiController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        // END-----------
         materialsFacade.create(matAdd);
         
         return ResponseEntity.ok(
@@ -93,8 +117,13 @@ public class MaterialApiController {
     
     @PutMapping(""+UrlProvider.Material.UPDATE)
     public ResponseEntity<StandardResponse> update(
-            @Valid @RequestBody UpdateAndDeleteMaterial reqBody, BindingResult br) throws MethodArgumentNotValidException
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @Valid @RequestPart(value = "data", required = false) UpdateAndDeleteMaterial reqBody,
+            BindingResult br,
+            HttpSession session
+    ) throws MethodArgumentNotValidException
     {
+        // Validation for iamge
         if(br.hasErrors()){
             throw new MethodArgumentNotValidException(null, br);
         }
@@ -115,8 +144,22 @@ public class MaterialApiController {
         matUpdate.setMaterialCategoryID(materialCaterogies);
         matUpdate.setName(reqBody.getName());
         matUpdate.setUnit(reqBody.getUnit());
-        matUpdate.setImage(reqBody.getImage());
-        
+        matUpdate.setQuantityInStock(reqBody.getQuantityInStock());
+        if(image != null && !image.isEmpty()){
+       
+            try {
+                FileSupport.deleteFile(session.getServletContext().getRealPath("/"), "materials", matUpdate.getImage());
+                
+                byte[] imageBytes =image.getBytes();
+                String orginFileName = image.getOriginalFilename();
+                String newImageFileName = FileSupport.saveFile(session.getServletContext().getRealPath("/"),"material",imageBytes, orginFileName);
+                matUpdate.setImage(newImageFileName);
+            
+            } catch (IOException ex) {
+                Logger.getLogger(EmployeeApiController.class.getName()).log(Level.SEVERE, null, ex);
+                
+            }
+        }
         materialsFacade.edit(matUpdate);
         
         return ResponseEntity.ok(

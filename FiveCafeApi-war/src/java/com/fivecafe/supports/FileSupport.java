@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 
 public class FileSupport {
     
@@ -36,7 +37,7 @@ public class FileSupport {
              */
             
             // ->> UPLOAD TO DEV NOT AT DIST
-            String subDirectoryPath = "C:\\Users\\PC HP\\OneDrive\\Documents\\GitHub\\five-cafe-api\\FiveCafeApi-war\\web\\resources\\images";
+            String subDirectoryPath = "D:\\== ProjectBasic\\JavaWeb\\Spring\\Enterprise\\FiveCafeApi\\FiveCafeApi-war\\web\\resources\\images";
             if (part != null) {
                 subDirectoryPath += File.separator + part;
             }
@@ -93,7 +94,7 @@ public class FileSupport {
         Path pathToDelete = Paths.get(pathString);
         
         // ->> DELETE FILE NOT AT DIST
-        String subDirectoryPath = "D:\\== ProjectBasic\\JavaWeb\\Spring\\Enterprise\\EnterpriseAppAssignment\\EnterpriseAppAssignment-war\\web\\resources\\images";
+        String subDirectoryPath = "D:\\== ProjectBasic\\JavaWeb\\Spring\\Enterprise\\FiveCafeApi\\FiveCafeApi-war\\web\\resources\\images";
         if (part != null) {
             subDirectoryPath += File.separator + part;
         }
@@ -101,5 +102,12 @@ public class FileSupport {
         Files.delete(Paths.get(subDirectoryPath));
         
         Files.delete(pathToDelete);
+    }
+    
+    public static String perfectImg(HttpServletRequest request, String part, String fileName) {
+        return  "http://" + request.getServerName() + ":" + 
+                request.getServerPort() + request.getContextPath() + 
+                "/resources" + "/images" + "/" + part +
+                "/" + fileName;
     }
 }

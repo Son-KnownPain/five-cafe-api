@@ -72,7 +72,7 @@ public class UrlProvider {
         }
     }
     
-    public class ProductCategory {
+    public class ProductCategory implements AuthUrl{
         public static final String PREFIX = "/pro-category";
         
         public static final String INDEX1 = "/index";
@@ -84,10 +84,25 @@ public class UrlProvider {
         public static final String UPDATE = "/update";
         public static final String DELETE = "/delete";
         public static final String SEARCH = "/search";
+     
+        @Override
+        public List<String> signInUrls() {
+            ArrayList<String> signInUrls = new ArrayList<>();
+            
+            return signInUrls;
+        }
         
+        private String addUserPrefix(final String PATH) {
+            return PREFIX + PATH;
+        }
+
+        @Override
+        public HashMap<String, List<String>> roleUrls() {
+            return null;
+        }
     }
     
-    public class Product {
+    public class Product implements AuthUrl{
         public static final String PREFIX = "/product";
         
         public static final String INDEX1 = "/index";
@@ -100,6 +115,51 @@ public class UrlProvider {
         public static final String DELETE = "/delete";
         public static final String SEARCH = "/search";
         
+        @Override
+        public List<String> signInUrls() {
+            ArrayList<String> signInUrls = new ArrayList<>();
+            
+            return signInUrls;
+        }
+        
+        private String addUserPrefix(final String PATH) {
+            return PREFIX + PATH;
+        }
+
+        @Override
+        public HashMap<String, List<String>> roleUrls() {
+            return null;
+        }
+    }
+    
+    public class Supplier implements AuthUrl{
+        public static final String PREFIX = "/supplier";
+        
+        public static final String INDEX1 = "/index";
+        public static final String INDEX2 = "/";
+        public static final String INDEX3 = "";
+        
+        public static final String ALL = "/all";
+        public static final String STORE = "/store";
+        public static final String UPDATE = "/update";
+        public static final String DELETE = "/delete";
+        public static final String SEARCH = "/search";
+        
+        @Override
+        public List<String> signInUrls() {
+            ArrayList<String> signInUrls = new ArrayList<>();
+            
+            return signInUrls;
+        }
+        
+        private String addUserPrefix(final String PATH) {
+            return PREFIX + PATH;
+        }
+
+        @Override
+        public HashMap<String, List<String>> roleUrls() {
+            return null;
+        }
     }
     
     //Nhu Code O Day:
@@ -213,6 +273,38 @@ public class UrlProvider {
         public static final String UPDATE = "/update";
         public static final String DELETE = "/delete";
         
+        
+        @Override
+        public List<String> signInUrls() {
+            ArrayList<String> signInUrls = new ArrayList<>();
+            
+            return signInUrls;
+        }
+        
+        private String addUserPrefix(final String PATH) {
+            return PREFIX + PATH;
+        }
+
+        @Override
+        public HashMap<String, List<String>> roleUrls() {
+            return null;
+        }
+    }
+    
+    public class Shift implements AuthUrl{
+        public static final String PREFIX ="/shift";
+        
+        // NONE SIGN IN
+        public static final String INDEX1 = "/index";
+        public static final String INDEX2 = "/";
+        public static final String INDEX3 = "";
+        
+        // NEED TO SIGN IN
+        public static final String ALL ="/all";
+        public static final String STORE = "/store";
+        public static final String UPDATE = "/update";
+        public static final String DELETE = "/delete";
+        public static final String SEARCH = "/search";
         
         @Override
         public List<String> signInUrls() {

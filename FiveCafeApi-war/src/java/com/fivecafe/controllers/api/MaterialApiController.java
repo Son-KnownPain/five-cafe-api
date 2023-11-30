@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -42,7 +42,7 @@ public class MaterialApiController {
     MaterialsFacadeLocal materialsFacade = lookupMaterialsFacadeLocal();
     
     @GetMapping(""+UrlProvider.Material.ALL)
-    public ResponseEntity<DataResponse<List<MaterialResponse>>> all(){
+    public ResponseEntity<DataResponse<List<MaterialResponse>>> all(HttpServletRequest request){
         List<Materials> allMaterial = materialsFacade.findAll();
         
         List<MaterialResponse> data = new ArrayList<>();
@@ -51,10 +51,11 @@ public class MaterialApiController {
             data.add(MaterialResponse.builder()
                     .materialID(materials.getMaterialID())
                     .materialCategoryID(materials.getMaterialCategoryID().getMaterialCategoryID())
+                    .materialCategoryName(materials.getMaterialCategoryID().getName())
                     .name(materials.getName())
                     .unit(materials.getUnit())
                     .quantityInStock(materials.getQuantityInStock())
-                    .image(materials.getImage())
+                    .image(FileSupport.perfectImg(request, "material", materials.getImage()))
                     .build());
         }
         
@@ -115,7 +116,7 @@ public class MaterialApiController {
                         .build());
     }
     
-    @PutMapping(""+UrlProvider.Material.UPDATE)
+    @PostMapping(""+UrlProvider.Material.UPDATE)
     public ResponseEntity<StandardResponse> update(
             @RequestPart(value = "image", required = false) MultipartFile image,
             @Valid @RequestPart(value = "data", required = false) UpdateAndDeleteMaterial reqBody,
@@ -148,7 +149,7 @@ public class MaterialApiController {
         if(image != null && !image.isEmpty()){
        
             try {
-                FileSupport.deleteFile(session.getServletContext().getRealPath("/"), "materials", matUpdate.getImage());
+                FileSupport.deleteFile(session.getServletContext().getRealPath("/"), "material", matUpdate.getImage());
                 
                 byte[] imageBytes =image.getBytes();
                 String orginFileName = image.getOriginalFilename();

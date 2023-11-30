@@ -27,4 +27,9 @@ public class SiteController {
     public String employeeManagementPage() {
         return "site/employee";
     }
+    
+    @GetMapping(""+WebUrlProvider.Site.MATERIAL)
+    public String materialManagementPage() {
+        return "site/material";
+    }
 }

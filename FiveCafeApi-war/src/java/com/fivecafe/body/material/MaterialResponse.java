@@ -14,6 +14,7 @@ import lombok.Setter;
 public class MaterialResponse {
     private int materialID;
     private int materialCategoryID;
+    private String materialCategoryName;
     private String name;
     private String unit;
     private int quantityInStock;

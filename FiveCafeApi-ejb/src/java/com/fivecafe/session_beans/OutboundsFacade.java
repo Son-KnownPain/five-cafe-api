@@ -5,6 +5,9 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.Outbounds;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -28,4 +31,5 @@ public class OutboundsFacade extends AbstractFacade<Outbounds> implements Outbou
         super(Outbounds.class);
     }
     
+
 }

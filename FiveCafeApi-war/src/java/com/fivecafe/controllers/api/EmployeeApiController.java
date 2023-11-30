@@ -81,7 +81,7 @@ public class EmployeeApiController {
         
         res.setSuccess(true);
         res.setStatus(200);
-        res.setMessage("Successfully get all role");
+        res.setMessage("Successfully get all employee");
         res.setData(data);
         return ResponseEntity.ok(res);
     }

@@ -33,14 +33,14 @@ public class UpdateAndDeleteEmployeeTimeKeeping {
     @NotNull(message = "Shift ID is required")
     private int shiftID;
     
-    @NotNull(message = "Date is required")
+    @NotEmpty(message = "Date is required")
     @Pattern(regexp = "\\d{2}/\\d{2}/\\d{4}", message = "Invalid date format(dd/MM/yyyy), example: 01/10/2023")
     private String date;
     
     @NotNull(message = "Salary is required") 
-    private Double salary;
+    private double salary;
     
     @NotNull(message = "Is pay is required") 
-    private Boolean isPaid;
+    private boolean isPaid;
     
 }

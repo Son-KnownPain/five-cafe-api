@@ -49,4 +49,16 @@
         <local>com.fivecafe.session_beans.ShiftsFacadeLocal</local>
         <ejb-link>FiveCafeApi-ejb.jar#ShiftsFacade</ejb-link>
     </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>EmployeeSalariesFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>com.fivecafe.session_beans.EmployeeSalariesFacadeLocal</local>
+        <ejb-link>FiveCafeApi-ejb.jar#EmployeeSalariesFacade</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>EmployeesFacade1</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>com.fivecafe.session_beans.EmployeesFacadeLocal</local>
+        <ejb-link>FiveCafeApi-ejb.jar#EmployeesFacade</ejb-link>
+    </ejb-local-ref>
 </web-app>

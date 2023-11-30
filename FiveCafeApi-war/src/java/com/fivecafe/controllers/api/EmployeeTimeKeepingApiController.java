@@ -106,7 +106,7 @@ public class EmployeeTimeKeepingApiController {
             e.printStackTrace();
         }
         etkAdd.setSalary(reqBody.getSalary());
-        etkAdd.setIsPaid(reqBody.getIsPaid());
+        etkAdd.setIsPaid(reqBody.isPaid());
                 
         try {
             employeeTimeKeepingsFacade.create(etkAdd);
@@ -165,7 +165,7 @@ public class EmployeeTimeKeepingApiController {
             e.printStackTrace();
         }
         etkUpdate.setSalary(reqBody.getSalary());
-        etkUpdate.setIsPaid(reqBody.getIsPaid());
+        etkUpdate.setIsPaid(reqBody.isPaid());
 
         employeeTimeKeepingsFacade.edit(etkUpdate);
 

@@ -11,7 +11,6 @@
     </jsp:attribute>
     <jsp:attribute name="scripts">
         <script>
-            const loginPath = window.APP_NAME + '/api/employee/login';
             Validator({
                 form: '#sign-in-form',
                 formGroup: '.login-form-gr',
@@ -22,6 +21,7 @@
                     Validator.minLength('#password', 8, 'Enter at least 8 characters'),
                 ],
                 onSubmit: function(data) {
+                    const loginPath = window.APP_NAME + '/api/employee/login';
                     fetch(loginPath, {
                         method: 'POST',
                         credentials: 'same-origin',

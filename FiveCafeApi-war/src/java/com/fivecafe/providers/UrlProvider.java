@@ -23,6 +23,8 @@ public class UrlProvider {
         public static final String UPDATE = "/update";
         public static final String DELETE = "/delete";
         
+        public static final String LOGOUT = "/logout";
+        
         public static final String INFO = "/info";
         
         
@@ -30,6 +32,7 @@ public class UrlProvider {
         public List<String> signInUrls() {
             ArrayList<String> signInUrls = new ArrayList<>();
             signInUrls.add(addApiPrefix(addEmployeePrefix(INFO)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(LOGOUT)));
             return signInUrls;
         }
         

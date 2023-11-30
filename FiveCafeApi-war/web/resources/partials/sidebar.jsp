@@ -17,8 +17,8 @@
     <section class="section">
         <p class="section-title">Management</p>
         <ul class="pl-1 m-0">
-            <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
-                <a href="#">
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/role" class="p-2 block">
                     Roles
                 </a>
             </li>

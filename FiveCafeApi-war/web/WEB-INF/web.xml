@@ -29,4 +29,16 @@
         <local>com.fivecafe.session_beans.EmployeesFacadeLocal</local>
         <ejb-link>FiveCafeApi-ejb.jar#EmployeesFacade</ejb-link>
     </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>MaterialsFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>com.fivecafe.session_beans.MaterialsFacadeLocal</local>
+        <ejb-link>FiveCafeApi-ejb.jar#MaterialsFacade</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>OutboundDetailsFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>com.fivecafe.session_beans.OutboundDetailsFacadeLocal</local>
+        <ejb-link>FiveCafeApi-ejb.jar#OutboundDetailsFacade</ejb-link>
+    </ejb-local-ref>
 </web-app>

@@ -17,4 +17,9 @@ public class SiteController {
     public String loginPage() {
         return "site/login";
     }
+    
+    @GetMapping(""+WebUrlProvider.Site.ROLE)
+    public String roleManagementPage() {
+        return "site/role";
+    }
 }

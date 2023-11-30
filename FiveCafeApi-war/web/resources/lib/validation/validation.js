@@ -71,32 +71,36 @@ function Validator(options) {
                 if (typeof options.onSubmit === 'function') {
                     var enabledInput = formElement.querySelectorAll('[name]')
                     var formValues = Array.from(enabledInput).reduce(function(values, element) {
-                    
-                    switch(element.type) {
-                        case 'checkbox':
-                            if (element.matches(':checked')) {
-                                if (!Array.isArray(values[element.name])) {
-                                    values[element.name] = [];
+                        switch(element.type) {
+                            case 'checkbox':
+                                if (element.matches(':checked')) {
+                                    if (!Array.isArray(values[element.name])) {
+                                        values[element.name] = [];
+                                    }
+                                    values[element.name].push(element.value);
+                                } else if (!values[element.name]) {  // Điều kiện là nếu không có key element.name trong values thì tạo nó và gán bằng chuỗi rỗng vì undefined chính là falsy
+                                    values[element.name] = '';
                                 }
-                                values[element.name].push(element.value);
-                            } else if (!values[element.name]) {  // Điều kiện là nếu không có key element.name trong values thì tạo nó và gán bằng chuỗi rỗng vì undefined chính là falsy
-                                values[element.name] = '';
-                            }
-                            break;
-                        case 'radio':
-                            values[element.name] = formElement.querySelector('input[name="' + element.name + '"]:checked').value
-                            break;
-                        case 'file':
-                            values[element.name] = element.files
-                            break;
-                        default:
-                            values[element.name] = element.value
-                    }
-                    
-                    return values
-
+                                break;
+                            case 'radio':
+                                values[element.name] = formElement.querySelector('input[name="' + element.name + '"]:checked').value
+                                break;
+                            case 'file':
+                                values[element.name] = element.files
+                                break;
+                            default:
+                                values[element.name] = element.value
+                        }
+                        
+                        return values
                     }, {})
-                    options.onSubmit(formValues)
+                    function resetForm(newValues) {
+                        for (const key in newValues) {
+                            const input = Array.from(enabledInput).find(inp => inp.name == key);
+                            input.value = newValues[key];
+                        }
+                    }
+                    options.onSubmit(formValues, { resetForm })
                 }
             }
         }

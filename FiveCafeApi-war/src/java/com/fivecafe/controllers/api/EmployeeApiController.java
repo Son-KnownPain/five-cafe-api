@@ -1,11 +1,13 @@
 package com.fivecafe.controllers.api;
 
 import com.fivecafe.body.employee.CreEmpReq;
+import com.fivecafe.body.employee.EmpInfoRes;
 import com.fivecafe.body.employee.EmpLoginCredentials;
 import com.fivecafe.body.employee.EmployeeRes;
 import com.fivecafe.body.employee.UpdEmpReq;
 import com.fivecafe.entities.Employees;
 import com.fivecafe.entities.Roles;
+import com.fivecafe.enums.RequestAttributeKeys;
 import com.fivecafe.enums.TokenNames;
 import com.fivecafe.exceptions.UnauthorizedException;
 import com.fivecafe.models.responses.DataResponse;
@@ -79,7 +81,7 @@ public class EmployeeApiController {
         
         res.setSuccess(true);
         res.setStatus(200);
-        res.setMessage("Successfully get all role");
+        res.setMessage("Successfully get all employee");
         res.setData(data);
         return ResponseEntity.ok(res);
     }
@@ -288,8 +290,56 @@ public class EmployeeApiController {
     }
     
     @GetMapping(""+UrlProvider.Employee.INFO)
-    public ResponseEntity<?> info() {
-        return ResponseEntity.ok("oke");
+    public ResponseEntity<?> info(HttpServletRequest request) {
+        String userID = (String) request.getAttribute(RequestAttributeKeys.USER_ID.toString());
+            
+        DataResponse<EmpInfoRes> res = new DataResponse<>();
+            
+        try {
+            int userIDInt = Integer.parseInt(userID);
+            
+            Employees employee = employeesFacade.find(userIDInt);
+            
+            EmpInfoRes info = EmpInfoRes.builder()
+                    .roleName(employee.getRoleID().getRoleName())
+                    .name(employee.getName())
+                    .image(FileSupport.perfectImg(request, "employee", employee.getImage()))
+                    .username(employee.getUsername())
+                    .phone(employee.getPhone())
+                    .build();
+            
+            res.setStatus(200);
+            res.setSuccess(true);
+            res.setMessage("Succsesfully get your info");
+            res.setData(info);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        return ResponseEntity.ok(res);
+    }
+    
+    @GetMapping(""+UrlProvider.Employee.LOGOUT)
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        Cookie aTCookie = new Cookie(TokenNames.ACCESS_TOKEN.toString(), "");
+        Cookie rTCookie = new Cookie(TokenNames.REFRESH_TOKEN.toString(), "");
+        
+        aTCookie.setMaxAge(0);
+        aTCookie.setPath("/");
+        
+        rTCookie.setMaxAge(0);
+        rTCookie.setPath("/");
+        
+        response.addCookie(aTCookie);
+        response.addCookie(rTCookie);
+        
+        return ResponseEntity.ok(
+                StandardResponse.builder()
+                        .status(200)
+                        .success(true)
+                        .message("Successfully logout")
+                .build()
+        );
     }
 
     private EmployeesFacadeLocal lookupEmployeesFacadeLocal() {

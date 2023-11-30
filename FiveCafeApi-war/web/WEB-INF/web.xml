@@ -18,6 +18,10 @@
         <ejb-link>FiveCafeApi-ejb.jar#ShiftsFacade</ejb-link>
     </ejb-local-ref>
     <ejb-local-ref>
+        <ejb-ref-name>OutboundsFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>com.fivecafe.session_beans.OutboundsFacadeLocal</local>
+        <ejb-link>FiveCafeApi-ejb.jar#OutboundsFacade</ejb-link>
         <ejb-ref-name>EmployeeTimeKeepingsFacade</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>com.fivecafe.session_beans.EmployeeTimeKeepingsFacadeLocal</local>
@@ -30,6 +34,16 @@
         <ejb-link>FiveCafeApi-ejb.jar#EmployeesFacade</ejb-link>
     </ejb-local-ref>
     <ejb-local-ref>
+        <ejb-ref-name>MaterialsFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>com.fivecafe.session_beans.MaterialsFacadeLocal</local>
+        <ejb-link>FiveCafeApi-ejb.jar#MaterialsFacade</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>OutboundDetailsFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>com.fivecafe.session_beans.OutboundDetailsFacadeLocal</local>
+        <ejb-link>FiveCafeApi-ejb.jar#OutboundDetailsFacade</ejb-link>
         <ejb-ref-name>ShiftsFacade1</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>com.fivecafe.session_beans.ShiftsFacadeLocal</local>

@@ -8,6 +8,8 @@ public class WebUrlProvider {
     public class Site implements WebAuthUrl {
         public static final String LOGIN = "/login";
         
+        public static final String ROLE = "/role";
+        
         public static final String GREET1 = "/greet";
         public static final String GREET2 = "/";
         public static final String GREET3 = "";
@@ -18,6 +20,7 @@ public class WebUrlProvider {
             signInUrls.add(GREET1);
             signInUrls.add(GREET2);
             signInUrls.add(GREET3);
+            signInUrls.add(ROLE);
             
             return signInUrls;
         }

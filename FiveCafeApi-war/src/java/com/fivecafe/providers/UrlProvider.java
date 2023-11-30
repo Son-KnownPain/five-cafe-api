@@ -23,6 +23,8 @@ public class UrlProvider {
         public static final String UPDATE = "/update";
         public static final String DELETE = "/delete";
         
+        public static final String LOGOUT = "/logout";
+        
         public static final String INFO = "/info";
         
         
@@ -30,6 +32,7 @@ public class UrlProvider {
         public List<String> signInUrls() {
             ArrayList<String> signInUrls = new ArrayList<>();
             signInUrls.add(addApiPrefix(addEmployeePrefix(INFO)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(LOGOUT)));
             return signInUrls;
         }
         
@@ -55,6 +58,36 @@ public class UrlProvider {
         public static final String DELETE = "/delete";
         
         
+        @Override
+        public List<String> signInUrls() {
+            ArrayList<String> signInUrls = new ArrayList<>();
+            
+            return signInUrls;
+        }
+        
+        private String addUserPrefix(final String PATH) {
+            return PREFIX + PATH;
+        }
+
+        @Override
+        public HashMap<String, List<String>> roleUrls() {
+            return null;
+        }
+    }
+    
+    public class Product implements AuthUrl{
+        public static final String PREFIX = "/product";
+        
+        public static final String INDEX1 = "/index";
+        public static final String INDEX2 = "/";
+        public static final String INDEX3 = "";
+        
+        public static final String ALL = "/all";
+        public static final String STORE = "/store";
+        public static final String UPDATE = "/update";
+        public static final String DELETE = "/delete";
+        public static final String SEARCH = "/search";
+     
         @Override
         public List<String> signInUrls() {
             ArrayList<String> signInUrls = new ArrayList<>();
@@ -102,8 +135,8 @@ public class UrlProvider {
         }
     }
     
-    public class Product implements AuthUrl{
-        public static final String PREFIX = "/product";
+    public class Outbound implements AuthUrl{
+        public static final String PREFIX = "/outbound";
         
         public static final String INDEX1 = "/index";
         public static final String INDEX2 = "/";

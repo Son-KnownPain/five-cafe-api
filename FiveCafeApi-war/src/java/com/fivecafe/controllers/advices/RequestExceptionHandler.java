@@ -1,6 +1,8 @@
 package com.fivecafe.controllers.advices;
 
+import com.fivecafe.exceptions.UnauthorizedException;
 import com.fivecafe.models.responses.InvalidResponse;
+import com.fivecafe.models.responses.StandardResponse;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -31,5 +33,16 @@ public class RequestExceptionHandler {
         res.setMessage("Request body is invalid data");
         res.setErrors(errors);
         return new ResponseEntity<InvalidResponse>(res, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<StandardResponse> handleUnauthorizedException(UnauthorizedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+            StandardResponse.builder()
+                    .status(401)
+                    .success(false)
+                    .message("Incorrect username or password")
+                    .build()
+        );
     }
 }

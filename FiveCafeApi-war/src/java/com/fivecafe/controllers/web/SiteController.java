@@ -22,4 +22,9 @@ public class SiteController {
     public String roleManagementPage() {
         return "site/role";
     }
+    
+    @GetMapping(""+WebUrlProvider.Site.EMPLOYEE)
+    public String employeeManagementPage() {
+        return "site/employee";
+    }
 }

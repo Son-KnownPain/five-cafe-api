@@ -27,24 +27,24 @@
                     Employees
                 </a>
             </li>
-            <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
-                <a href="#">
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/supplier" class="p-2 block">
                     Suppliers
                 </a>
             </li>
-            <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
-                <a href="#">
-                    Statuses
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/bill-status" class="p-2 block">
+                    Bill status
                 </a>
             </li>
-            <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
-                <a href="#">
-                    Shifts
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/shift" class="p-2 block">
+                   Shifts
                 </a>
             </li>
-            <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
-                <a href="#">
-                    Product categories
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/pro-category" class="p-2 block">
+                   Product categories
                 </a>
             </li>
             <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
@@ -52,9 +52,9 @@
                     Products
                 </a>
             </li>
-            <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
-                <a href="#">
-                    Material categories
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/mat-category" class="p-2 block">
+                   Material categories
                 </a>
             </li>
             <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">

@@ -19,5 +19,15 @@
             <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/MaterialApiController.java</file>
             <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/body/material/MaterialResponse.java</file>
         </group>
+        <group>
+            <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/web/WEB-INF/web.xml</file>
+            <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/web/SiteController.java</file>
+            <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/providers/WebUrlProvider.java</file>
+        </group>
+        <group>
+            <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/web/WEB-INF/web.xml</file>
+            <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/web/SiteController.java</file>
+            <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/providers/WebUrlProvider.java</file>
+        </group>
     </open-files>
 </project-private>

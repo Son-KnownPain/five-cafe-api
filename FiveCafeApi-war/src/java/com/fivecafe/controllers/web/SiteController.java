@@ -46,5 +46,13 @@ public class SiteController {
     @GetMapping(""+WebUrlProvider.Site.SUPPLIER)
     public String supplierManagementPage() {
         return "site/supplier";
+    @GetMapping(""+WebUrlProvider.Site.EMPLOYEE)
+    public String employeeManagementPage() {
+        return "site/employee";
+    }
+    
+    @GetMapping(""+WebUrlProvider.Site.MATERIAL)
+    public String materialManagementPage() {
+        return "site/material";
     }
 }

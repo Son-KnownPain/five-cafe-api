@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class CreateMaterial {
-    @NotNull
+    @NotNull(message = "Material category ID is required")
     private int materialCategoryID;
     
     @NotEmpty(message = "Material name cannot be empty")

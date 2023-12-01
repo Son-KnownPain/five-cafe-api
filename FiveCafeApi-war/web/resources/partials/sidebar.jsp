@@ -22,8 +22,8 @@
                     Roles
                 </a>
             </li>
-            <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
-                <a href="#">
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/employee" class="p-2 block">
                     Employees
                 </a>
             </li>
@@ -57,8 +57,8 @@
                    Material categories
                 </a>
             </li>
-            <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
-                <a href="#">
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/material" class="p-2 block">
                     Materials
                 </a>
             </li>

@@ -97,6 +97,7 @@ function showSuccessAlert(content) {
 
     sAContentElm.textContent = content;
 
+    sAElm.classList.remove('opacity-0');
     sAElm.classList.remove('hidden');
     sAElm.classList.add('flex');
 }

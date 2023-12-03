@@ -9,6 +9,11 @@ public class WebUrlProvider {
         public static final String LOGIN = "/login";
         
         public static final String ROLE = "/role";
+        public static final String BILL_STATUS = "/bill-status";
+        public static final String PRODUCT_CATEGORIES = "/pro-category";
+        public static final String MATERIAL_CATEGORIES = "/mat-category";
+        public static final String SHIFTS = "/shift";
+        public static final String SUPPLIER = "/supplier";
         public static final String EMPLOYEE = "/employee";
         public static final String MATERIAL = "/material";
         

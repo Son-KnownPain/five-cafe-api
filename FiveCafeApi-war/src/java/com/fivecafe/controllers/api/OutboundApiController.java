@@ -1,9 +1,9 @@
 package com.fivecafe.controllers.api;
 
-import com.fivecafe.body.outbound.CreateOutboundResponse;
+import com.fivecafe.body.outbound.CreateOutboundResq;
 import com.fivecafe.body.outbound.OutboundDetailResponse;
 import com.fivecafe.body.outbound.OutboundResponse;
-import com.fivecafe.body.outbound.UpdateOutboundResponse;
+import com.fivecafe.body.outbound.UpdateOutboundResq;
 import com.fivecafe.entities.Employees;
 import com.fivecafe.entities.Materials;
 import com.fivecafe.entities.OutboundDetails;
@@ -103,7 +103,7 @@ public class OutboundApiController {
     }
 
     @PostMapping("" + UrlProvider.Outbound.STORE)
-    public ResponseEntity<StandardResponse> storeOutbound(@Valid @RequestBody CreateOutboundResponse createResponse, BindingResult br) throws MethodArgumentNotValidException, java.text.ParseException {
+    public ResponseEntity<StandardResponse> storeOutbound(@Valid @RequestBody CreateOutboundResq createResponse, BindingResult br) throws MethodArgumentNotValidException, java.text.ParseException {
 
         Employees employees = employeesFacade.find(createResponse.getEmployeeID());
 
@@ -157,7 +157,7 @@ public class OutboundApiController {
     }
     
     @PutMapping(""+UrlProvider.Outbound.UPDATE)
-    public ResponseEntity<StandardResponse> updateOutbound(@Valid @RequestBody UpdateOutboundResponse updateRes, BindingResult br) throws  MethodArgumentNotValidException, java.text.ParseException{
+    public ResponseEntity<StandardResponse> updateOutbound(@Valid @RequestBody UpdateOutboundResq updateRes, BindingResult br) throws  MethodArgumentNotValidException, java.text.ParseException{
         
         if(br.hasErrors()){
             throw new MethodArgumentNotValidException(null, br);

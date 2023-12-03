@@ -18,6 +18,6 @@ public class EmployeeTimeKeepingResponse {
     private int employeeID;
     private int shiftID;
     private String date;
-    private Double salary;
-    private Boolean isPaid;
+    private double salary;
+    private boolean isPaid;
 }

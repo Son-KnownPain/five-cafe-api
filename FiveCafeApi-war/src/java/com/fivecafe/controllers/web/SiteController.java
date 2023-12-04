@@ -55,4 +55,9 @@ public class SiteController {
     public String materialManagementPage() {
         return "site/material";
     }
+    
+    @GetMapping(""+WebUrlProvider.Site.PRODUCT)
+    public String productManagementPage() {
+        return "site/product";
+    }
 }

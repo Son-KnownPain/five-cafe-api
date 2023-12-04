@@ -11,6 +11,7 @@ public class WebUrlProvider {
         public static final String ROLE = "/role";
         public static final String EMPLOYEE = "/employee";
         public static final String MATERIAL = "/material";
+        public static final String PRODUCT = "/product";
         
         public static final String GREET1 = "/greet";
         public static final String GREET2 = "/";
@@ -25,6 +26,7 @@ public class WebUrlProvider {
             signInUrls.add(ROLE);
             signInUrls.add(EMPLOYEE);
             signInUrls.add(MATERIAL);
+            signInUrls.add(PRODUCT);
             
             return signInUrls;
         }

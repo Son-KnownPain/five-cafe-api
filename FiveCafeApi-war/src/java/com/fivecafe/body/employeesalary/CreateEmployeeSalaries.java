@@ -1,5 +1,6 @@
 package com.fivecafe.body.employeesalary;
 
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -21,4 +22,7 @@ public class CreateEmployeeSalaries {
     @NotEmpty(message = "Date is required")
     @Pattern(regexp = "\\d{2}/\\d{2}/\\d{4}", message = "Invalid date format(dd/MM/yyyy), example: 01/10/2023")
     private String date;
+     
+    @NotEmpty(message = "Time keeping is required")
+    private List<Integer> timeKeepingIDs;
 }

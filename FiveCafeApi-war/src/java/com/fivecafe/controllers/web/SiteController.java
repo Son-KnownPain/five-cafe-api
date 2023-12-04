@@ -23,6 +23,29 @@ public class SiteController {
         return "site/role";
     }
     
+    @GetMapping(""+WebUrlProvider.Site.BILL_STATUS)
+    public String billStatusManagementPage() {
+        return "site/bill-status";
+    }
+    
+    @GetMapping(""+WebUrlProvider.Site.PRODUCT_CATEGORIES)
+    public String productCategoriesManagementPage() {
+        return "site/product-categories";
+    }
+    
+    @GetMapping(""+WebUrlProvider.Site.MATERIAL_CATEGORIES)
+    public String materialCategoriesManagementPage() {
+        return "site/material-categories";
+    }
+    
+    @GetMapping(""+WebUrlProvider.Site.SHIFTS)
+    public String shiftManagementPage() {
+        return "site/shift";
+    }
+    
+    @GetMapping(""+WebUrlProvider.Site.SUPPLIER)
+    public String supplierManagementPage() {
+        return "site/supplier";
     @GetMapping(""+WebUrlProvider.Site.EMPLOYEE)
     public String employeeManagementPage() {
         return "site/employee";

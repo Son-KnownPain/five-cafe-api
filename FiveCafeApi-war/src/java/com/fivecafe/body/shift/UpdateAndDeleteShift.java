@@ -25,11 +25,11 @@ public class UpdateAndDeleteShift {
     private double salary;
     
     @NotNull(message = "Time from is required")
-    @Pattern(regexp = "^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$", message = "Invalid time format")
+    @Pattern(regexp = "^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$", message = "Invalid time from format(HH:mm:ss), example: 6:00:00")
     private String timeFrom;
     
     @NotNull(message = "Time to is required")
-    @Pattern(regexp = "^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$", message = "Invalid time format")
+    @Pattern(regexp = "^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$", message = "Invalid time from format(HH:mm:ss), example: 6:00:00")
     private String timeTo;
     
 }

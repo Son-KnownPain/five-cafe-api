@@ -83,7 +83,7 @@ public class EmployeeSalariesApiController {
         if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
-        //TimeKeeping
+        
         EmployeeSalaries salaryAdd = new EmployeeSalaries();
 
         salaryAdd.setEmployeeID(employees);
@@ -94,13 +94,17 @@ public class EmployeeSalariesApiController {
         }catch(ParseException e){
             e.printStackTrace();
         }
-            employeeSalariesFacade.create(salaryAdd);
-            return ResponseEntity.ok(StandardResponse
-                    .builder()
-                    .success(true)
-                    .status(200)
-                    .message("Successfully create new employee salary")
-                    .build());
+        employeeSalariesFacade.create(salaryAdd);
+        for (Integer timeKeepingID : reqBody.getTimeKeepingIDs()) {
+//            EmployeeSalaryDetails empSalaryDetails = new EmployeeSalaryDe
+        }
+        
+        return ResponseEntity.ok(StandardResponse
+                .builder()
+                .success(true)
+                .status(200)
+                .message("Successfully create new employee salary")
+                .build());
     }
     
     @PutMapping("" + UrlProvider.EmployeeSalaries.UPDATE)

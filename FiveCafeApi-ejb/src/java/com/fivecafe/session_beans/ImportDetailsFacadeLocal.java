@@ -28,5 +28,7 @@ public interface ImportDetailsFacadeLocal {
     List<ImportDetails> findRange(int[] range);
 
     int count();
+
+    public List<ImportDetails> findByImportID(int importID);
     
 }

@@ -5,9 +5,11 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.ImportDetails;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -26,6 +28,15 @@ public class ImportDetailsFacade extends AbstractFacade<ImportDetails> implement
 
     public ImportDetailsFacade() {
         super(ImportDetails.class);
+    }
+    
+    @Override
+    public List<ImportDetails> findByImportID(int importID) {
+        TypedQuery<ImportDetails> query = em.createNamedQuery("ImportDetails.findByImportID", ImportDetails.class);
+        
+        query.setParameter("importID", importID);
+        
+        return query.getResultList();
     }
     
 }

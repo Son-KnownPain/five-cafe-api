@@ -1,6 +1,5 @@
 package com.fivecafe.body.imports;
 
-import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +14,6 @@ import lombok.Setter;
 @Builder
 public class ImportRes {
     private int importID;
-    private Date importDate;
+    private String importDate;
     private List<ImportDetailRes> details;
 }

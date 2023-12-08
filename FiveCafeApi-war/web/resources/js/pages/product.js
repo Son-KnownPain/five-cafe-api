@@ -1,6 +1,6 @@
 // Fetch table data
 function fetchTableData() {
-    const fetchPath = window.APP_NAME + '/api/material/all';
+    const fetchPath = window.APP_NAME + '/api/product/all';
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
@@ -10,7 +10,7 @@ function fetchTableData() {
                     return `
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                <input type="checkbox" name="delete-checkbox" value="${item.materialID}" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <input type="checkbox" name="delete-checkbox" value="${item.productID}" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             </th>
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 <img class="object-cover w-20 h-20 rounded" src="${item.image}" alt="Large avatar">
@@ -19,16 +19,16 @@ function fetchTableData() {
                                 ${item.name}
                             </th>
                             <td class="px-6 py-4">
-                                ${item.unit}
+                                ${item.price}
                             </td>
                             <td class="px-6 py-4">
-                                ${item.quantityInStock}
+                                ${item.selling ? 'Selling' : 'Stop selling'}
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a data-edit-id="${item.materialID}" data-modal-target="update-modal" data-modal-toggle="update-modal" class="block cursor-pointer font-semibold text-yellow-500 dark:text-yellow-500 hover:text-yellow-300">
+                                <a data-edit-id="${item.productID}" data-modal-target="update-modal" data-modal-toggle="update-modal" class="block cursor-pointer font-semibold text-yellow-500 dark:text-yellow-500 hover:text-yellow-300">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
-                                <a data-detail-id="${item.materialID}" data-modal-target="detail-modal" data-modal-toggle="detail-modal" class="mt-2 block cursor-pointer font-semibold text-blue-500 dark:text-blue-500 hover:text-blue-300">
+                                <a data-detail-id="${item.productID}" data-modal-target="detail-modal" data-modal-toggle="detail-modal" class="mt-2 block cursor-pointer font-semibold text-blue-500 dark:text-blue-500 hover:text-blue-300">
                                     <i class="fa-solid fa-circle-info"></i>
                                 </a>
                             </td>
@@ -52,7 +52,7 @@ function fetchTableData() {
                 // Handle delete
                 const yesDltBtn = document.getElementById('yes-dlt-btn')
                 yesDltBtn.onclick = () => {
-                    fetch(`${window.APP_NAME}/api/material/delete?ids=${checkedRowsToDelete.join(',')}`, {
+                    fetch(`${window.APP_NAME}/api/product/delete?ids=${checkedRowsToDelete.join(',')}`, {
                         method: 'DELETE',
                         credentials: 'same-origin',
                     })
@@ -60,7 +60,7 @@ function fetchTableData() {
                     .then(res => {
                         if (res.status == 200) {
                             hideWarningAlert();
-                            showSuccessAlert('Successfully delete material');
+                            showSuccessAlert('Successfully delete product');
                             fetchTableData();
                             checkedRowsToDelete = [];
                             renderDeleteBtn();
@@ -86,15 +86,15 @@ function fetchTableData() {
             const editBtns = document.querySelectorAll('a[data-edit-id]');
             Array.from(editBtns).forEach(btn => {
                 btn.onclick = () => {
-                    const employee = res.data.find(item => item.materialID == btn.dataset.editId);
+                    const product = res.data.find(item => item.productID == btn.dataset.editId);
 
-                    document.getElementById('materialIDEdit').value = employee.materialID;
-                    document.getElementById('previewImgEdit').src = employee.image;
+                    document.getElementById('productIDEdit').value = product.productID;
+                    document.getElementById('previewImgEdit').src = product.image;
                     document.getElementById('previewImgEdit').classList.remove('hidden')
-                    document.getElementById('materialCategoryIDEdit').value = employee.materialCategoryID;
-                    document.getElementById('nameEdit').value = employee.name;
-                    document.getElementById('unitEdit').value = employee.unit;
-                    document.getElementById('quantityInStockEdit').value = employee.quantityInStock;
+                    document.getElementById('productCategoryIDEdit').value = product.productCategoryID;
+                    document.getElementById('nameEdit').value = product.name;
+                    document.getElementById('priceEdit').value = product.price;
+                    document.getElementById('isSellingEdit').checked = product.selling;
                 }
             })
 
@@ -102,13 +102,13 @@ function fetchTableData() {
             const detailBtns = document.querySelectorAll('a[data-detail-id]')
             Array.from(detailBtns).forEach(btn => {
                 btn.onclick = () => {
-                    const material = res.data.find(item => item.materialID == btn.dataset.detailId);
+                    const product = res.data.find(item => item.productID == btn.dataset.detailId);
 
-                    document.getElementById("detail-image").src = material.image;
-                    document.getElementById("detail-name").textContent = material.name;
-                    document.getElementById("detail-unit").textContent = material.unit;
-                    document.getElementById("detail-quantityInStock").textContent = material.quantityInStock;
-                    document.getElementById("detail-category").textContent = material.materialCategoryName;
+                    document.getElementById("detail-image").src = product.image;
+                    document.getElementById("detail-name").textContent = product.name;
+                    document.getElementById("detail-price").textContent = product.price;
+                    document.getElementById("detail-status").textContent = product.selling ? 'Selling' : 'Stop selling';
+                    document.getElementById("detail-category").textContent = product.productCategoryName;
                 }
             })
         }
@@ -164,13 +164,12 @@ Validator({
     errorSelector: '.form-message',
     rules: [
         Validator.isRequired('#image', 'Image is required'),
-        Validator.isRequired('#materialCategoryID', 'Material category is required'),
+        Validator.isRequired('#productCategoryID', 'Product category is required'),
         Validator.isRequired('#name', 'Name is required'),
-        Validator.isRequired('#unit', 'Unit is required'),
-        Validator.isRequired('#quantityInStock', 'Quantity in stock is required'),
+        Validator.isRequired('#price', 'Price is required'),
     ],
     onSubmit: function(data, { resetForm }) {
-        const storePath = window.APP_NAME + '/api/material/store';
+        const storePath = window.APP_NAME + '/api/product/store';
         // Form Data
         const { image, ...otherData } = data;
         const [imageFile] = image;
@@ -181,10 +180,10 @@ Validator({
         formData.append("data", new Blob(
             [
                 JSON.stringify({
-                    materialCategoryID: otherData.materialCategoryID,
+                    productCategoryID: otherData.productCategoryID,
                     name: otherData.name,
-                    unit: otherData.unit,
-                    quantityInStock: otherData.quantityInStock,
+                    price: otherData.price,
+                    selling: typeof otherData.isSelling === 'string' ? false : otherData.isSelling.includes('yes'),
                 })
             ],
             {
@@ -203,15 +202,14 @@ Validator({
             if (res.status == 200) {
                 document.getElementById('close-create-modal-btn').click();
                 hideWarningAlert();
-                showSuccessAlert('Successfully create new material');
+                showSuccessAlert('Successfully create new product');
                 fetchTableData();
                 resetPreviewImage('#previewImg')
                 resetForm({
                     image: '',
-                    materialCategoryID: otherData.materialCategoryID,
+                    productCategoryID: otherData.productCategoryID,
                     name: '',
-                    unit: '',
-                    quantityInStock: '0',
+                    price: '',
                 })
             } else if (res.status == 400 && res.invalid) {
                 showWarningAlert('Invalid some fields', res.errors);
@@ -230,14 +228,12 @@ Validator({
     formGroup: '.form-gr',
     errorSelector: '.form-message',
     rules: [
-        Validator.isRequired('#materialIDEdit', 'Material ID is required'),
-        Validator.isRequired('#materialCategoryIDEdit', 'Material category is required'),
+        Validator.isRequired('#productCategoryIDEdit', 'Product category is required'),
         Validator.isRequired('#nameEdit', 'Name is required'),
-        Validator.isRequired('#unitEdit', 'Unit is required'),
-        Validator.isRequired('#quantityInStockEdit', 'Quantity in stock is required'),
+        Validator.isRequired('#priceEdit', 'Price is required'),
     ],
     onSubmit: function(data, { resetForm }) {
-        const updatePath = window.APP_NAME + '/api/material/update';
+        const updatePath = window.APP_NAME + '/api/product/update';
         // Form Data
         const { image, ...otherData } = data;
         const imageFile = image.length > 0 ? image[0] : null;
@@ -248,11 +244,11 @@ Validator({
         formData.append("data", new Blob(
             [
                 JSON.stringify({
-                    materialID: otherData.materialID,
-                    materialCategoryID: otherData.materialCategoryID,
+                    productID: otherData.productID,
+                    productCategoryID: otherData.productCategoryID,
                     name: otherData.name,
-                    unit: otherData.unit,
-                    quantityInStock: otherData.quantityInStock,
+                    price: otherData.price,
+                    selling: typeof otherData.isSelling === 'string' ? false : otherData.isSelling.includes('yes'),
                 })
             ],
             {
@@ -271,16 +267,15 @@ Validator({
             if (res.status == 200) {
                 document.getElementById('close-update-modal-btn').click();
                 hideWarningAlert();
-                showSuccessAlert('Successfully update material data');
+                showSuccessAlert('Successfully update product data');
                 fetchTableData();
                 resetPreviewImage('#previewImgEdit')
                 resetForm({
-                    materialID: '',
+                    productID: '',
                     image: '',
-                    materialCategoryID: otherData.materialCategoryID,
+                    productCategoryID: otherData.productCategoryID,
                     name: '',
-                    unit: '',
-                    quantityInStock: '0',
+                    price: '',
                 })
             } else if (res.status == 400 && res.invalid) {
                 showWarningAlert('Invalid some fields', res.errors);
@@ -323,8 +318,8 @@ function resetPreviewImage(previewerSelector) {
 }
 
 // Handle fetch role data
-function fetchMaterialCategories(selectsID) {
-    const fetchPath = window.APP_NAME + '/api/mat-category/all';
+function fetchProductCategories(selectsID) {
+    const fetchPath = window.APP_NAME + '/api/pro-category/all';
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
@@ -333,7 +328,7 @@ function fetchMaterialCategories(selectsID) {
                 document.getElementById(selectID).innerHTML = 
                 res.data.map(item => {
                     return `
-                        <option value="${item.materialCategoryID}">${item.name}</option>
+                        <option value="${item.productCategoryID}">${item.name}</option>
                     `
                 }).join('');
             })
@@ -341,7 +336,7 @@ function fetchMaterialCategories(selectsID) {
     })
     .catch(_res => { })
 }
-fetchMaterialCategories([
-    'materialCategoryID',
-    'materialCategoryIDEdit',
+fetchProductCategories([
+    'productCategoryID',
+    'productCategoryIDEdit',
 ]);

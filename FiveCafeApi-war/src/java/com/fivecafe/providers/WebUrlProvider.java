@@ -17,6 +17,7 @@ public class WebUrlProvider {
         public static final String EMPLOYEE = "/employee";
         public static final String MATERIAL = "/material";
         public static final String PRODUCT = "/product";
+        public static final String IMPORT = "/import";
         
         public static final String GREET1 = "/greet";
         public static final String GREET2 = "/";

@@ -1,7 +1,7 @@
 package com.fivecafe.controllers.api;
 
+import com.fivecafe.body.imports.AddImportDetailReq;
 import com.fivecafe.body.imports.CreateImportReq;
-import com.fivecafe.body.imports.DeleteImportDetailReq;
 import com.fivecafe.body.imports.ImportDetailRes;
 import com.fivecafe.body.imports.ImportRes;
 import com.fivecafe.body.imports.UpdateImportDetailReq;
@@ -164,6 +164,57 @@ public class ImportApiController {
         return ResponseEntity.ok(res);
     }
     
+    @PostMapping(""+UrlProvider.Import.STORE_MAT_ITEM)
+    public ResponseEntity<?> storeMatItem(@Valid @RequestBody AddImportDetailReq reqBody, BindingResult br) throws MethodArgumentNotValidException {
+        if (br.hasErrors()) throw new MethodArgumentNotValidException(null, br);
+        
+        // Validate
+        Imports imports = importsFacade.find(reqBody.getImportID());
+        if (imports == null) {
+            br.rejectValue("importID", "error.importID", "Import ID you provided is not exist");
+        }
+        
+        Materials material = materialsFacade.find(reqBody.getMaterialID());
+        if (material == null) {
+            br.rejectValue("materialID", "error.materialID", "Material ID you provided is not exist");
+        }
+
+        Suppliers supplier = suppliersFacade.find(reqBody.getSupplierID());
+        if (supplier == null) {
+            br.rejectValue("supplierID", "error.supplierID", "Supplier ID you provided is not exist");
+        }
+        
+        if (br.hasErrors()) throw new MethodArgumentNotValidException(null, br);
+        
+        // Valid
+        ImportDetailsPK idPK = new ImportDetailsPK();
+        idPK.setImportID(reqBody.getImportID());
+        idPK.setMaterialID(reqBody.getMaterialID());
+        
+        ImportDetails newImportDetail = new ImportDetails();
+        
+        newImportDetail.setImportDetailsPK(idPK);
+        newImportDetail.setImports(imports);
+        newImportDetail.setMaterials(material);
+        newImportDetail.setSupplierID(supplier);
+        newImportDetail.setUnitPrice(reqBody.getUnitPrice());
+        newImportDetail.setQuantity(reqBody.getQuantity());
+        
+        // Update material quantity in stock
+        material.setQuantityInStock(material.getQuantityInStock() + reqBody.getQuantity());
+
+        importDetailsFacade.create(newImportDetail);
+        materialsFacade.edit(material);
+        
+        StandardResponse res = StandardResponse.builder()
+                .status(200)
+                .success(true)
+                .message("Successfully update import material item data")
+                .build();
+        
+        return ResponseEntity.ok(res);
+    }
+    
     @PutMapping(""+UrlProvider.Import.UPDATE_MAT_ITEM)
     public ResponseEntity<?> updateMatItem(@Valid @RequestBody UpdateImportDetailReq reqBody, BindingResult br) throws MethodArgumentNotValidException {
         if (br.hasErrors()) throw new MethodArgumentNotValidException(null, br);
@@ -216,17 +267,21 @@ public class ImportApiController {
     }
     
     @DeleteMapping(""+UrlProvider.Import.DELETE_MAT_ITEM)
-    public ResponseEntity<?> deleteMatItem(@Valid @RequestBody DeleteImportDetailReq reqBody, BindingResult br) throws MethodArgumentNotValidException {
-        if (br.hasErrors()) throw new MethodArgumentNotValidException(null, br);
+    public ResponseEntity<?> deleteMatItem(@RequestParam("matID") int matID, @RequestParam("impID") int impID) {
         
         ImportDetailsPK idPK = new ImportDetailsPK();
-        idPK.setImportID(reqBody.getImportID());
-        idPK.setMaterialID(reqBody.getMaterialID());
+        idPK.setImportID(impID);
+        idPK.setMaterialID(matID);
         
         ImportDetails importDetail = importDetailsFacade.find(idPK);
         
         if (importDetail == null) {
-            br.rejectValue("materialID", "error.materialID", "Import detail was not found with materialID and importID you provided");
+            StandardResponse res = new StandardResponse();
+            res.setStatus(400);
+            res.setSuccess(true);
+            res.setMessage("Cannot found import detail with import id and material id you provided");
+
+            return ResponseEntity.ok(res);
         }
         
         importDetailsFacade.remove(importDetail);

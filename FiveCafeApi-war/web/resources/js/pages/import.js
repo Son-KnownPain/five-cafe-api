@@ -31,9 +31,10 @@ function fetchTableData(auto  = {}) {
             // Init flowbite
             initFlowbite();
 
-            // Handle checkbox
+            // Handle checkbox to delete
             let checkedRowsToDelete = [];
 
+            // Check if has any checked checkbox then show delete button
             function renderDeleteBtn() {
                 const dltBtn = document.getElementById('dlt-btn');
                 if (checkedRowsToDelete.length > 0) {
@@ -81,9 +82,15 @@ function fetchTableData(auto  = {}) {
             if (!document.getElementById('detail-update-form').classList.contains('hidden')) {
                 document.getElementById('detail-update-form').classList.add('hidden');
             }
-
+            if (!document.getElementById('detail-add-form').classList.contains('hidden')) {
+                document.getElementById('detail-add-form').classList.add('hidden');
+            }
             document.getElementById('cancel-update-mat-btn').onclick = () => {
                 document.getElementById('detail-update-form').classList.add('hidden');
+            }
+            document.getElementById('cancel-add-mat-btn').onclick = () => {
+                document.getElementById('detail-add-form').classList.add('hidden');
+                document.getElementById('add-mat-item-btn-box').classList.remove('hidden');
             }
 
             Array.from(detailBtns).forEach(btn => {
@@ -112,6 +119,15 @@ function fetchTableData(auto  = {}) {
                                     <button data-delete-mat-id="${detail.materialID}" class="ml-2 text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800 dark:hover:bg-red-500">
                                         <i class="fa-regular fa-trash-can"></i>
                                     </button>
+
+                                    <div data-confirmation-toggle-id="${detail.materialID}" class="hidden">
+                                        <button data-yes-dc-mat-id="${detail.materialID}" class="text-cyan-700 border border-cyan-700 hover:bg-cyan-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-cyan-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-cyan-500 dark:text-cyan-500 dark:hover:text-white dark:focus:ring-cyan-800 dark:hover:bg-cyan-500">
+                                            <i class="fa-solid fa-check"></i>
+                                        </button>
+                                        <button data-no-dc-mat-id="${detail.materialID}" class="ml-2 text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800 dark:hover:bg-red-500">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </div>
                                 </h5>
                                 <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Unit price: ${window.currencyOutput(detail.unitPrice)}</p>
                                 <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Quantity: ${detail.quantity} ${detail.unit}</p>
@@ -121,8 +137,60 @@ function fetchTableData(auto  = {}) {
                         </div>
                     `).join('')
 
+                    // Handle click delete mat item
+                    const deleteItemBtns = document.querySelectorAll('button[data-delete-mat-id]');
+                    Array.from(deleteItemBtns).forEach(btn => {
+                        btn.onclick = () => {
+                            const matID = btn.dataset.deleteMatId;
+
+                            // Hide trash icon btn
+                            btn.classList.add('hidden')
+                            // Show confirmation
+                            document.querySelector(`div[data-confirmation-toggle-id='${matID}']`).classList.remove('hidden')
+
+                            // When click yes
+                            document.querySelector(`button[data-yes-dc-mat-id='${matID}']`).onclick = () => {
+                                const importID = importItem.importID;
+
+                                const deletePath = `${window.APP_NAME}/api/import/delete-mat-item?matID=${matID}&impID=${importID}`;
+                                fetch(deletePath, {
+                                    method: 'DELETE',
+                                    credentials: 'same-origin',
+                                })
+                                .then(res => res.json())
+                                .then(res => {
+                                    if (res.status == 200) {
+                                        document.getElementById('close-import-detail-modal-btn').click();
+                                        hideWarningAlert();
+                                        showSuccessAlert(res.message);
+                                        showDetailSuccessAlert("Delete success")
+                                        fetchTableData({ detailClickID: importID })
+                                    } else if (res.status == 400 && res.invalid) {
+                                        showWarningAlert('Invalid some fields', res.errors);
+                                        document.getElementById('close-import-detail-modal-btn').click();
+                                    }
+                                })
+                                .catch(_res => {})
+                            }
+                            // When click no
+                            document.querySelector(`button[data-no-dc-mat-id='${matID}']`).onclick = () => {
+                                // Show trash icon btn
+                                document.querySelector(`button[data-delete-mat-id='${matID}']`).classList.remove('hidden')
+                                // Hide confirmation
+                                document.querySelector(`div[data-confirmation-toggle-id='${matID}']`).classList.add('hidden')
+                            }
+                        }
+                    });
+
+                    // Handle click add material item
+                    document.getElementById('add-mat-item-btn').onclick = () => {
+                        document.getElementById('importIDAdd').value = importItem.importID;
+                        document.getElementById('add-mat-item-btn-box').classList.add('hidden');
+                        document.getElementById('detail-add-form').classList.remove('hidden');
+                    }
+
                     // Handle click edit material item
-                    const editItemBtns = document.querySelectorAll('button[data-edit-mat-id');
+                    const editItemBtns = document.querySelectorAll('button[data-edit-mat-id]');
                     Array.from(editItemBtns).forEach(btn => {
                         btn.onclick = () => {
                             const materialData = importItem.details.find(item => item.materialID == btn.dataset.editMatId);
@@ -253,6 +321,48 @@ Validator({
     }
 });
 
+// Validate add material
+Validator({
+    form: '#add-material-form',
+    formGroup: '.form-gr',
+    errorSelector: '.form-message',
+    rules: [
+        Validator.isRequired('#materialIDAdd', 'Material ID is required'),
+        Validator.isRequired('#supplierIDAdd', 'Supplier ID is required'),
+        Validator.isRequired('#unitPriceAdd', 'Unit price is required'),
+        Validator.isRequired('#quantityAdd', 'Quantity is required'),
+    ],
+    onSubmit: function(data, { resetForm }) {
+        const addPath = `${window.APP_NAME}/api/import/store-mat-item`
+        fetch(addPath, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.status == 200) {
+                document.getElementById('close-import-detail-modal-btn').click();
+                hideWarningAlert();
+                showSuccessAlert(res.message);
+                resetForm({
+                    unitPrice: '0',
+                    quantity: '0',
+                })
+                showDetailSuccessAlert("Add material success")
+                fetchTableData({ detailClickID: data.importID })
+            } else if (res.status == 400 && res.invalid) {
+                showWarningAlert('Invalid some fields', res.errors);
+                document.getElementById('close-import-detail-modal-btn').click();
+            }
+        })
+        .res(_err => {})
+    }
+});
+
 // Validate update material item
 Validator({
     form: '#update-material-form',
@@ -376,6 +486,7 @@ function fetchMaterials(selectsID) {
 }
 fetchMaterials([
     'materialID',
+    'materialIDAdd',
 ]);
 
 var suppliers = [];
@@ -407,6 +518,10 @@ fetchSuppliers([
     },
     {
         selectID: 'supplierIDEdit',
+        selectedID:  0,
+    },
+    {
+        selectID: 'supplierIDAdd',
         selectedID:  0,
     },
 ]);

@@ -5,6 +5,7 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.Employees;
+import com.fivecafe.entities.Roles;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -30,5 +31,7 @@ public interface EmployeesFacadeLocal {
     int count();
 
     public Employees findByUsername(String username);
+
+    public List<Employees> searchEmployees(String name, Roles role);
     
 }

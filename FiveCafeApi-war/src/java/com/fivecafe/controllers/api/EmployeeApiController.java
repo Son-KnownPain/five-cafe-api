@@ -86,6 +86,42 @@ public class EmployeeApiController {
         return ResponseEntity.ok(res);
     }
     
+    @GetMapping(""+UrlProvider.Employee.SEARCH)
+    public ResponseEntity<DataResponse<List<EmployeeRes>>> search(
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "roleID", defaultValue = "") String roleID,
+            HttpServletRequest request
+    ) {
+        Roles role = null;
+        if (roleID.length() > 0) {
+            role = rolesFacade.find(roleID);
+        }
+        List<Employees> allEmps = employeesFacade.searchEmployees(keyword, role);
+        
+        List<EmployeeRes> data = new ArrayList<>();
+        
+        for (Employees emp : allEmps) {
+            data.add(EmployeeRes.builder()
+                    .employeeID(emp.getEmployeeID())
+                    .roleID(emp.getRoleID().getRoleID())
+                    .roleName(emp.getRoleID().getRoleName())
+                    .name(emp.getName())
+                    .image(FileSupport.perfectImg(request, "employee", emp.getImage()))
+                    .phone(emp.getPhone())
+                    .username(emp.getUsername())
+                    .build()
+            );
+        }
+        
+        DataResponse<List<EmployeeRes>> res = new DataResponse<>();
+        
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully searching employee");
+        res.setData(data);
+        return ResponseEntity.ok(res);
+    }
+    
     @PostMapping(value = ""+UrlProvider.Employee.STORE)
     public ResponseEntity<StandardResponse> store(
             @RequestPart(value = "image", required = false) MultipartFile image,

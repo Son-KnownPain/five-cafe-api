@@ -2,11 +2,10 @@ package com.fivecafe.controllers.api;
 
 import com.fivecafe.entities.ProductCategories;
 import com.fivecafe.entities.Products;
-import com.fivecafe.models.product.CreateProductResponse;
-import com.fivecafe.models.product.UpdateProductResponse;
+import com.fivecafe.models.product.CreateProductReq;
 import com.fivecafe.models.product.ProductResponse;
+import com.fivecafe.models.product.UpdateProductReq;
 import com.fivecafe.models.responses.DataResponse;
-import com.fivecafe.models.responses.InvalidResponse;
 import com.fivecafe.models.responses.StandardResponse;
 import com.fivecafe.providers.UrlProvider;
 import com.fivecafe.session_beans.ProductCategoriesFacadeLocal;
@@ -20,6 +19,7 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -29,8 +29,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -46,12 +44,22 @@ public class ProductApiController {
     ProductsFacadeLocal productsFacade = lookupProductsFacadeLocal();
 
     @GetMapping("" + UrlProvider.Product.ALL)
-    public ResponseEntity<DataResponse<List<ProductResponse>>> allPro() {
+    public ResponseEntity<DataResponse<List<ProductResponse>>> allPro(HttpServletRequest request) {
         List<Products> allProduct = productsFacade.findAll();
         List<ProductResponse> data = new ArrayList<>();
 
         for (Products p : allProduct) {
-            data.add(ProductResponse.builder().productID(p.getProductID()).productCategoryID(p.getProductCategoryID().getProductCategoryID()).name(p.getName()).price(p.getPrice()).isSelling(p.getIsSelling()).image(p.getImage()).build());
+            data.add(
+                    ProductResponse.builder()
+                            .productID(p.getProductID())
+                            .productCategoryID(p.getProductCategoryID().getProductCategoryID())
+                            .productCategoryName(p.getProductCategoryID().getName())
+                            .name(p.getName())
+                            .price(p.getPrice())
+                            .isSelling(p.getIsSelling())
+                            .image(FileSupport.perfectImg(request, "products", p.getImage()))
+                            .build()
+            );
         }
 
         DataResponse<List<ProductResponse>> proResponse = new DataResponse<>();
@@ -65,7 +73,13 @@ public class ProductApiController {
     }
 
     @PostMapping("" + UrlProvider.Product.STORE)
-    public ResponseEntity<StandardResponse> storeProduct(@RequestPart(value = "image", required = false) MultipartFile image, @RequestPart(value = "data", required = false) @Valid CreateProductResponse createPro_res, HttpSession session, BindingResult br) throws MethodArgumentNotValidException {
+    public ResponseEntity<StandardResponse> storeProduct(
+            @RequestPart(value = "image", required = false) MultipartFile image, 
+            @RequestPart(value = "data", required = false) @Valid CreateProductReq createPro_res, 
+            HttpSession session, BindingResult br
+    ) 
+            throws MethodArgumentNotValidException 
+    {
 
         //Validation for image
         if (image == null || image.isEmpty()) {
@@ -107,7 +121,14 @@ public class ProductApiController {
     }
 
     @PostMapping(""+UrlProvider.Product.UPDATE)
-    public ResponseEntity<StandardResponse> updateProduct(@RequestPart(value = "image", required = false) MultipartFile image, @RequestPart(value = "data", required = false) @Valid UpdateProductResponse updatePro_res, HttpSession session, BindingResult br) throws MethodArgumentNotValidException {
+    public ResponseEntity<StandardResponse> updateProduct(
+            @RequestPart(value = "image", required = false) MultipartFile image, 
+            @RequestPart(value = "data", required = false) @Valid UpdateProductReq updatePro_res, 
+            HttpSession session, 
+            BindingResult br
+    ) 
+            throws MethodArgumentNotValidException 
+    {
         
         ProductCategories proCategory = productCategoriesFacade.find(updatePro_res.getProductCategoryID());
 
@@ -156,7 +177,7 @@ public class ProductApiController {
     }
 
     @DeleteMapping("" + UrlProvider.Product.DELETE)
-    public ResponseEntity<?> deleteProduct(@RequestParam("ids") String ids) {
+    public ResponseEntity<?> deleteProduct(@RequestParam("ids") String ids, HttpSession session) {
         String[] idsPC = ids.split(",");
 
         for (String id : idsPC) {
@@ -169,6 +190,11 @@ public class ProductApiController {
             }
             Products product = productsFacade.find(idInt);
             if (product != null) {
+                try {
+                    FileSupport.deleteFile(session.getServletContext().getRealPath("/"), "products", product.getImage());
+                } catch (IOException ex) {
+                    Logger.getLogger(EmployeeApiController.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 productsFacade.remove(product);
             }
         }

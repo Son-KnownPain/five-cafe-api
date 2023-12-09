@@ -231,7 +231,6 @@ Validator({
     errorSelector: '.form-message',
     rules: [
         Validator.isRequired('#materialIDEdit', 'Material ID is required'),
-        Validator.isRequired('#imageEdit', 'Image is required'),
         Validator.isRequired('#materialCategoryIDEdit', 'Material category is required'),
         Validator.isRequired('#nameEdit', 'Name is required'),
         Validator.isRequired('#unitEdit', 'Unit is required'),

@@ -1,11 +1,6 @@
 // Fetch table data
-function fetchTableData(searching = null) {
-    let fetchPath = window.APP_NAME;
-    if (searching) {
-        fetchPath += `/api/employee/search?keyword=${searching.keyword}${searching.roleID ? `&roleID=${searching.roleID}` : ""}`
-    } else  {
-        fetchPath += '/api/employee/all';
-    }
+function fetchTableData() {
+    const fetchPath = window.APP_NAME + '/api/product/all';
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
@@ -15,7 +10,7 @@ function fetchTableData(searching = null) {
                     return `
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                <input type="checkbox" name="delete-checkbox" value="${item.employeeID}" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <input type="checkbox" name="delete-checkbox" value="${item.productID}" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             </th>
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 <img class="object-cover w-20 h-20 rounded" src="${item.image}" alt="Large avatar">
@@ -24,16 +19,16 @@ function fetchTableData(searching = null) {
                                 ${item.name}
                             </th>
                             <td class="px-6 py-4">
-                                ${item.roleName}
+                                ${item.price}
                             </td>
                             <td class="px-6 py-4">
-                                ${item.phone}
+                                ${item.selling ? 'Selling' : 'Stop selling'}
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a data-edit-id="${item.employeeID}" data-modal-target="update-modal" data-modal-toggle="update-modal" class="block cursor-pointer font-semibold text-yellow-500 dark:text-yellow-500 hover:text-yellow-300">
+                                <a data-edit-id="${item.productID}" data-modal-target="update-modal" data-modal-toggle="update-modal" class="block cursor-pointer font-semibold text-yellow-500 dark:text-yellow-500 hover:text-yellow-300">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
-                                <a data-detail-id="${item.employeeID}" data-modal-target="emp-detail-modal" data-modal-toggle="emp-detail-modal" class="mt-2 block cursor-pointer font-semibold text-blue-500 dark:text-blue-500 hover:text-blue-300">
+                                <a data-detail-id="${item.productID}" data-modal-target="detail-modal" data-modal-toggle="detail-modal" class="mt-2 block cursor-pointer font-semibold text-blue-500 dark:text-blue-500 hover:text-blue-300">
                                     <i class="fa-solid fa-circle-info"></i>
                                 </a>
                             </td>
@@ -57,7 +52,7 @@ function fetchTableData(searching = null) {
                 // Handle delete
                 const yesDltBtn = document.getElementById('yes-dlt-btn')
                 yesDltBtn.onclick = () => {
-                    fetch(`${window.APP_NAME}/api/employee/delete?ids=${checkedRowsToDelete.join(',')}`, {
+                    fetch(`${window.APP_NAME}/api/product/delete?ids=${checkedRowsToDelete.join(',')}`, {
                         method: 'DELETE',
                         credentials: 'same-origin',
                     })
@@ -65,7 +60,7 @@ function fetchTableData(searching = null) {
                     .then(res => {
                         if (res.status == 200) {
                             hideWarningAlert();
-                            showSuccessAlert('Successfully delete employee');
+                            showSuccessAlert('Successfully delete product');
                             fetchTableData();
                             checkedRowsToDelete = [];
                             renderDeleteBtn();
@@ -91,15 +86,15 @@ function fetchTableData(searching = null) {
             const editBtns = document.querySelectorAll('a[data-edit-id]');
             Array.from(editBtns).forEach(btn => {
                 btn.onclick = () => {
-                    const employee = res.data.find(item => item.employeeID == btn.dataset.editId);
+                    const product = res.data.find(item => item.productID == btn.dataset.editId);
 
-                    document.getElementById('employeeIDEdit').value = employee.employeeID;
-                    document.getElementById('previewImgEdit').src = employee.image;
+                    document.getElementById('productIDEdit').value = product.productID;
+                    document.getElementById('previewImgEdit').src = product.image;
                     document.getElementById('previewImgEdit').classList.remove('hidden')
-                    document.getElementById('roleIDEdit').value = employee.roleID;
-                    document.getElementById('nameEdit').value = employee.name;
-                    document.getElementById('phoneEdit').value = employee.phone;
-                    document.getElementById('usernameEdit').value = employee.username;
+                    document.getElementById('productCategoryIDEdit').value = product.productCategoryID;
+                    document.getElementById('nameEdit').value = product.name;
+                    document.getElementById('priceEdit').value = product.price;
+                    document.getElementById('isSellingEdit').checked = product.selling;
                 }
             })
 
@@ -107,13 +102,13 @@ function fetchTableData(searching = null) {
             const detailBtns = document.querySelectorAll('a[data-detail-id]')
             Array.from(detailBtns).forEach(btn => {
                 btn.onclick = () => {
-                    const employee = res.data.find(item => item.employeeID == btn.dataset.detailId);
+                    const product = res.data.find(item => item.productID == btn.dataset.detailId);
 
-                    document.getElementById("detail-image").src = employee.image;
-                    document.getElementById("detail-name").textContent = employee.name;
-                    document.getElementById("detail-username").textContent = employee.username;
-                    document.getElementById("detail-phone").textContent = employee.phone;
-                    document.getElementById("detail-roleName").textContent = employee.roleName;
+                    document.getElementById("detail-image").src = product.image;
+                    document.getElementById("detail-name").textContent = product.name;
+                    document.getElementById("detail-price").textContent = product.price;
+                    document.getElementById("detail-status").textContent = product.selling ? 'Selling' : 'Stop selling';
+                    document.getElementById("detail-category").textContent = product.productCategoryName;
                 }
             })
         }
@@ -122,45 +117,7 @@ function fetchTableData(searching = null) {
 }
 fetchTableData();
 
-// Handle searching
-function renderRoleFilter() {
-    const items = [
-        {
-            roleID: '',
-            roleName: 'Tất cả chức vụ',
-        },
-        ...roles,
-    ]
-    document.getElementById('role-filter').innerHTML = items.map(item => {
-        return `
-            <li data-role-id="${item.roleID}" data-role-name="${item.roleName}">
-                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">${item.roleName}</button>
-            </li>
-        `
-    }).join('');
-}
-function processClickChooseRole() {
-    Array.from(document.querySelectorAll('li[data-role-id]')).forEach(li => {
-        li.onclick = () => {
-            document.getElementById('roleIDSearch').value = li.dataset.roleId;
-            document.getElementById('dropdown-button').innerHTML = `
-                ${li.dataset.roleName}
-                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                </svg>
-            `
-        }
-    })
-}
-document.getElementById('search-form').onsubmit = e => {
-    e.preventDefault();
-    const roleID = document.getElementById('roleIDSearch').value;
-    const keyword = document.getElementById('keywordSearch').value;
-    fetchTableData({
-        roleID: roleID.length && roleID,
-        keyword: keyword
-    })
-}
+
 
 // Alerts
 let successAlert = "";
@@ -207,15 +164,12 @@ Validator({
     errorSelector: '.form-message',
     rules: [
         Validator.isRequired('#image', 'Image is required'),
-        Validator.isRequired('#roleID', 'Role is required'),
+        Validator.isRequired('#productCategoryID', 'Product category is required'),
         Validator.isRequired('#name', 'Name is required'),
-        Validator.isRequired('#phone', 'Phone is required'),
-        Validator.isRequired('#username', 'Username is required'),
-        Validator.isRequired('#password', 'Password is required'),
-        Validator.minLength('#password', 8, 'Password require min 8 characters'),
+        Validator.isRequired('#price', 'Price is required'),
     ],
     onSubmit: function(data, { resetForm }) {
-        const storePath = window.APP_NAME + '/api/employee/store';
+        const storePath = window.APP_NAME + '/api/product/store';
         // Form Data
         const { image, ...otherData } = data;
         const [imageFile] = image;
@@ -226,11 +180,10 @@ Validator({
         formData.append("data", new Blob(
             [
                 JSON.stringify({
-                    roleID: otherData.roleID,
+                    productCategoryID: otherData.productCategoryID,
                     name: otherData.name,
-                    phone: otherData.phone,
-                    username: otherData.username,
-                    password: otherData.password,
+                    price: otherData.price,
+                    selling: typeof otherData.isSelling === 'string' ? false : otherData.isSelling.includes('yes'),
                 })
             ],
             {
@@ -249,16 +202,14 @@ Validator({
             if (res.status == 200) {
                 document.getElementById('close-create-modal-btn').click();
                 hideWarningAlert();
-                showSuccessAlert('Successfully create new employee');
+                showSuccessAlert('Successfully create new product');
                 fetchTableData();
                 resetPreviewImage('#previewImg')
                 resetForm({
                     image: '',
-                    roleID: otherData.roleID,
+                    productCategoryID: otherData.productCategoryID,
                     name: '',
-                    phone: '',
-                    username: '',
-                    password: '',
+                    price: '',
                 })
             } else if (res.status == 400 && res.invalid) {
                 showWarningAlert('Invalid some fields', res.errors);
@@ -277,14 +228,12 @@ Validator({
     formGroup: '.form-gr',
     errorSelector: '.form-message',
     rules: [
-        Validator.isRequired('#employeeIDEdit', 'Employee ID is required'),
-        Validator.isRequired('#roleIDEdit', 'Role is required'),
+        Validator.isRequired('#productCategoryIDEdit', 'Product category is required'),
         Validator.isRequired('#nameEdit', 'Name is required'),
-        Validator.isRequired('#phoneEdit', 'Phone is required'),
-        Validator.isRequired('#usernameEdit', 'Username is required'),
+        Validator.isRequired('#priceEdit', 'Price is required'),
     ],
     onSubmit: function(data, { resetForm }) {
-        const updatePath = window.APP_NAME + '/api/employee/update';
+        const updatePath = window.APP_NAME + '/api/product/update';
         // Form Data
         const { image, ...otherData } = data;
         const imageFile = image.length > 0 ? image[0] : null;
@@ -295,12 +244,11 @@ Validator({
         formData.append("data", new Blob(
             [
                 JSON.stringify({
-                    employeeID: otherData.employeeID,
-                    roleID: otherData.roleID,
+                    productID: otherData.productID,
+                    productCategoryID: otherData.productCategoryID,
                     name: otherData.name,
-                    phone: otherData.phone,
-                    username: otherData.username,
-                    password: otherData.password,
+                    price: otherData.price,
+                    selling: typeof otherData.isSelling === 'string' ? false : otherData.isSelling.includes('yes'),
                 })
             ],
             {
@@ -319,16 +267,15 @@ Validator({
             if (res.status == 200) {
                 document.getElementById('close-update-modal-btn').click();
                 hideWarningAlert();
-                showSuccessAlert('Successfully update employee data');
+                showSuccessAlert('Successfully update product data');
                 fetchTableData();
                 resetPreviewImage('#previewImgEdit')
                 resetForm({
+                    productID: '',
                     image: '',
-                    roleID: otherData.roleID,
+                    productCategoryID: otherData.productCategoryID,
                     name: '',
-                    phone: '',
-                    username: '',
-                    password: '',
+                    price: '',
                 })
             } else if (res.status == 400 && res.invalid) {
                 showWarningAlert('Invalid some fields', res.errors);
@@ -370,34 +317,26 @@ function resetPreviewImage(previewerSelector) {
     }
 }
 
-var roles = []
-
 // Handle fetch role data
-function fetchRoles() {
-    const fetchPath = window.APP_NAME + '/api/role/all';
+function fetchProductCategories(selectsID) {
+    const fetchPath = window.APP_NAME + '/api/pro-category/all';
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
         if (res.status == 200) {
-            roles = res.data;
-            renderRoleSelects([
-                'roleID',
-                'roleIDEdit',
-            ]);
-            renderRoleFilter();
-            processClickChooseRole();
+            selectsID.forEach(selectID => {
+                document.getElementById(selectID).innerHTML = 
+                res.data.map(item => {
+                    return `
+                        <option value="${item.productCategoryID}">${item.name}</option>
+                    `
+                }).join('');
+            })
         }
     })
     .catch(_res => { })
 }
-fetchRoles();
-function renderRoleSelects(selectsID) {
-    selectsID.forEach(selectID => {
-        document.getElementById(selectID).innerHTML = 
-        roles.map(item => {
-            return `
-                <option value="${item.roleID}">${item.roleName}</option>
-            `
-        }).join('');
-    })
-}
+fetchProductCategories([
+    'productCategoryID',
+    'productCategoryIDEdit',
+]);

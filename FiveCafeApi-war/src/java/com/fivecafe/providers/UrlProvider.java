@@ -295,6 +295,40 @@ public class UrlProvider {
         }
     }
     
+     public class Bills implements AuthUrl{
+        public static final String PREFIX ="/bill";
+        
+        // NONE SIGN IN
+        public static final String INDEX1 = "/index";
+        public static final String INDEX2 = "/";
+        public static final String INDEX3 = "";
+        
+        // NEED TO SIGN IN
+        public static final String ALL ="/all";
+        public static final String STORE = "/store";
+        public static final String UPDATE = "/update";
+        public static final String DELETE = "/delete";
+        public static final String SEARCH = "/search";
+        
+        @Override
+        public List<String> signInUrls() {
+            ArrayList<String> signInUrls = new ArrayList<>();
+            
+            return signInUrls;
+        }
+        
+        private String addUserPrefix(final String PATH) {
+            return PREFIX + PATH;
+        }
+
+        
+        @Override
+        public HashMap<String, List<String>> roleUrls() {
+            return null;
+        }
+    }
+    
+    
     public class Import implements AuthUrl {
         public static final String PREFIX = "/import";
         

@@ -1,6 +1,11 @@
 // Fetch table data
-function fetchTableData() {
-    const fetchPath = window.APP_NAME + '/api/employee/all';
+function fetchTableData(searching = null) {
+    let fetchPath = window.APP_NAME;
+    if (searching) {
+        fetchPath += `/api/employee/search?keyword=${searching.keyword}${searching.roleID ? `&roleID=${searching.roleID}` : ""}`
+    } else  {
+        fetchPath += '/api/employee/all';
+    }
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
@@ -117,7 +122,45 @@ function fetchTableData() {
 }
 fetchTableData();
 
-
+// Handle searching
+function renderRoleFilter() {
+    const items = [
+        {
+            roleID: '',
+            roleName: 'Tất cả chức vụ',
+        },
+        ...roles,
+    ]
+    document.getElementById('role-filter').innerHTML = items.map(item => {
+        return `
+            <li data-role-id="${item.roleID}" data-role-name="${item.roleName}">
+                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">${item.roleName}</button>
+            </li>
+        `
+    }).join('');
+}
+function processClickChooseRole() {
+    Array.from(document.querySelectorAll('li[data-role-id]')).forEach(li => {
+        li.onclick = () => {
+            document.getElementById('roleIDSearch').value = li.dataset.roleId;
+            document.getElementById('dropdown-button').innerHTML = `
+                ${li.dataset.roleName}
+                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                </svg>
+            `
+        }
+    })
+}
+document.getElementById('search-form').onsubmit = e => {
+    e.preventDefault();
+    const roleID = document.getElementById('roleIDSearch').value;
+    const keyword = document.getElementById('keywordSearch').value;
+    fetchTableData({
+        roleID: roleID.length && roleID,
+        keyword: keyword
+    })
+}
 
 // Alerts
 let successAlert = "";
@@ -327,26 +370,34 @@ function resetPreviewImage(previewerSelector) {
     }
 }
 
+var roles = []
+
 // Handle fetch role data
-function fetchRoles(selectsID) {
+function fetchRoles() {
     const fetchPath = window.APP_NAME + '/api/role/all';
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
         if (res.status == 200) {
-            selectsID.forEach(selectID => {
-                document.getElementById(selectID).innerHTML = 
-                res.data.map(item => {
-                    return `
-                        <option value="${item.roleID}">${item.roleName}</option>
-                    `
-                }).join('');
-            })
+            roles = res.data;
+            renderRoleSelects([
+                'roleID',
+                'roleIDEdit',
+            ]);
+            renderRoleFilter();
+            processClickChooseRole();
         }
     })
     .catch(_res => { })
 }
-fetchRoles([
-    'roleID',
-    'roleIDEdit',
-]);
+fetchRoles();
+function renderRoleSelects(selectsID) {
+    selectsID.forEach(selectID => {
+        document.getElementById(selectID).innerHTML = 
+        roles.map(item => {
+            return `
+                <option value="${item.roleID}">${item.roleName}</option>
+            `
+        }).join('');
+    })
+}

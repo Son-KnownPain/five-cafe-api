@@ -102,9 +102,9 @@ function fetchTableData(auto  = {}) {
                     document.getElementById('importIDEdit').value = importItem.importID;
 
                     document.getElementById('import-info').innerHTML = `
-                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Import ID: <span class="font-bold dark:text-white text-white">${importItem.importID}</span></p>
-                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Import Date: <span class="font-bold dark:text-white text-white">${importItem.importDate}</span></p>
-                        <p class="text-base font-normal dark:text-gray-400 text-gray-700">Total cost: <span class="font-bold dark:text-white text-white">${window.currencyOutput(importItem.details.reduce((acc, cur) => acc + cur.unitPrice * cur.quantity, 0))}</span></p>
+                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Import ID: <span class="font-bold dark:text-white text-black">${importItem.importID}</span></p>
+                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Import Date: <span class="font-bold dark:text-white text-black">${importItem.importDate}</span></p>
+                        <p class="text-base font-normal dark:text-gray-400 text-gray-700">Total cost: <span class="font-bold dark:text-white text-black">${window.currencyOutput(importItem.details.reduce((acc, cur) => acc + cur.unitPrice * cur.quantity, 0))}</span></p>
                     `
 
                     document.getElementById("details-content").innerHTML = importItem.details.map(detail => `

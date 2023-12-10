@@ -14,12 +14,10 @@ import lombok.Setter;
 public class BillDetailsResponse {
 //    Bill Details:
     private double unitPrice;
-    private int quatity;
+    private int quantity;
     
 //    Product
     private int productID;
     private String name;
-    private double price;
     private String image;
-    
 }

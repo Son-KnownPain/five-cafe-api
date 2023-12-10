@@ -47,7 +47,6 @@ public class SiteController {
     public String supplierManagementPage() {
         return "site/supplier";
      }   
-    }
     
     @GetMapping(""+WebUrlProvider.Site.EMPLOYEE)
     public String employeeManagementPage() {
@@ -68,5 +67,10 @@ public class SiteController {
     @GetMapping(""+WebUrlProvider.Site.IMPORT)
     public String importManagementPage() {
         return "site/import";
+    }
+    
+    @GetMapping(""+WebUrlProvider.Site.BILL)
+    public String billManagementPage() {
+        return "site/bill";
     }
 }

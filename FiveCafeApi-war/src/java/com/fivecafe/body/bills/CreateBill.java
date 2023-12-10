@@ -16,7 +16,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class CreateBill {
-
     @Valid
     @NotEmpty(message = "Details can't empty")
     private List<CreateBillDetail> details;
@@ -38,18 +37,8 @@ public class CreateBill {
     @AllArgsConstructor
     @Builder
     public static class CreateBillDetail {
-
-//        @NotNull(message = "Employee ID is required")
-//        private int employeeID;
-//
-//        @NotNull(message = "Bill status ID is required")
-//        private int billStatusID;
-
         @NotNull(message = "Bill status ID is required")
         private int productID;
-
-        @NotNull(message = "Unit Price is required")
-        private double unitPrice;
 
         @NotNull(message = "quatity is required")
         private int quantity;

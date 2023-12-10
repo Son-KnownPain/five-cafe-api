@@ -3,10 +3,6 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/web/SiteController.java</file>
-            <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/providers/WebUrlProvider.java</file>
-        </group>
-        <group>
             <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/body/bills/CreateBill.java</file>
             <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/body/bills/BillResponse.java</file>
             <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/body/bills/UpdateAndDeleteBillDetail.java</file>
@@ -28,6 +24,10 @@
             <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/body/bills/CreateBill.java</file>
             <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/body/bills/BillResponse.java</file>
             <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/body/bills/UpdateAndDeleteBillDetail.java</file>
+            <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/BillApiController.java</file>
+        </group>
+        <group>
+            <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/body/bills/BillDetailsResponse.java</file>
             <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/BillApiController.java</file>
         </group>
     </open-files>

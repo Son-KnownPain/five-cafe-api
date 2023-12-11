@@ -69,6 +69,11 @@ public class SiteController {
         return "site/import";
     }
     
+    @GetMapping(""+WebUrlProvider.Site.OUTBOUND)
+    public String outboundManagementPage() {
+        return "site/outbound";
+    }
+
     @GetMapping(""+WebUrlProvider.Site.BILL)
     public String billManagementPage() {
         return "site/bill";

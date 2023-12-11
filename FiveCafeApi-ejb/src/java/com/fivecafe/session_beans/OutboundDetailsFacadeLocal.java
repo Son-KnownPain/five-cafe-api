@@ -28,5 +28,7 @@ public interface OutboundDetailsFacadeLocal {
     List<OutboundDetails> findRange(int[] range);
 
     int count();
+
+    public List<OutboundDetails> findByOutboundID(int outboundID);
     
 }

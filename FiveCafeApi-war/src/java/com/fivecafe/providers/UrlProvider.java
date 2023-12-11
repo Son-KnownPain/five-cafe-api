@@ -145,8 +145,10 @@ public class UrlProvider {
         
         public static final String ALL = "/all";
         public static final String STORE = "/store";
+        public static final String STORE_MAT_ITEM = "/store-mat-item";
         public static final String UPDATE = "/update";
         public static final String DELETE = "/delete";
+        public static final String DELETE_MAT_ITEM = "/delete-mat-item";
         public static final String SEARCH = "/search";
         
         @Override

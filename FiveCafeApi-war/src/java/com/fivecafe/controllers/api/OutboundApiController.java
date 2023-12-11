@@ -1,5 +1,6 @@
 package com.fivecafe.controllers.api;
 
+import com.fivecafe.body.outbound.CreateOutboundDetailReq;
 import com.fivecafe.body.outbound.CreateOutboundResq;
 import com.fivecafe.body.outbound.OutboundDetailResponse;
 import com.fivecafe.body.outbound.OutboundResponse;
@@ -26,6 +27,7 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.expression.ParseException;
@@ -54,31 +56,25 @@ public class OutboundApiController {
     OutboundsFacadeLocal outboundsFacade = lookupOutboundsFacadeLocal();
 
     @GetMapping("" + UrlProvider.Outbound.ALL)
-    public ResponseEntity<?> allOutbound() {
+    public ResponseEntity<?> allOutbound(HttpServletRequest request) {
 
         List<Outbounds> allOut = outboundsFacade.findAll();
 
         //format date
         SimpleDateFormat formDate = new SimpleDateFormat("dd/MM/yyyy");
+
         DataResponse<List<OutboundResponse>> responses = new DataResponse<>();
         List<OutboundResponse> dataOut = new ArrayList<>();
 
         for (Outbounds outboundItem : allOut) {
             List<OutboundDetailResponse> listOutboundDetail = new ArrayList<>();
-            for (OutboundDetails outboundDetailItem : outboundItem.getOutboundDetailsCollection()) {
+            for (OutboundDetails outboundDetailItem : outboundDetailsFacade.findByOutboundID(outboundItem.getOutboundID())) {
                 listOutboundDetail.add(
                         OutboundDetailResponse.builder()
-                                .employeeID(outboundDetailItem.getOutbounds().getEmployeeID().getEmployeeID())
-                                .name(outboundDetailItem.getOutbounds().getEmployeeID().getName())
-                                .phone(outboundDetailItem.getOutbounds().getEmployeeID().getPhone())
-                                .image(outboundDetailItem.getOutbounds().getEmployeeID().getImage())
-                                .username(outboundDetailItem.getOutbounds().getEmployeeID().getUsername())
-                                .password(outboundDetailItem.getOutbounds().getEmployeeID().getPassword())
                                 .materialID(outboundDetailItem.getMaterials().getMaterialID())
                                 .materialName(outboundDetailItem.getMaterials().getName())
                                 .unit(outboundDetailItem.getMaterials().getUnit())
-                                .materialImage(outboundDetailItem.getMaterials().getImage())
-                                .quantityInStock(outboundDetailItem.getMaterials().getQuantityInStock())
+                                .materialImage(FileSupport.perfectImg(request, "material", outboundDetailItem.getMaterials().getImage()))
                                 .quantity(outboundDetailItem.getQuantity())
                                 .build()
                 );
@@ -88,8 +84,10 @@ public class OutboundApiController {
             dataOut.add(
                     OutboundResponse.builder()
                             .outboundID(outboundItem.getOutboundID())
+                            .employeeID(outboundItem.getEmployeeID().getEmployeeID())
+                            .name(outboundItem.getEmployeeID().getName())
                             .date(formDate.format(outboundItem.getDate()))
-                            .outboundDetail(listOutboundDetail)
+                            .details(listOutboundDetail)
                             .build()
             );
         }
@@ -103,49 +101,68 @@ public class OutboundApiController {
     }
 
     @PostMapping("" + UrlProvider.Outbound.STORE)
-    public ResponseEntity<StandardResponse> storeOutbound(@Valid @RequestBody CreateOutboundResq createResponse, BindingResult br) throws MethodArgumentNotValidException, java.text.ParseException {
-
-        Employees employees = employeesFacade.find(createResponse.getEmployeeID());
-
-        if (employees == null) {
-            br.rejectValue("employeeID", "error.employeeID", "That employee ID is current existing");
-        }
-
-        Materials materials = materialsFacade.find(createResponse.getMaterialID());
-        if (materials == null) {
-            br.rejectValue("materialID", "error.materialID", "That material ID is current existing");
-        }
-
+    public ResponseEntity<StandardResponse> storeOutbound(
+            @Valid @RequestBody CreateOutboundResq createResponse, BindingResult br
+    ) throws MethodArgumentNotValidException, java.text.ParseException {
         if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
 
-        // create outbound object
-        Outbounds obNew = new Outbounds();
-
-        //format date
-        SimpleDateFormat formDate = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            Date date = formDate.parse(createResponse.getDate());
-            obNew.setDate(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        Employees employees = employeesFacade.find(createResponse.getEmployeeID());
+        if (employees == null) {
+            br.rejectValue("employeeID", "error.employeeID", "That employee ID does not exist");
         }
+
+        for (CreateOutboundResq.CreateOutboundDetailReq detail : createResponse.getDetails()) {
+            Materials materials = materialsFacade.find(detail.getMaterialID());
+
+            if (materials.getQuantityInStock() < detail.getQuantity()) {
+                br.rejectValue("forError", "error.forError", "Not enough materials, please add more materials");
+                break;
+            }
+        }
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
+        }
+
+        for (CreateOutboundResq.CreateOutboundDetailReq detail : createResponse.getDetails()) {
+            Materials materials = materialsFacade.find(detail.getMaterialID());
+            if (materials == null) {
+                br.rejectValue("materialID", "error.materialID", "That material ID does not exist");
+                break;
+            }
+        }
+
+        // After valid
+        Outbounds obNew = new Outbounds();
+        obNew.setDate(new Date());
         obNew.setEmployeeID(employees);
 
         outboundsFacade.create(obNew);
 
-        // Create outbound detail
-        OutboundDetails obDetail = new OutboundDetails();
-        obDetail.setQuantity(createResponse.getQuantity());
+        //Details
+        try {
+            for (CreateOutboundResq.CreateOutboundDetailReq detail : createResponse.getDetails()) {
+                Materials materials = materialsFacade.find(detail.getMaterialID());
 
-        // Create outbound detail PK
-        OutboundDetailsPK obDetailPK = new OutboundDetailsPK();
-        obDetailPK.setOutboundID(obNew.getOutboundID());
-        obDetailPK.setMaterialID(materials.getMaterialID());
-        obDetail.setOutboundDetailsPK(obDetailPK);
+                OutboundDetails outboundDetailNew = new OutboundDetails();
 
-        outboundDetailsFacade.create(obDetail);
+                OutboundDetailsPK idPK = new OutboundDetailsPK();
+                idPK.setOutboundID(obNew.getOutboundID());
+                idPK.setMaterialID(detail.getMaterialID());
+
+                outboundDetailNew.setOutboundDetailsPK(idPK);
+                outboundDetailNew.setOutbounds(obNew);
+                outboundDetailNew.setMaterials(materials);
+                outboundDetailNew.setQuantity(detail.getQuantity());
+
+                outboundDetailsFacade.create(outboundDetailNew);
+                materials.setQuantityInStock(materials.getQuantityInStock() - detail.getQuantity());
+                materialsFacade.edit(materials);
+            }
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", e);
+        }
 
         return ResponseEntity.ok(
                 StandardResponse.builder()
@@ -155,72 +172,137 @@ public class OutboundApiController {
                         .build()
         );
     }
-    
-    @PutMapping(""+UrlProvider.Outbound.UPDATE)
-    public ResponseEntity<StandardResponse> updateOutbound(@Valid @RequestBody UpdateOutboundResq updateRes, BindingResult br) throws  MethodArgumentNotValidException, java.text.ParseException{
-        
-        if(br.hasErrors()){
+
+    @PostMapping("" + UrlProvider.Outbound.STORE_MAT_ITEM)
+    public ResponseEntity<?> storeMaterialItem(@Valid @RequestBody CreateOutboundDetailReq reqBody, BindingResult br) throws MethodArgumentNotValidException {
+        if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
-        
-        Employees employees = employeesFacade.find(updateRes.getEmployeeID());
 
-        if (employees == null) {
-            br.rejectValue("employeeID", "error.employeeID", "That employee ID is current existing");
+        // Validate
+        Outbounds outbounds = outboundsFacade.find(reqBody.getOutboundID());
+        if (outbounds == null) {
+            br.rejectValue("outboundID", "error.outboundID", "Outbound ID you provided is not exist");
         }
 
-        Materials materials = materialsFacade.find(updateRes.getMaterialID());
+        Materials materials = materialsFacade.find(reqBody.getMaterialID());
         if (materials == null) {
-            br.rejectValue("materialID", "error.materialID", "That material ID is current existing");
-        }
-        
-        Outbounds updateOutbound = outboundsFacade.find(updateRes.getOutboundID());
-        
-        if(updateOutbound == null){
-            br.rejectValue("outboundID", "error.outboundID", "That outbound ID is current existing");
+            br.rejectValue("materialID", "error.materialID", "Material ID you provided is not exist");
         }
 
         if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
-        
-        //format date
-        SimpleDateFormat formDate = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            Date date = formDate.parse(updateRes.getDate());
-            updateOutbound.setDate(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
+
+        // Valid
+        OutboundDetailsPK idPK = new OutboundDetailsPK();
+        idPK.setOutboundID(reqBody.getOutboundID());
+        idPK.setMaterialID(reqBody.getMaterialID());
+
+        OutboundDetails outboundDetailNew = new OutboundDetails();
+
+        outboundDetailNew.setOutboundDetailsPK(idPK);
+        outboundDetailNew.setOutbounds(outbounds);
+        outboundDetailNew.setMaterials(materials);
+        outboundDetailNew.setQuantity(reqBody.getQuantity());
+
+        // Update material quantity in stock
+        materials.setQuantityInStock(materials.getQuantityInStock() - reqBody.getQuantity());
+
+        outboundDetailsFacade.create(outboundDetailNew);
+        materialsFacade.edit(materials);
+
+        StandardResponse res = StandardResponse.builder()
+                .status(200)
+                .success(true)
+                .message("Successfully update outbound material item data")
+                .build();
+
+        return ResponseEntity.ok(res);
+    }
+
+    @PutMapping("" + UrlProvider.Outbound.UPDATE)
+    public ResponseEntity<StandardResponse> updateOutbound(@Valid @RequestBody UpdateOutboundResq updateRes, BindingResult br) throws MethodArgumentNotValidException, java.text.ParseException {
+
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
         }
-        updateOutbound.setEmployeeID(employees);
 
-        outboundsFacade.edit(updateOutbound);
+        Outbounds updateOutbound = outboundsFacade.find(updateRes.getOutboundID());
 
-        // Create outbound detail
-        OutboundDetails obDetail = new OutboundDetails();
-        obDetail.setQuantity(updateRes.getQuantity());
+        if (updateOutbound == null) {
+            br.rejectValue("outboundID", "error.outboundID", "Outbound ID you provided is not exist");
+        }
 
-        // Create outbound detail PK
-        OutboundDetailsPK obDetailPK = new OutboundDetailsPK();
-        obDetailPK.setOutboundID(updateOutbound.getOutboundID());
-        obDetailPK.setMaterialID(materials.getMaterialID());
-        obDetail.setOutboundDetailsPK(obDetailPK);
+        Materials materials = materialsFacade.find(updateRes.getMaterialID());
+        if (materials == null) {
+            br.rejectValue("materialID", "error.materialID", "Material ID you provided is not exist");
+        }
 
-        outboundDetailsFacade.edit(obDetail);
-        
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
+        }
+
+        // Valid
+        OutboundDetailsPK idPK = new OutboundDetailsPK();
+        idPK.setOutboundID(updateRes.getOutboundID());
+        idPK.setMaterialID(updateRes.getMaterialID());
+
+        OutboundDetails outboundDetailNew = outboundDetailsFacade.find(idPK);
+
+        if (outboundDetailNew != null) {
+
+            // Update material quantity in stock
+            materials.setQuantityInStock(materials.getQuantityInStock() - (updateRes.getQuantity() - outboundDetailNew.getQuantity()));
+
+            // Update import detail
+            outboundDetailNew.setQuantity(updateRes.getQuantity());
+
+            outboundDetailsFacade.edit(outboundDetailNew);
+            materialsFacade.edit(materials);
+        }
+
         return ResponseEntity.ok(
                 StandardResponse.builder()
-                    .status(200)
-                    .success(true)
-                    .message("Successfully update outbound")
-                    .build()
+                        .status(200)
+                        .success(true)
+                        .message("Successfully update outbound")
+                        .build()
         );
     }
-    
+
+    @DeleteMapping("" + UrlProvider.Import.DELETE_MAT_ITEM)
+    public ResponseEntity<?> deleteMatItem(@RequestParam("matID") int matID, @RequestParam("outboundID") int outboundID) {
+
+        OutboundDetailsPK idPK = new OutboundDetailsPK();
+        idPK.setOutboundID(outboundID);
+        idPK.setMaterialID(matID);
+
+        OutboundDetails outboundDetails = outboundDetailsFacade.find(idPK);
+
+        if (outboundDetails == null) {
+            StandardResponse res = new StandardResponse();
+            res.setStatus(400);
+            res.setSuccess(true);
+            res.setMessage("Cannot found outbound detail with outbound id and material id you provided");
+
+            return ResponseEntity.ok(res);
+        }
+
+        outboundDetailsFacade.remove(outboundDetails);
+
+        StandardResponse res = new StandardResponse();
+        res.setStatus(200);
+        res.setSuccess(true);
+        res.setMessage("Successfully delete outbound detail");
+
+        return ResponseEntity.ok(res);
+    }
+
     @DeleteMapping("" + UrlProvider.Outbound.DELETE)
     public ResponseEntity<?> deleteOutbound(@RequestParam("ids") String ids) {
         String[] idsPC = ids.split(",");
-        
+
         for (String id : idsPC) {
             int idInt;
             try {
@@ -229,9 +311,9 @@ public class OutboundApiController {
                 e.printStackTrace();
                 continue;
             }
-            
+
             Outbounds obs = outboundsFacade.find(idInt);
-            if(obs != null){
+            if (obs != null) {
                 outboundsFacade.remove(obs);
             }
         }
@@ -242,6 +324,39 @@ public class OutboundApiController {
                         .message("Successfully delete outbound")
                         .build()
         );
+    }
+
+    @GetMapping("" + UrlProvider.Outbound.SEARCH)
+    public ResponseEntity<DataResponse<List<OutboundResponse>>> searchOutbound(
+            @RequestParam(name = "dateForm", defaultValue = "") Date dateForm,
+            @RequestParam(name = "dateTo", defaultValue = "") Date dateTo,
+            HttpServletRequest request) {
+
+        //format date
+        SimpleDateFormat formDate = new SimpleDateFormat("dd/MM/yyyy");
+        formDate.setLenient(false); // Không cho phép ngày tháng không hợp lệ
+
+        List<Outbounds> allOuts = outboundsFacade.getOutboundsByDaterange(dateForm, dateTo);
+
+        List<OutboundResponse> data = new ArrayList<>();
+
+        for (Outbounds outbounds : allOuts) {
+            data.add(
+                    OutboundResponse.builder()
+                            .outboundID(outbounds.getOutboundID())
+                            .employeeID(outbounds.getEmployeeID().getEmployeeID())
+                            .date(formDate.format(outbounds.getDate()))
+                            .build()
+            );
+        }
+
+        DataResponse<List<OutboundResponse>> res = new DataResponse<>();
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully searching outbound");
+        res.setData(data);
+        return ResponseEntity.ok(res);
     }
 
     private OutboundsFacadeLocal lookupOutboundsFacadeLocal() {

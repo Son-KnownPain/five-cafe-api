@@ -12,21 +12,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class OutboundDetailResponse {
-    //Employee
-    private int employeeID;
-    private String name;
-    private String phone;
-    private String image;
-    private String username;
-    private String password;
-    
     //Material
     private int materialID;
     private String materialName;
     private String unit;
     private String materialImage;
-    private int quantityInStock;
-    
     //Outbound details
     private int quantity;
 }

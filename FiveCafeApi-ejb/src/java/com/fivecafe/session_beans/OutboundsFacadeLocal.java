@@ -5,6 +5,7 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.Outbounds;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -28,5 +29,8 @@ public interface OutboundsFacadeLocal {
     List<Outbounds> findRange(int[] range);
 
     int count();
+
+    public List<Outbounds> getOutboundsByDaterange(Date dateForm, Date dateTo);
+
     
 }

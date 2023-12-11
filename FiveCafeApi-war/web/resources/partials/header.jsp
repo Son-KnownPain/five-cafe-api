@@ -20,13 +20,13 @@
         </div>
     </div>
     <div class="mt-3">
-        <div class="flex items-center text-gray-300 text-sm">
+        <div class="flex items-center text-gray-700 dark:text-green-300 text-sm">
             <i class="fa-solid fa-square-phone-flip mr-2"></i>
             <span id="info-phone">
                 <!-- Rendered by JS -->
             </span>
         </div>
-        <div class="mt-2 flex items-center text-gray-300 text-sm">
+        <div class="mt-2 flex items-center text-gray-700 dark:text-green-300 text-sm">
             <i class="fa-solid fa-clipboard-user mr-2"></i>
             <span id="info-role-name">
                 <!-- Rendered by JS -->

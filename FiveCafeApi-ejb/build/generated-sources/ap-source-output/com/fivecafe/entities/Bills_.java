@@ -18,7 +18,6 @@ public class Bills_ {
     public static volatile SingularAttribute<Bills, Integer> billID;
     public static volatile SingularAttribute<Bills, String> cardCode;
     public static volatile SingularAttribute<Bills, BillStatuses> billStatusID;
-    public static volatile SingularAttribute<Bills, Integer> employeeID;
-    public static volatile SingularAttribute<Bills, Employees> employees;
+    public static volatile SingularAttribute<Bills, Employees> employeeID;
 
 }

@@ -21,9 +21,9 @@ public class Employees_ {
     public static volatile SingularAttribute<Employees, String> phone;
     public static volatile SingularAttribute<Employees, Roles> roleID;
     public static volatile SingularAttribute<Employees, String> name;
+    public static volatile CollectionAttribute<Employees, Bills> billsCollection;
     public static volatile CollectionAttribute<Employees, EmployeeTimeKeepings> employeeTimeKeepingsCollection;
     public static volatile SingularAttribute<Employees, Integer> employeeID;
-    public static volatile SingularAttribute<Employees, Bills> bills;
     public static volatile SingularAttribute<Employees, String> username;
 
 }

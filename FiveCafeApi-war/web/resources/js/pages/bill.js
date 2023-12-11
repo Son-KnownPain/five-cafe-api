@@ -2,7 +2,7 @@
 function fetchTableData(auto  = {}) {
     const { detailClickID = false } = auto;
 
-    const fetchPath = window.APP_NAME + '/api/import/all';
+    const fetchPath = window.APP_NAME + '/api/bill/all';
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
@@ -12,16 +12,25 @@ function fetchTableData(auto  = {}) {
                     return `
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                <input type="checkbox" name="delete-checkbox" value="${item.importID}" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <input type="checkbox" name="delete-checkbox" value="${item.billID}" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             </th>
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                ${item.importID}
+                                ${item.billID}
                             </th>
                             <td class="px-6 py-4">
-                                ${item.importDate}
+                                ${item.employeeID}
+                            </td>
+                            <td class="px-6 py-4">
+                                ${item.billStatusID}
+                            </td>
+                            <td class="px-6 py-4">
+                                ${item.createDate}
+                            </td>
+                            <td class="px-6 py-4">
+                                ${item.cardCode}
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a title="View detail" data-detail-id="${item.importID}" data-modal-target="import-detail-modal" data-modal-toggle="import-detail-modal" class="mt-2 block cursor-pointer font-semibold text-blue-500 dark:text-blue-500 hover:text-blue-300">
+                                <a title="View detail" data-detail-id="${item.billID}" data-modal-target="bill-detail-modal" data-modal-toggle="bill-detail-modal" class="mt-2 block cursor-pointer font-semibold text-blue-500 dark:text-blue-500 hover:text-blue-300">
                                     <i class="fa-solid fa-circle-info"></i>
                                 </a>
                             </td>
@@ -46,7 +55,7 @@ function fetchTableData(auto  = {}) {
                 // Handle click delete
                 const yesDltBtn = document.getElementById('yes-dlt-btn')
                 yesDltBtn.onclick = () => {
-                    fetch(`${window.APP_NAME}/api/import/delete_import?ids=${checkedRowsToDelete.join(',')}`, {
+                    fetch(`${window.APP_NAME}/api/bill/delete_bill?ids=${checkedRowsToDelete.join(',')}`, {
                         method: 'DELETE',
                         credentials: 'same-origin',
                     })
@@ -54,7 +63,7 @@ function fetchTableData(auto  = {}) {
                     .then(res => {
                         if (res.status == 200) {
                             hideWarningAlert();
-                            showSuccessAlert('Successfully delete imports');
+                            showSuccessAlert('Successfully delete bills');
                             fetchTableData();
                             checkedRowsToDelete = [];
                             renderDeleteBtn();
@@ -85,74 +94,73 @@ function fetchTableData(auto  = {}) {
             if (!document.getElementById('detail-add-form').classList.contains('hidden')) {
                 document.getElementById('detail-add-form').classList.add('hidden');
             }
-            document.getElementById('cancel-update-mat-btn').onclick = () => {
+            document.getElementById('cancel-update-pro-btn').onclick = () => {
                 document.getElementById('detail-update-form').classList.add('hidden');
             }
-            document.getElementById('cancel-add-mat-btn').onclick = () => {
+            document.getElementById('cancel-add-pro-btn').onclick = () => {
                 document.getElementById('detail-add-form').classList.add('hidden');
-                document.getElementById('add-mat-item-btn-box').classList.remove('hidden');
+                document.getElementById('add-pro-item-btn-box').classList.remove('hidden');
             }
 
             Array.from(detailBtns).forEach(btn => {
                 btn.onclick = () => {
                     document.getElementById('detail-update-form').classList.add('hidden');
 
-                    const importItem = res.data.find(item => item.importID == btn.dataset.detailId);
+                    const billItem = res.data.find(item => item.billID == btn.dataset.detailId);
 
-                    document.getElementById('importIDEdit').value = importItem.importID;
+                    document.getElementById('billIDEdit').value = billItem.billID;
 
-                    document.getElementById('import-info').innerHTML = `
-                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Import ID: <span class="font-bold dark:text-white text-black">${importItem.importID}</span></p>
-                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Import Date: <span class="font-bold dark:text-white text-black">${importItem.importDate}</span></p>
-                        <p class="text-base font-normal dark:text-gray-400 text-gray-700">Total cost: <span class="font-bold dark:text-white text-black">${window.currencyOutput(importItem.details.reduce((acc, cur) => acc + cur.unitPrice * cur.quantity, 0))}</span></p>
+                    document.getElementById('bill-info').innerHTML = `
+                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Bill ID: <span class="font-bold dark:text-white text-black">${billItem.billID}</span></p>
+                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Bill Create Date: <span class="font-bold dark:text-white text-black">${billItem.createDate}</span></p>
+                        <p class="text-base font-normal dark:text-gray-400 text-gray-700">Total price: <span class="font-bold dark:text-white text-black">${window.currencyOutput(billItem.details.reduce((acc, cur) => acc + cur.unitPrice * cur.quantity, 0))}</span></p>
                     `
 
-                    document.getElementById("details-content").innerHTML = importItem.details.map(detail => `
+                    document.getElementById("details-content").innerHTML = billItem.details.map(detail => `
                         <div class="flex py-2">
-                            <img class="object-cover rounded w-32 h-32" src="${detail.materialImage}" alt="Material">
+                            <img class="object-cover rounded w-32 h-32" src="${detail.image}" alt="Product">
                             <div class="flex flex-col justify-between px-4 leading-normal">
                                 <h5 class="mb-2 text-base font-semibold tracking-tight text-gray-900 dark:text-white">
-                                    ${detail.materialName}
-                                    <button data-edit-mat-id="${detail.materialID}" class="ml-2 text-yellow-700 border border-yellow-700 hover:bg-yellow-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-yellow-500 dark:text-yellow-500 dark:hover:text-white dark:focus:ring-yellow-800 dark:hover:bg-yellow-500">
+                                    ${detail.name}
+                                    <button data-edit-pro-id="${detail.productID}" class="ml-2 text-yellow-700 border border-yellow-700 hover:bg-yellow-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-yellow-500 dark:text-yellow-500 dark:hover:text-white dark:focus:ring-yellow-800 dark:hover:bg-yellow-500">
                                         <i class="fa-solid fa-pencil"></i>
                                     </button>
-                                    <button data-delete-mat-id="${detail.materialID}" class="ml-2 text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800 dark:hover:bg-red-500">
+                                    <button data-delete-pro-id="${detail.productID}" class="ml-2 text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800 dark:hover:bg-red-500">
                                         <i class="fa-regular fa-trash-can"></i>
                                     </button>
 
-                                    <div data-confirmation-toggle-id="${detail.materialID}" class="hidden">
-                                        <button data-yes-dc-mat-id="${detail.materialID}" class="text-cyan-700 border border-cyan-700 hover:bg-cyan-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-cyan-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-cyan-500 dark:text-cyan-500 dark:hover:text-white dark:focus:ring-cyan-800 dark:hover:bg-cyan-500">
+                                    <div data-confirmation-toggle-id="${detail.productID}" class="hidden">
+                                        <button data-yes-dc-pro-id="${detail.productID}" class="text-cyan-700 border border-cyan-700 hover:bg-cyan-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-cyan-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-cyan-500 dark:text-cyan-500 dark:hover:text-white dark:focus:ring-cyan-800 dark:hover:bg-cyan-500">
                                             <i class="fa-solid fa-check"></i>
                                         </button>
-                                        <button data-no-dc-mat-id="${detail.materialID}" class="ml-2 text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800 dark:hover:bg-red-500">
+                                        <button data-no-dc-pro-id="${detail.productID}" class="ml-2 text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800 dark:hover:bg-red-500">
                                             <i class="fa-solid fa-xmark"></i>
                                         </button>
                                     </div>
                                 </h5>
                                 <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Unit price: ${window.currencyOutput(detail.unitPrice)}</p>
-                                <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Quantity: ${detail.quantity} ${detail.unit}</p>
+                                <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Quantity: ${detail.quantity}</p>
                                 <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Total: ${window.currencyOutput(detail.unitPrice * detail.quantity)}</p>
-                                <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Supplier: ${detail.supplierContactName}</p>
                             </div>
                         </div>
                     `).join('')
 
                     // Handle click delete mat item
-                    const deleteItemBtns = document.querySelectorAll('button[data-delete-mat-id]');
+                    const deleteItemBtns = document.querySelectorAll('button[data-delete-pro-id]');
                     Array.from(deleteItemBtns).forEach(btn => {
                         btn.onclick = () => {
-                            const matID = btn.dataset.deleteMatId;
+                            const productID = btn.dataset.deleteProId;
 
                             // Hide trash icon btn
                             btn.classList.add('hidden')
                             // Show confirmation
-                            document.querySelector(`div[data-confirmation-toggle-id='${matID}']`).classList.remove('hidden')
+                            document.querySelector(`div[data-confirmation-toggle-id='${productID}']`).classList.remove('hidden')
 
                             // When click yes
-                            document.querySelector(`button[data-yes-dc-mat-id='${matID}']`).onclick = () => {
-                                const importID = importItem.importID;
+                            document.querySelector(`button[data-yes-dc-pro-id='${productID}']`).onclick = () => {
+                                const billID = billItem.billID;
 
-                                const deletePath = `${window.APP_NAME}/api/import/delete-mat-item?matID=${matID}&impID=${importID}`;
+                                const deletePath = `${window.APP_NAME}/api/bill/delete-pro-item?productID=${productID}&billID=${billID}`;
                                 fetch(deletePath, {
                                     method: 'DELETE',
                                     credentials: 'same-origin',
@@ -160,45 +168,44 @@ function fetchTableData(auto  = {}) {
                                 .then(res => res.json())
                                 .then(res => {
                                     if (res.status == 200) {
-                                        document.getElementById('close-import-detail-modal-btn').click();
+                                        document.getElementById('close-bill-detail-modal-btn').click();
                                         hideWarningAlert();
                                         showSuccessAlert(res.message);
                                         showDetailSuccessAlert("Delete success")
-                                        fetchTableData({ detailClickID: importID })
+                                        fetchTableData({ detailClickID: billID })
                                     } else if (res.status == 400 && res.invalid) {
                                         showWarningAlert('Invalid some fields', res.errors);
-                                        document.getElementById('close-import-detail-modal-btn').click();
+                                        document.getElementById('close-bill-detail-modal-btn').click();
                                     }
                                 })
                                 .catch(_res => {})
                             }
                             // When click no
-                            document.querySelector(`button[data-no-dc-mat-id='${matID}']`).onclick = () => {
+                            document.querySelector(`button[data-no-dc-pro-id='${productID}']`).onclick = () => {
                                 // Show trash icon btn
-                                document.querySelector(`button[data-delete-mat-id='${matID}']`).classList.remove('hidden')
+                                document.querySelector(`button[data-delete-pro-id='${productID}']`).classList.remove('hidden')
                                 // Hide confirmation
-                                document.querySelector(`div[data-confirmation-toggle-id='${matID}']`).classList.add('hidden')
+                                document.querySelector(`div[data-confirmation-toggle-id='${productID}']`).classList.add('hidden')
                             }
                         }
                     });
 
-                    // Handle click add material item
-                    document.getElementById('add-mat-item-btn').onclick = () => {
-                        document.getElementById('importIDAdd').value = importItem.importID;
-                        document.getElementById('add-mat-item-btn-box').classList.add('hidden');
+                    // Handle click add product item
+                    document.getElementById('add-pro-item-btn').onclick = () => {
+                        document.getElementById('billIDAdd').value = billItem.billID;
+                        document.getElementById('add-pro-item-btn-box').classList.add('hidden');
                         document.getElementById('detail-add-form').classList.remove('hidden');
                     }
 
-                    // Handle click edit material item
-                    const editItemBtns = document.querySelectorAll('button[data-edit-mat-id]');
+                    // Handle click edit product item
+                    const editItemBtns = document.querySelectorAll('button[data-edit-pro-id]');
+                    
                     Array.from(editItemBtns).forEach(btn => {
                         btn.onclick = () => {
-                            const materialData = importItem.details.find(item => item.materialID == btn.dataset.editMatId);
+                            const productData = billItem.details.find(item => item.productID == btn.dataset.editProId);
 
-                            document.getElementById('materialIDEdit').value = materialData.materialID;
-                            document.getElementById('supplierIDEdit').value = materialData.supplierID;
-                            document.getElementById('unitPriceEdit').value = materialData.unitPrice;
-                            document.getElementById('quantityEdit').value = materialData.quantity;
+                            document.getElementById('productIDEdit').value = productData.productID;
+                            document.getElementById('quantityEdit').value = productData.quantity;
 
                             document.getElementById('detail-update-form').classList.remove('hidden');
                         }
@@ -264,36 +271,36 @@ function hideWarningAlert() {
     wrapper.classList.add('hidden');
 }
 
-// Validate choose material
+// Validate choose product
 Validator({
-    form: '#choose-material-form',
+    form: '#choose-product-form',
     formGroup: '.form-gr',
     errorSelector: '.form-message',
     rules: [
-        Validator.isRequired('#materialID', 'Material ID is required'),
-        Validator.isRequired('#supplierID', 'Supplier ID is required'),
-        Validator.isRequired('#unitPrice', 'Unit price is required'),
+        Validator.isRequired('#productID', 'Product ID is required'),
         Validator.isRequired('#quantity', 'Quantity is required'),
     ],
     onSubmit: function(data, { resetForm }) {
         resetForm({
-            materialID: data.materialID,
-            supplierID: data.supplierID,
-            unitPrice: '0',
+            productID: data.productID,
             quantity: '0',
         })
-        insertMaterialItem(data)
+        insertproductItem(data)
     }
 });
 
-// Validate create import
+// Validate create bill
 Validator({
-    form: '#create-import-form',
+    form: '#create-bill-form',
     formGroup: '.form-gr',
     errorSelector: '.form-message',
-    rules: [],
-    onSubmit: function() {
-        const storePath = window.APP_NAME + '/api/import/store';
+    rules: [
+        Validator.isRequired('#employeeID', 'Employee ID is required'),
+        Validator.isRequired('#billStatusID', 'Bill Status ID is required'),
+        Validator.isRequired('#cardCode', 'Card Code is required'),
+    ],
+    onSubmit: function(data, {resetForm}) {
+        const storePath = window.APP_NAME + '/api/bill/store';
 
         fetch(storePath, {
             method: 'POST',
@@ -302,7 +309,10 @@ Validator({
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                details: materialsImport,
+                billStatusID: data.billStatusID,
+                cardCode: data.cardCode,
+                employeeID: data.employeeID,
+                details: productsBill,
             }),
         })
         .then(res => res.json())
@@ -310,7 +320,10 @@ Validator({
             if (res.status == 200) {
                 document.getElementById('close-create-modal-btn').click();
                 hideWarningAlert();
-                showSuccessAlert('Successfully create import');
+                showSuccessAlert('Successfully create bill');
+                resetForm({
+                    cardCode: '',
+                })
                 fetchTableData();
             } else if (res.status == 400 && res.invalid) {
                 showWarningAlert('Invalid some fields', res.errors);
@@ -321,19 +334,17 @@ Validator({
     }
 });
 
-// Validate add material
+// Validate add product
 Validator({
-    form: '#add-material-form',
+    form: '#add-product-form',
     formGroup: '.form-gr',
     errorSelector: '.form-message',
     rules: [
-        Validator.isRequired('#materialIDAdd', 'Material ID is required'),
-        Validator.isRequired('#supplierIDAdd', 'Supplier ID is required'),
-        Validator.isRequired('#unitPriceAdd', 'Unit price is required'),
+        Validator.isRequired('#productIDAdd', 'Product ID is required'),
         Validator.isRequired('#quantityAdd', 'Quantity is required'),
     ],
     onSubmit: function(data, { resetForm }) {
-        const addPath = `${window.APP_NAME}/api/import/store-mat-item`
+        const addPath = `${window.APP_NAME}/api/bill/store-pro-item`
         fetch(addPath, {
             method: 'POST',
             credentials: 'same-origin',
@@ -345,38 +356,39 @@ Validator({
         .then(res => res.json())
         .then(res => {
             if (res.status == 200) {
-                document.getElementById('close-import-detail-modal-btn').click();
+                document.getElementById('close-bill-detail-modal-btn').click();
                 hideWarningAlert();
                 showSuccessAlert(res.message);
                 resetForm({
-                    unitPrice: '0',
                     quantity: '0',
                 })
-                showDetailSuccessAlert("Add material success")
-                fetchTableData({ detailClickID: data.importID })
+                showDetailSuccessAlert("Add product success");
+                if (document.getElementById('add-pro-item-btn-box').classList.contains("hidden")) {
+                    document.getElementById('add-pro-item-btn-box').classList.remove("hidden")
+                }
+                fetchTableData({ detailClickID: data.billID })
             } else if (res.status == 400 && res.invalid) {
                 showWarningAlert('Invalid some fields', res.errors);
-                document.getElementById('close-import-detail-modal-btn').click();
+                document.getElementById('close-bill-detail-modal-btn').click();
             }
         })
-        .res(_err => {})
+        .catch(_err => {})
     }
 });
 
-// Validate update material item
+// Validate update product item
 Validator({
-    form: '#update-material-form',
+    form: '#update-product-form',
     formGroup: '.form-gr',
     errorSelector: '.form-message',
     rules: [
-        Validator.isRequired('#importIDEdit', 'Import ID is required'),
-        Validator.isRequired('#materialIDEdit', 'Material ID is required'),
-        Validator.isRequired('#supplierIDEdit', 'Supplier ID is required'),
-        Validator.isRequired('#unitPriceEdit', 'Unit price is required'),
+        Validator.isRequired('#billIDEdit', 'bill ID is required'),
+        Validator.isRequired('#productIDEdit', 'Product ID is required'),
+        // Validator.isRequired('#unitPriceEdit', 'Unit price is required'),
         Validator.isRequired('#quantityEdit', 'Quantity is required'),
     ],
     onSubmit: function(data, { resetForm }) {
-        const updatePath = window.APP_NAME + '/api/import/update-mat-item';
+        const updatePath = window.APP_NAME + '/api/bill/update-pro-item';
 
         fetch(updatePath, {
             method: 'PUT',
@@ -389,56 +401,51 @@ Validator({
         .then(res => res.json())
         .then(res => {
             if (res.status == 200) {
-                document.getElementById('close-import-detail-modal-btn').click();
+                document.getElementById('close-bill-detail-modal-btn').click();
                 hideWarningAlert();
                 showSuccessAlert(res.message);
                 resetForm({
                     quantity: 0,
-                    unitPrice: 0,
+                    // unitPrice: 0,
                 });
                 showDetailSuccessAlert("Update success")
-                fetchTableData({ detailClickID: data.importID })
+                fetchTableData({ detailClickID: data.billID })
             } else if (res.status == 400 && res.invalid) {
                 showWarningAlert('Invalid some fields', res.errors);
-                document.getElementById('close-import-detail-modal-btn').click();
+                document.getElementById('close-bill-detail-modal-btn').click();
             }
         })
         .catch(_err => {})
     }
 });
 
-// ------------ IMPORT
+// ------------ bill
 
-var materialsImport = [];
+var productsBill = [];
 
-
-function insertMaterialItem({ materialID, supplierID, unitPrice, quantity }) {
-    materialsImport.push({
-        materialID: materialID,
-        supplierID: supplierID,
-        unitPrice: unitPrice,
+function insertproductItem({ productID, quantity }) {
+    productsBill.push({
+        productID: productID,
         quantity: quantity,
     })
 
-    renderMaterials();
+    renderProducts();
 }
 
-function renderMaterials() {
-    const materialsBox = document.getElementById("materialsBox");
+function renderProducts() {
+    const productsBox = document.getElementById("productsBox");
 
-    materialsBox.innerHTML = materialsImport.map(matItem => {
-        const material = materials.find(x => x.materialID ==  matItem.materialID);
-        const supplier = suppliers.find(x => x.supplierID == matItem.supplierID);
+    productsBox.innerHTML = productsBill.map(proItem => {
+        const product = products.find(x => x.productID ==  proItem.productID);
         return `
             <div class="flex py-2">
-                <img class="object-cover rounded w-32 h-32" src="${material.image}" alt="Material">
+                <img class="object-cover rounded w-32 h-32" src="${product.image}" alt="Product">
                 <div class="flex flex-col justify-between px-4 leading-normal">
-                    <h5 class="mb-2 text-base font-semibold tracking-tight text-gray-900 dark:text-white">${material.name}</h5>
-                    <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Unit price: ${window.currencyOutput(matItem.unitPrice)}</p>
-                    <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Quantity: ${matItem.quantity}</p>
-                    <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Total: ${window.currencyOutput(matItem.unitPrice * matItem.quantity)}</p>
-                    <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Supplier: ${supplier.contactName}</p>
-                    <button data-remove-item-id="${matItem.materialID}" class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                    <h5 class="mb-2 text-base font-semibold tracking-tight text-gray-900 dark:text-white">${product.name}</h5>
+                    <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Unit price: ${window.currencyOutput(product.price)}</p>
+                    <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Quantity: ${proItem.quantity}</p>
+                    <p class="mb-1 text-sm font-normal text-gray-700 dark:text-gray-400">Total: ${window.currencyOutput(product.price * proItem.quantity)}</p>
+                    <button data-remove-item-id="${proItem.productID}" class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
                         <i class="fa-regular fa-circle-xmark mr-2"></i>
                         Remove
                     </button>
@@ -449,34 +456,34 @@ function renderMaterials() {
 
     Array.from(document.querySelectorAll('button[data-remove-item-id]')).forEach(btn => {
         btn.onclick = () => {
-            removeMaterialItem(btn.dataset.removeItemId)
+            removeProductItem(btn.dataset.removeItemId)
         }
     })
 }
 
-function removeMaterialItem(materialID) {
-    materialsImport = materialsImport.filter(item => item.materialID != materialID);
+function removeProductItem(productID) {
+    productsBill = productsBill.filter(item => item.productID != productID);
 
-    renderMaterials();
+    renderProducts();
 }
 
 // ------------ SELECT
 
-var materials = [];
+var products = [];
 
-// Handle fetch material data
-function fetchMaterials(selectsID) {
-    const fetchPath = window.APP_NAME + '/api/material/all';
+// Handle fetch product data
+function fetchProducts(selectsID) {
+    const fetchPath = window.APP_NAME + '/api/product/all';
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
         if (res.status == 200) {
-            materials = res.data;
+            products = res.data;
             selectsID.forEach(selectID => {
                 document.getElementById(selectID).innerHTML = 
                 res.data.map(item => {
                     return `
-                        <option value="${item.materialID}">${item.name}</option>
+                        <option value="${item.productID}">${item.name}</option>
                     `
                 }).join('');
             })
@@ -484,26 +491,22 @@ function fetchMaterials(selectsID) {
     })
     .catch(_res => { })
 }
-fetchMaterials([
-    'materialID',
-    'materialIDAdd',
+fetchProducts([
+    'productID',
+    'productIDAdd',
 ]);
 
-var suppliers = [];
-
-// Handle fetch supplier data
-function fetchSuppliers(selects) {
-    const fetchPath = window.APP_NAME + '/api/supplier/all';
+function fetchEmployees(selectsID) {
+    const fetchPath = window.APP_NAME + '/api/employee/all';
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
         if (res.status == 200) {
-            suppliers = res.data;
-            selects.forEach(select => {
-                document.getElementById(select.selectID).innerHTML = 
+            selectsID.forEach(selectID => {
+                document.getElementById(selectID).innerHTML = 
                 res.data.map(item => {
                     return `
-                        <option value="${item.supplierID}" ${item.supplierID == select.selectedID ? 'selected' : ''}>${item.contactName}</option>
+                        <option value="${item.employeeID}">${item.name}</option>
                     `
                 }).join('');
             })
@@ -511,17 +514,28 @@ function fetchSuppliers(selects) {
     })
     .catch(_res => { })
 }
-fetchSuppliers([
-    {
-        selectID: 'supplierID',
-        selectedID:  0,
-    },
-    {
-        selectID: 'supplierIDEdit',
-        selectedID:  0,
-    },
-    {
-        selectID: 'supplierIDAdd',
-        selectedID:  0,
-    },
+fetchEmployees([
+    'employeeID',
+]);
+
+function fetchBillStatus(selectsID) {
+    const fetchPath = window.APP_NAME + '/api/bill-sts/all';
+    fetch(fetchPath)
+    .then(res => res.json())
+    .then(res => {
+        if (res.status == 200) {
+            selectsID.forEach(selectID => {
+                document.getElementById(selectID).innerHTML = 
+                res.data.map(item => {
+                    return `
+                        <option value="${item.billStatusID}">${item.billStatusValue}</option>
+                    `
+                }).join('');
+            })
+        }
+    })
+    .catch(_res => { })
+}
+fetchBillStatus([
+    'billStatusID',
 ]);

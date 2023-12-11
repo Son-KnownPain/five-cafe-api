@@ -87,9 +87,9 @@
                     Exports
                 </a>
             </li>
-            <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
-                <a href="#">
-                    Bills
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/bill" class="p-2 block">
+                    Bill
                 </a>
             </li>
         </ul>

@@ -18,7 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -83,8 +82,8 @@ public class Employees implements Serializable {
     private Collection<EmployeeSalaries> employeeSalariesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "employeeID")
     private Collection<EmployeeTimeKeepings> employeeTimeKeepingsCollection;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "employees")
-    private Bills bills;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "employeeID")
+    private Collection<Bills> billsCollection;
 
     public Employees() {
     }
@@ -185,12 +184,13 @@ public class Employees implements Serializable {
         this.employeeTimeKeepingsCollection = employeeTimeKeepingsCollection;
     }
 
-    public Bills getBills() {
-        return bills;
+    @XmlTransient
+    public Collection<Bills> getBillsCollection() {
+        return billsCollection;
     }
 
-    public void setBills(Bills bills) {
-        this.bills = bills;
+    public void setBillsCollection(Collection<Bills> billsCollection) {
+        this.billsCollection = billsCollection;
     }
 
     @Override

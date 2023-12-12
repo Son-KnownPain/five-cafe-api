@@ -40,14 +40,14 @@ public class MaterialApiController {
 
     MaterialCategoriesFacadeLocal materialCategoriesFacade = lookupMaterialCategoriesFacadeLocal();
     MaterialsFacadeLocal materialsFacade = lookupMaterialsFacadeLocal();
-    
-    @GetMapping(""+UrlProvider.Material.ALL)
-    public ResponseEntity<DataResponse<List<MaterialResponse>>> all(HttpServletRequest request){
+
+    @GetMapping("" + UrlProvider.Material.ALL)
+    public ResponseEntity<DataResponse<List<MaterialResponse>>> all(HttpServletRequest request) {
         List<Materials> allMaterial = materialsFacade.findAll();
-        
+
         List<MaterialResponse> data = new ArrayList<>();
-        
-        for(Materials materials : allMaterial){
+
+        for (Materials materials : allMaterial) {
             data.add(MaterialResponse.builder()
                     .materialID(materials.getMaterialID())
                     .materialCategoryID(materials.getMaterialCategoryID().getMaterialCategoryID())
@@ -58,7 +58,7 @@ public class MaterialApiController {
                     .image(FileSupport.perfectImg(request, "material", materials.getImage()))
                     .build());
         }
-        
+
         DataResponse<List<MaterialResponse>> res = new DataResponse<>();
 
         res.setSuccess(true);
@@ -67,46 +67,48 @@ public class MaterialApiController {
         res.setData(data);
         return ResponseEntity.ok(res);
     }
-    
-    @PostMapping(""+UrlProvider.Material.STORE)
+
+    @PostMapping("" + UrlProvider.Material.STORE)
     public ResponseEntity<StandardResponse> store(
             @RequestPart(value = "image", required = false) MultipartFile image,
             @Valid @RequestPart(value = "data", required = false) CreateMaterial reqBody,
             BindingResult br,
             HttpSession session
-    ) throws MethodArgumentNotValidException{
-        if(br.hasErrors()) throw new MethodArgumentNotValidException(null, br);
+    ) throws MethodArgumentNotValidException {
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
+        }
         // Validation for iamge
-        if(image == null || image.isEmpty()){
+        if (image == null || image.isEmpty()) {
             br.rejectValue("image", "error.image", "Image is required");
             throw new MethodArgumentNotValidException(null, br);
         }
-           
+
         MaterialCategories materialCaterogies = materialCategoriesFacade.find(reqBody.getMaterialCategoryID());
-        if(materialCaterogies == null){
+        if (materialCaterogies == null) {
             br.rejectValue("materialCategoryID", "error.materialCategoryID", "MaterialCategoryID is not exist");
         }
-        if(br.hasErrors()){
+        if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
-        
+
         Materials matAdd = new Materials();
-        
+
         matAdd.setMaterialCategoryID(materialCaterogies);
         matAdd.setName(reqBody.getName());
         matAdd.setUnit(reqBody.getUnit());
         matAdd.setQuantityInStock(reqBody.getQuantityInStock());
         try {
-            byte[] imageBytes =image.getBytes();
+            byte[] imageBytes = image.getBytes();
             String orginFileName = image.getOriginalFilename();
-            String newImageFileName = FileSupport.saveFile(session.getServletContext().getRealPath("/"),"material",imageBytes, orginFileName);
+            String newImageFileName = FileSupport.saveFile(session.getServletContext().getRealPath("/"), "material", imageBytes, orginFileName);
             matAdd.setImage(newImageFileName);
         } catch (IOException ex) {
             Logger.getLogger(EmployeeApiController.class.getName()).log(Level.SEVERE, null, ex);
         }
         // END-----------
         materialsFacade.create(matAdd);
-        
+
         return ResponseEntity.ok(
                 StandardResponse
                         .builder()
@@ -115,54 +117,53 @@ public class MaterialApiController {
                         .message("Successfully create new material")
                         .build());
     }
-    
-    @PostMapping(""+UrlProvider.Material.UPDATE)
+
+    @PostMapping("" + UrlProvider.Material.UPDATE)
     public ResponseEntity<StandardResponse> update(
             @RequestPart(value = "image", required = false) MultipartFile image,
             @Valid @RequestPart(value = "data", required = false) UpdateAndDeleteMaterial reqBody,
             BindingResult br,
             HttpSession session
-    ) throws MethodArgumentNotValidException
-    {
+    ) throws MethodArgumentNotValidException {
         // Validation for iamge
-        if(br.hasErrors()){
+        if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
-        
+
         Materials matUpdate = materialsFacade.find(reqBody.getMaterialID());
         MaterialCategories materialCaterogies = materialCategoriesFacade.find(reqBody.getMaterialCategoryID());
-        
-        if(materialCaterogies == null){
+
+        if (materialCaterogies == null) {
             br.rejectValue("materialCategoryID", "error.materialCategoryID", "MaterialCategoryID is not exist");
         }
-        if(matUpdate == null){
+        if (matUpdate == null) {
             br.rejectValue("materialID", "error.materialID", "The material ID does not exist");
         }
-        if(br.hasErrors()){
+        if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
-        
+
         matUpdate.setMaterialCategoryID(materialCaterogies);
         matUpdate.setName(reqBody.getName());
         matUpdate.setUnit(reqBody.getUnit());
         matUpdate.setQuantityInStock(reqBody.getQuantityInStock());
-        if(image != null && !image.isEmpty()){
-       
+        if (image != null && !image.isEmpty()) {
+
             try {
                 FileSupport.deleteFile(session.getServletContext().getRealPath("/"), "material", matUpdate.getImage());
-                
-                byte[] imageBytes =image.getBytes();
+
+                byte[] imageBytes = image.getBytes();
                 String orginFileName = image.getOriginalFilename();
-                String newImageFileName = FileSupport.saveFile(session.getServletContext().getRealPath("/"),"material",imageBytes, orginFileName);
+                String newImageFileName = FileSupport.saveFile(session.getServletContext().getRealPath("/"), "material", imageBytes, orginFileName);
                 matUpdate.setImage(newImageFileName);
-            
+
             } catch (IOException ex) {
                 Logger.getLogger(EmployeeApiController.class.getName()).log(Level.SEVERE, null, ex);
-                
+
             }
         }
         materialsFacade.edit(matUpdate);
-        
+
         return ResponseEntity.ok(
                 StandardResponse.builder()
                         .success(true)
@@ -171,12 +172,12 @@ public class MaterialApiController {
                         .build()
         );
     }
-    
-     @DeleteMapping(""+UrlProvider.Material.DELETE)
-    public ResponseEntity<?> delete(@RequestParam("ids") String ids){
-        String[] idMate= ids.split(",");
-        
-        for (String id : idMate){
+
+    @DeleteMapping("" + UrlProvider.Material.DELETE)
+    public ResponseEntity<?> delete(@RequestParam("ids") String ids) {
+        String[] idMate = ids.split(",");
+
+        for (String id : idMate) {
             int idInt;
             try {
                 idInt = Integer.parseInt(id);
@@ -184,8 +185,8 @@ public class MaterialApiController {
                 e.printStackTrace();
                 continue;
             }
-            Materials materials= materialsFacade.find(idInt);
-            if(materials != null){
+            Materials materials = materialsFacade.find(idInt);
+            if (materials != null) {
                 materialsFacade.remove(materials);
             }
         }
@@ -197,22 +198,50 @@ public class MaterialApiController {
                         .build()
         );
     }
-    
-//    @GetMapping(""+UrlProvider.Material.SEARCH)
-//    public ResponseEntity searchMaterialByName(@RequestParam("m") String name){
-//        List<Materials> foundMatName= materialsFacade.searchMaterialByName(name);
-//        if(foundMatName.isEmpty()){
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//        return ResponseEntity.ok(
-//                StandardResponse.builder()
-//                        .success(true)
-//                        .status(200)
-//                        .message("Successfully search material")
-//                        .build());
-//    }
-    
-    
+
+    @GetMapping("" + UrlProvider.Material.SEARCH)
+    public ResponseEntity<DataResponse<List<MaterialResponse>>> searchMaterialByNameAndMatCategory(
+            @RequestParam(name = "materialCategoryID", defaultValue = "") String materialCategoryID,
+            @RequestParam(name = "name", defaultValue = "") String name,
+            HttpServletRequest request) {
+
+        MaterialCategories materialCategories = null;
+        if (materialCategoryID.length() > 0) {
+            try {
+                int matCateIDInt = Integer.parseInt(materialCategoryID);
+                materialCategories = materialCategoriesFacade.find(matCateIDInt);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        List<Materials> materialses = materialsFacade.searchMaterialByCategoryAndName(materialCategories,name);
+
+        List<MaterialResponse> data = new ArrayList<>();
+
+        for (Materials materials : materialses) {
+            data.add(
+                    MaterialResponse.builder()
+                            .materialID(materials.getMaterialID())
+                            .materialCategoryID(materials.getMaterialCategoryID().getMaterialCategoryID())
+                            .materialCategoryName(materials.getMaterialCategoryID().getName())
+                            .name(materials.getName())
+                            .unit(materials.getUnit())
+                            .quantityInStock(materials.getQuantityInStock())
+                            .image(FileSupport.perfectImg(request, "material", materials.getImage()))
+                            .build()
+            );
+        }
+
+        DataResponse<List<MaterialResponse>> res = new DataResponse<>();
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully searching material");
+        res.setData(data);
+        return ResponseEntity.ok(res);
+    }
+
     private MaterialsFacadeLocal lookupMaterialsFacadeLocal() {
         try {
             Context c = new InitialContext();
@@ -232,7 +261,5 @@ public class MaterialApiController {
             throw new RuntimeException(ne);
         }
     }
-    
-    
-    
+
 }

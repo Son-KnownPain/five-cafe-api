@@ -1,40 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-<<<<<<< HEAD
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/EmployeeSalariesApiController.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/body/employeesalary/CreateEmployeeSalaryReq.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/body/employeetimekeeping/CreateEmployeeTimeKeeping.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/body/employeetimekeeping/UpdateAndDeleteEmployeeTimeKeeping.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/EmployeeTimeKeepingApiController.java</file>
-        </group>
-        <group>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/body/employeesalary/EmployeeSalariesResponse.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/EmployeeSalariesApiController.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/providers/WebUrlProvider.java</file>
-        </group>
-        <group>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/EmployeeSalariesApiController.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/body/employeesalary/UpdateDetailItemReq.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/providers/UrlProvider.java</file>
-=======
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/web/WEB-INF/jsp/site/outbound.jsp</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/OutboundApiController.java</file>
-        </group>
-        <group>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/web/WEB-INF/jsp/site/outbound.jsp</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/OutboundApiController.java</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/web/resources/js/pages/outbound.js</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/web/WEB-INF/tags/layouts/admin_layout.tag</file>
-        </group>
-        <group>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/body/outbound/OutboundResponse.java</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/ProductApiController.java</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/MaterialApiController.java</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/body/material/MaterialResponse.java</file>
->>>>>>> main
-        </group>
-    </open-files>
 </project-private>

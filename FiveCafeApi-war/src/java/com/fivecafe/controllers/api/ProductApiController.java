@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -181,32 +182,43 @@ public class ProductApiController {
         );
     }
 
-//    @GetMapping(""+UrlProvider.Product.SEARCH)
-//    public ResponseEntity searchProduct(@RequestParam("q") String name){
-//        List<Products> findProduct = productsFacade.searchProductByName(name);
-//        List<String> error = new ArrayList<>();
-//        
-//        if (findProduct.isEmpty()) {
-//            error.add("The product name you are looking for does not exist");
-//
-//            InvalidResponse res = new InvalidResponse();
-//            res.setSuccess(false);
-//            res.setStatus(400);
-//            res.setMessage("The requested product name is invalid");
-//            res.setInvalid(true);
-//            res.setErrors(error);
-//
-//            return ResponseEntity.badRequest().body(res);
-//        }
-//        
-//        return ResponseEntity.ok(
-//                StandardResponse.builder()
-//                        .success(true)
-//                        .status(200)
-//                        .message("Successfully search product")
-//                        .build()
-//        );       
-//    }
+    @GetMapping("" + UrlProvider.Product.SEARCH)
+    public ResponseEntity<DataResponse<List<ProductResponse>>> searchProductByProCatIDAndProName(
+            @RequestParam(name = "productCategoryID", defaultValue = "") int productCategoryID,
+            @RequestParam(name = "name", defaultValue = "") String name,
+            HttpServletRequest request) {
+
+        ProductCategories productCategories = null;
+        if(productCategories != null){
+            productCategories = productCategoriesFacade.find(productCategoryID);
+        }
+        
+        List<Products> productses = productsFacade.searchProductsByCategoryAndName(productCategories, name);
+        
+        List<ProductResponse> data = new ArrayList<>();
+
+        for (Products products : productses) {
+            data.add(
+                    ProductResponse.builder()
+                            .productID(products.getProductID())
+                            .productCategoryID(products.getProductCategoryID().getProductCategoryID())
+                            .name(products.getName())
+                            .isSelling(products.getIsSelling())
+                            .price(products.getPrice())
+                            .image(products.getImage())
+                            .build()
+            );
+        }
+
+        DataResponse<List<ProductResponse>> res = new DataResponse<>();
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully searching product");
+        res.setData(data);
+        return ResponseEntity.ok(res);
+    }
+    
     private ProductsFacadeLocal lookupProductsFacadeLocal() {
         try {
             Context c = new InitialContext();

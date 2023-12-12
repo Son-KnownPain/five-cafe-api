@@ -209,13 +209,18 @@ public class ProductApiController {
 
     @GetMapping("" + UrlProvider.Product.SEARCH)
     public ResponseEntity<DataResponse<List<ProductResponse>>> searchProductByProCatIDAndProName(
-            @RequestParam(name = "productCategoryID", defaultValue = "") int productCategoryID,
+            @RequestParam(name = "productCategoryID", defaultValue = "") String productCategoryID,
             @RequestParam(name = "name", defaultValue = "") String name,
             HttpServletRequest request) {
 
         ProductCategories productCategories = null;
-        if(productCategories != null){
-            productCategories = productCategoriesFacade.find(productCategoryID);
+        if(productCategoryID.length() > 0){
+            try {
+                int proCateIDInt = Integer.parseInt(productCategoryID);
+                productCategories = productCategoriesFacade.find(proCateIDInt);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         
         List<Products> productses = productsFacade.searchProductsByCategoryAndName(productCategories, name);
@@ -227,10 +232,11 @@ public class ProductApiController {
                     ProductResponse.builder()
                             .productID(products.getProductID())
                             .productCategoryID(products.getProductCategoryID().getProductCategoryID())
+                            .productCategoryName(products.getProductCategoryID().getName())
                             .name(products.getName())
-                            .isSelling(products.getIsSelling())
                             .price(products.getPrice())
-                            .image(products.getImage())
+                            .isSelling(products.getIsSelling())
+                            .image(FileSupport.perfectImg(request, "products", products.getImage()))
                             .build()
             );
         }

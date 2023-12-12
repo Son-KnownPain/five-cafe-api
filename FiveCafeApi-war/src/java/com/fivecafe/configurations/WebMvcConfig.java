@@ -50,8 +50,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-            .allowedOrigins("http://localhost:3000") // Đổi thành địa chỉ ReactJS của bạn
-            .allowedMethods("GET", "POST", "PUT", "DELETE")
+            .allowedOrigins("*") // Đổi thành địa chỉ ReactJS của bạn
+            .allowedMethods("*")
             .allowCredentials(true);
     }
     

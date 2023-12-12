@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author ADMIN
+ * @author Admin
  */
 @Entity
 @Table(name = "Products")
@@ -67,6 +67,8 @@ public class Products implements Serializable {
     @JoinColumn(name = "ProductCategoryID", referencedColumnName = "ProductCategoryID")
     @ManyToOne(optional = false)
     private ProductCategories productCategoryID;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "products")
+    private Collection<MaterialToProducts> materialToProductsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "products")
     private Collection<BillDetails> billDetailsCollection;
 
@@ -131,6 +133,15 @@ public class Products implements Serializable {
 
     public void setProductCategoryID(ProductCategories productCategoryID) {
         this.productCategoryID = productCategoryID;
+    }
+
+    @XmlTransient
+    public Collection<MaterialToProducts> getMaterialToProductsCollection() {
+        return materialToProductsCollection;
+    }
+
+    public void setMaterialToProductsCollection(Collection<MaterialToProducts> materialToProductsCollection) {
+        this.materialToProductsCollection = materialToProductsCollection;
     }
 
     @XmlTransient

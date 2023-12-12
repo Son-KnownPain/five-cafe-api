@@ -27,5 +27,4 @@ public class ImportsFacade extends AbstractFacade<Imports> implements ImportsFac
     public ImportsFacade() {
         super(Imports.class);
     }
-    
 }

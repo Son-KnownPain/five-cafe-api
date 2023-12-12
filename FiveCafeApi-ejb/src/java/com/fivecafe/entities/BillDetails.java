@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author ADMIN
+ * @author Admin
  */
 @Entity
 @Table(name = "BillDetails")
@@ -43,9 +43,6 @@ public class BillDetails implements Serializable {
     @NotNull
     @Column(name = "Quantity")
     private int quantity;
-    @JoinColumn(name = "BDStatusID", referencedColumnName = "BDStatusID")
-    @ManyToOne(optional = false)
-    private BDStatuses bDStatusID;
     @JoinColumn(name = "BillID", referencedColumnName = "BillID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Bills bills;
@@ -92,14 +89,6 @@ public class BillDetails implements Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public BDStatuses getBDStatusID() {
-        return bDStatusID;
-    }
-
-    public void setBDStatusID(BDStatuses bDStatusID) {
-        this.bDStatusID = bDStatusID;
     }
 
     public Bills getBills() {

@@ -55,7 +55,7 @@ public class MaterialCategoryApiController {
         return ResponseEntity.ok(res);
     }
     
-    @PostMapping(""+UrlProvider.Role.STORE)
+    @PostMapping(""+UrlProvider.MaterialCategory.STORE)
     public ResponseEntity<StandardResponse> store(@Valid @RequestBody CreateMaterialCaterogy reqBody, BindingResult br) throws MethodArgumentNotValidException{
         if(br.hasErrors()){
             throw new MethodArgumentNotValidException(null, br);
@@ -100,16 +100,24 @@ public class MaterialCategoryApiController {
     }
     
     @DeleteMapping(""+UrlProvider.MaterialCategory.DELETE)
-    public ResponseEntity<?> delete(@RequestParam("ids") String ids) {
+    public ResponseEntity<?> delete(@RequestParam("ids") String ids){
         String[] idMat= ids.split(",");
         
         for (String id : idMat){
-            MaterialCategories materialCategories= materialCategoriesFacade.find(id);
+            int idInt;
+            try {
+                idInt = Integer.parseInt(id);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                continue;
+            }
+            MaterialCategories materialCategories= materialCategoriesFacade.find(idInt);
             if(materialCategories != null){
                 materialCategoriesFacade.remove(materialCategories);
             }
         }
-        return ResponseEntity.ok(StandardResponse.builder()
+        return ResponseEntity.ok(
+                StandardResponse.builder()
                         .success(true)
                         .status(200)
                         .message("Successfully delete material category")
@@ -118,19 +126,19 @@ public class MaterialCategoryApiController {
 
     }
     
-    @GetMapping(""+UrlProvider.ProductCategory.SEARCH)
-    public ResponseEntity searchMaterialCategoryByName(@RequestParam("q") String name){
-        List<MaterialCategories> foundMatCateName= materialCategoriesFacade.searchMaterialCategoryByName(name);
-        if(foundMatCateName.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(
-                StandardResponse.builder()
-                        .success(true)
-                        .status(200)
-                        .message("Successfully search material category")
-                        .build());
-    }
+//    @GetMapping(""+UrlProvider.MaterialCategory.SEARCH)
+//    public ResponseEntity searchMaterialCategoryByName(@RequestParam("q") String name){
+//        List<MaterialCategories> foundMatCateName= materialCategoriesFacade.searchMaterialCategoryByName(name);
+//        if(foundMatCateName.isEmpty()){
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//        return ResponseEntity.ok(
+//                StandardResponse.builder()
+//                        .success(true)
+//                        .status(200)
+//                        .message("Successfully search material category")
+//                        .build());
+//    }
 
     private MaterialCategoriesFacadeLocal lookupMaterialCategoriesFacadeLocal() {
         try {

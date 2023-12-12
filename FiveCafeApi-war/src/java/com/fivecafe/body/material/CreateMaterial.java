@@ -1,6 +1,5 @@
 package com.fivecafe.body.material;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,16 +14,17 @@ import org.hibernate.validator.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class CreateMaterial {
-    @NotNull
+    @NotNull(message = "Material category ID is required")
     private int materialCategoryID;
     
     @NotEmpty(message = "Material name cannot be empty")
-    @NotNull
     private String name;
     
-    @NotNull
-    @Min(value = 0, message = "Unit must be greather than 0")
+    @NotEmpty(message = "Material unit cannot be empty")
     private String unit;
+    
+    @NotNull(message = "Quantity in stock is required")
+    private int quantityInStock;
     
     private String image;
 }

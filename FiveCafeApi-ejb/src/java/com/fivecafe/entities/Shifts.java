@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author ADMIN
+ * @author Admin
  */
 @Entity
 @Table(name = "Shifts")
@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Shifts.findAll", query = "SELECT s FROM Shifts s"),
     @NamedQuery(name = "Shifts.findByShiftID", query = "SELECT s FROM Shifts s WHERE s.shiftID = :shiftID"),
     @NamedQuery(name = "Shifts.findByName", query = "SELECT s FROM Shifts s WHERE s.name = :name"),
-    @NamedQuery(name = "Shifts.findBySalaryPerHour", query = "SELECT s FROM Shifts s WHERE s.salaryPerHour = :salaryPerHour"),
+    @NamedQuery(name = "Shifts.findBySalary", query = "SELECT s FROM Shifts s WHERE s.salary = :salary"),
     @NamedQuery(name = "Shifts.findByTimeFrom", query = "SELECT s FROM Shifts s WHERE s.timeFrom = :timeFrom"),
     @NamedQuery(name = "Shifts.findByTimeTo", query = "SELECT s FROM Shifts s WHERE s.timeTo = :timeTo")})
 public class Shifts implements Serializable {
@@ -54,8 +54,8 @@ public class Shifts implements Serializable {
     private String name;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "SalaryPerHour")
-    private double salaryPerHour;
+    @Column(name = "Salary")
+    private double salary;
     @Basic(optional = false)
     @NotNull
     @Column(name = "TimeFrom")
@@ -76,10 +76,10 @@ public class Shifts implements Serializable {
         this.shiftID = shiftID;
     }
 
-    public Shifts(Integer shiftID, String name, double salaryPerHour, Date timeFrom, Date timeTo) {
+    public Shifts(Integer shiftID, String name, double salary, Date timeFrom, Date timeTo) {
         this.shiftID = shiftID;
         this.name = name;
-        this.salaryPerHour = salaryPerHour;
+        this.salary = salary;
         this.timeFrom = timeFrom;
         this.timeTo = timeTo;
     }
@@ -100,12 +100,12 @@ public class Shifts implements Serializable {
         this.name = name;
     }
 
-    public double getSalaryPerHour() {
-        return salaryPerHour;
+    public double getSalary() {
+        return salary;
     }
 
-    public void setSalaryPerHour(double salaryPerHour) {
-        this.salaryPerHour = salaryPerHour;
+    public void setSalary(double salary) {
+        this.salary = salary;
     }
 
     public Date getTimeFrom() {

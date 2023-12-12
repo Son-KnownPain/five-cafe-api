@@ -9,7 +9,6 @@ import com.fivecafe.models.poductcategory.CreateProductCategory;
 import com.fivecafe.models.poductcategory.UpdateAndDeleteProductCategory;
 import com.fivecafe.models.poductcategory.ProductCategoryResponse;
 import com.fivecafe.models.responses.DataResponse;
-import com.fivecafe.models.responses.InvalidResponse;
 import com.fivecafe.models.responses.StandardResponse;
 import com.fivecafe.providers.UrlProvider;
 import com.fivecafe.session_beans.ProductCategoriesFacadeLocal;
@@ -99,31 +98,22 @@ public class ProductCategoryApiController {
     }
 
     @DeleteMapping("" + UrlProvider.ProductCategory.DELETE)
-    public ResponseEntity<?> deleteProductCategories(@RequestParam("ids") List<Integer> ids) {
-        List<String> errors = new ArrayList<>();
-        List<Integer> deletedIds = new ArrayList<>();
-
-        for (int id : ids) {
-            ProductCategories pc = productCategoriesFacade.find(id);
-            
-
-            if (pc != null) {
-                productCategoriesFacade.remove(pc);
-                deletedIds.add(id);
-            } else {
-                errors.add("The product category ID in the path does not exist");
-
-                InvalidResponse res = new InvalidResponse();
-                res.setSuccess(false);
-                res.setStatus(400);
-                res.setMessage("Bad request path ID");
-                res.setInvalid(true);
-                res.setErrors(errors);
-
-                return ResponseEntity.badRequest().body(res);
+    public ResponseEntity<?> deleteProductCategories(@RequestParam("ids") String ids) {
+        String[] idsPC = ids.split(",");
+        
+        for (String id : idsPC) {
+            int idInt;
+            try {
+                idInt = Integer.parseInt(id);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                continue;
+            }
+            ProductCategories productCategories = productCategoriesFacade.find(idInt);
+            if(productCategories != null){
+                productCategoriesFacade.remove(productCategories);
             }
         }
-
         return ResponseEntity.ok(
                 StandardResponse.builder()
                         .success(true)
@@ -133,32 +123,32 @@ public class ProductCategoryApiController {
         );
     }
 
-    @GetMapping("" + UrlProvider.ProductCategory.SEARCH)
-    public ResponseEntity searchProductCategoryByName(@RequestParam("q") String name) {
-        List<ProductCategories> foundProductCategoryName = productCategoriesFacade.searchProductCategoryByName(name);
-        List<String> errors = new ArrayList<>();
-
-        if (foundProductCategoryName.isEmpty()) {
-            errors.add("The product category name you are looking for does not exist");
-
-            InvalidResponse res = new InvalidResponse();
-            res.setSuccess(false);
-            res.setStatus(400);
-            res.setMessage("The requested product category name is invalid");
-            res.setInvalid(true);
-            res.setErrors(errors);
-
-            return ResponseEntity.badRequest().body(res);
-        }
-
-        return ResponseEntity.ok(
-                StandardResponse.builder()
-                        .success(true)
-                        .status(200)
-                        .message("Successfully search product category")
-                        .build()
-        );
-    }
+//    @GetMapping("" + UrlProvider.ProductCategory.SEARCH)
+//    public ResponseEntity searchProductCategoryByName(@RequestParam("q") String name) {
+//        List<ProductCategories> foundProductCategoryName = productCategoriesFacade.searchProductCategoryByName(name);
+//        List<String> errors = new ArrayList<>();
+//
+//        if (foundProductCategoryName.isEmpty()) {
+//            errors.add("The product category name you are looking for does not exist");
+//
+//            InvalidResponse res = new InvalidResponse();
+//            res.setSuccess(false);
+//            res.setStatus(400);
+//            res.setMessage("The requested product category name is invalid");
+//            res.setInvalid(true);
+//            res.setErrors(errors);
+//
+//            return ResponseEntity.badRequest().body(res);
+//        }
+//
+//        return ResponseEntity.ok(
+//                StandardResponse.builder()
+//                        .success(true)
+//                        .status(200)
+//                        .message("Successfully search product category")
+//                        .build()
+//        );
+//    }
 
     private ProductCategoriesFacadeLocal lookupProductCategoriesFacadeLocal() {
         try {

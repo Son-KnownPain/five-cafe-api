@@ -6,7 +6,6 @@
 /*.jar
 /*.war
 /*.ear
-glassfish-resources.xml
 
 # NetBeans
 /nbproject/private/
@@ -30,3 +29,6 @@ Thumbs.db
 /FiveCafeApi-ejb/dist/
 /FiveCafeApi-war/dist/
 /FiveCafeApi-war/build/
+FiveCafeApi-ejb/build/classes/META-INF/META-INF/glassfish-resources.xml
+FiveCafeApi-ejb/nbproject/private/private.properties
+FiveCafeApi-ejb/src/conf/META-INF/glassfish-resources.xml

@@ -28,7 +28,5 @@ public interface MaterialCategoriesFacadeLocal {
     List<MaterialCategories> findRange(int[] range);
 
     int count();
-
-    public List<MaterialCategories> searchMaterialCategoryByName(String name);
     
 }

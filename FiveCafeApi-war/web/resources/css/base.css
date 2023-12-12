@@ -1,0 +1,11 @@
+:root {
+    --header-height: 80px;
+    --sidebar-width: 320px;
+}
+
+
+/* CSS remember */
+
+/* z-index */
+    /* header: 10 */
+    /* sidebar: 10 */

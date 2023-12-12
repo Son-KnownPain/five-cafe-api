@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author ADMIN
+ * @author Admin
  */
 @Entity
 @Table(name = "Materials")
@@ -36,7 +36,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Materials.findByMaterialID", query = "SELECT m FROM Materials m WHERE m.materialID = :materialID"),
     @NamedQuery(name = "Materials.findByName", query = "SELECT m FROM Materials m WHERE m.name = :name"),
     @NamedQuery(name = "Materials.findByUnit", query = "SELECT m FROM Materials m WHERE m.unit = :unit"),
-    @NamedQuery(name = "Materials.findByImage", query = "SELECT m FROM Materials m WHERE m.image = :image")})
+    @NamedQuery(name = "Materials.findByImage", query = "SELECT m FROM Materials m WHERE m.image = :image"),
+    @NamedQuery(name = "Materials.findByQuantityInStock", query = "SELECT m FROM Materials m WHERE m.quantityInStock = :quantityInStock")})
 public class Materials implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -60,11 +61,19 @@ public class Materials implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "Image")
     private String image;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "QuantityInStock")
+    private int quantityInStock;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "materials")
     private Collection<ImportDetails> importDetailsCollection;
     @JoinColumn(name = "MaterialCategoryID", referencedColumnName = "MaterialCategoryID")
     @ManyToOne(optional = false)
     private MaterialCategories materialCategoryID;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "materials")
+    private Collection<OutboundDetails> outboundDetailsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "materials")
+    private Collection<MaterialToProducts> materialToProductsCollection;
 
     public Materials() {
     }
@@ -73,11 +82,12 @@ public class Materials implements Serializable {
         this.materialID = materialID;
     }
 
-    public Materials(Integer materialID, String name, String unit, String image) {
+    public Materials(Integer materialID, String name, String unit, String image, int quantityInStock) {
         this.materialID = materialID;
         this.name = name;
         this.unit = unit;
         this.image = image;
+        this.quantityInStock = quantityInStock;
     }
 
     public Integer getMaterialID() {
@@ -112,6 +122,14 @@ public class Materials implements Serializable {
         this.image = image;
     }
 
+    public int getQuantityInStock() {
+        return quantityInStock;
+    }
+
+    public void setQuantityInStock(int quantityInStock) {
+        this.quantityInStock = quantityInStock;
+    }
+
     @XmlTransient
     public Collection<ImportDetails> getImportDetailsCollection() {
         return importDetailsCollection;
@@ -127,6 +145,24 @@ public class Materials implements Serializable {
 
     public void setMaterialCategoryID(MaterialCategories materialCategoryID) {
         this.materialCategoryID = materialCategoryID;
+    }
+
+    @XmlTransient
+    public Collection<OutboundDetails> getOutboundDetailsCollection() {
+        return outboundDetailsCollection;
+    }
+
+    public void setOutboundDetailsCollection(Collection<OutboundDetails> outboundDetailsCollection) {
+        this.outboundDetailsCollection = outboundDetailsCollection;
+    }
+
+    @XmlTransient
+    public Collection<MaterialToProducts> getMaterialToProductsCollection() {
+        return materialToProductsCollection;
+    }
+
+    public void setMaterialToProductsCollection(Collection<MaterialToProducts> materialToProductsCollection) {
+        this.materialToProductsCollection = materialToProductsCollection;
     }
 
     @Override

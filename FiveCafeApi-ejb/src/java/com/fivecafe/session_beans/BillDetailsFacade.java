@@ -5,9 +5,11 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.BillDetails;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -26,6 +28,15 @@ public class BillDetailsFacade extends AbstractFacade<BillDetails> implements Bi
 
     public BillDetailsFacade() {
         super(BillDetails.class);
+    }
+    
+    @Override
+    public List<BillDetails> findByBillID(int billID) {
+        TypedQuery<BillDetails> query = em.createNamedQuery("BillDetails.findByBillID", BillDetails.class);
+        
+        query.setParameter("billID", billID);
+        
+        return query.getResultList();
     }
     
 }

@@ -5,9 +5,20 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.Outbounds;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  *
@@ -27,5 +38,20 @@ public class OutboundsFacade extends AbstractFacade<Outbounds> implements Outbou
     public OutboundsFacade() {
         super(Outbounds.class);
     }
+    
+    @Override
+    public List<Outbounds> getOutboundsByDaterange(Date dateForm, Date dateTo){
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Outbounds> cq = cb.createQuery(Outbounds.class);
+        Root<Outbounds> root = cq.from(Outbounds.class);
+        Path<Date> datePath = root.get("date");
+        Predicate datePredicate = cb.between(datePath, dateForm, dateTo);
+        
+        cq.where(datePredicate);
+        
+        return em.createQuery(cq).getResultList();
+        
+    }
+
     
 }

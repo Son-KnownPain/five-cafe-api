@@ -9,7 +9,6 @@ import com.fivecafe.models.poductcategory.CreateProductCategory;
 import com.fivecafe.models.poductcategory.UpdateAndDeleteProductCategory;
 import com.fivecafe.models.poductcategory.ProductCategoryResponse;
 import com.fivecafe.models.responses.DataResponse;
-import com.fivecafe.models.responses.InvalidResponse;
 import com.fivecafe.models.responses.StandardResponse;
 import com.fivecafe.providers.UrlProvider;
 import com.fivecafe.session_beans.ProductCategoriesFacadeLocal;

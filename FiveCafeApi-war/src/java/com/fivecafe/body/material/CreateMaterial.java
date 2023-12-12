@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @AllArgsConstructor
 @Builder
 public class CreateMaterial {
-    @NotNull
+    @NotNull(message = "Material category ID is required")
     private int materialCategoryID;
     
     @NotEmpty(message = "Material name cannot be empty")
@@ -23,6 +23,8 @@ public class CreateMaterial {
     @NotEmpty(message = "Material unit cannot be empty")
     private String unit;
     
-    @NotEmpty(message = "Material image cannot be empty")
+    @NotNull(message = "Quantity in stock is required")
+    private int quantityInStock;
+    
     private String image;
 }

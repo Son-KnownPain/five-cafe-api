@@ -19,7 +19,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Admin
+ * @author ADMIN
  */
 @Entity
 @Table(name = "Bills")
@@ -38,7 +37,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Bills.findAll", query = "SELECT b FROM Bills b"),
     @NamedQuery(name = "Bills.findByBillID", query = "SELECT b FROM Bills b WHERE b.billID = :billID"),
-    @NamedQuery(name = "Bills.findByEmployeeID", query = "SELECT b FROM Bills b WHERE b.employeeID = :employeeID"),
     @NamedQuery(name = "Bills.findByCreatedDate", query = "SELECT b FROM Bills b WHERE b.createdDate = :createdDate"),
     @NamedQuery(name = "Bills.findByCardCode", query = "SELECT b FROM Bills b WHERE b.cardCode = :cardCode")})
 public class Bills implements Serializable {
@@ -49,10 +47,6 @@ public class Bills implements Serializable {
     @Basic(optional = false)
     @Column(name = "BillID")
     private Integer billID;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "EmployeeID")
-    private int employeeID;
     @Basic(optional = false)
     @NotNull
     @Column(name = "CreatedDate")
@@ -68,9 +62,9 @@ public class Bills implements Serializable {
     @JoinColumn(name = "BillStatusID", referencedColumnName = "BillStatusID")
     @ManyToOne(optional = false)
     private BillStatuses billStatusID;
-    @JoinColumn(name = "BillID", referencedColumnName = "EmployeeID", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private Employees employees;
+    @JoinColumn(name = "EmployeeID", referencedColumnName = "EmployeeID")
+    @ManyToOne(optional = false)
+    private Employees employeeID;
 
     public Bills() {
     }
@@ -79,9 +73,8 @@ public class Bills implements Serializable {
         this.billID = billID;
     }
 
-    public Bills(Integer billID, int employeeID, Date createdDate, String cardCode) {
+    public Bills(Integer billID, Date createdDate, String cardCode) {
         this.billID = billID;
-        this.employeeID = employeeID;
         this.createdDate = createdDate;
         this.cardCode = cardCode;
     }
@@ -92,14 +85,6 @@ public class Bills implements Serializable {
 
     public void setBillID(Integer billID) {
         this.billID = billID;
-    }
-
-    public int getEmployeeID() {
-        return employeeID;
-    }
-
-    public void setEmployeeID(int employeeID) {
-        this.employeeID = employeeID;
     }
 
     public Date getCreatedDate() {
@@ -135,12 +120,12 @@ public class Bills implements Serializable {
         this.billStatusID = billStatusID;
     }
 
-    public Employees getEmployees() {
-        return employees;
+    public Employees getEmployeeID() {
+        return employeeID;
     }
 
-    public void setEmployees(Employees employees) {
-        this.employees = employees;
+    public void setEmployeeID(Employees employeeID) {
+        this.employeeID = employeeID;
     }
 
     @Override

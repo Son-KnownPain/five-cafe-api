@@ -64,12 +64,12 @@
             </li>
             <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
                 <a href="#">
-                    Employee time keepings
+                    Time keepings
                 </a>
             </li>
-            <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
-                <a href="#">
-                    Employee salaries
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/emp-salary" class="p-2 block">
+                    Salaries
                 </a>
             </li>
             <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
@@ -79,7 +79,7 @@
             </li>
             <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
                 <a href="#">
-                    Exports
+                    Outbound
                 </a>
             </li>
             <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">

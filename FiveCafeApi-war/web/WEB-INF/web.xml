@@ -5,4 +5,16 @@
             index.html
         </welcome-file>
     </welcome-file-list>
+    <ejb-local-ref>
+        <ejb-ref-name>EmployeeTimeKeepingsFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>com.fivecafe.session_beans.EmployeeTimeKeepingsFacadeLocal</local>
+        <ejb-link>FiveCafeApi-ejb.jar#EmployeeTimeKeepingsFacade</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>EmployeeSalaryDetailsFacade</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>com.fivecafe.session_beans.EmployeeSalaryDetailsFacadeLocal</local>
+        <ejb-link>FiveCafeApi-ejb.jar#EmployeeSalaryDetailsFacade</ejb-link>
+    </ejb-local-ref>
 </web-app>

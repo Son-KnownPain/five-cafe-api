@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -59,6 +58,7 @@ public class EmployeeTimeKeepingApiController {
                     .timeKeepingID(empTK.getTimeKeepingID())
                     .employeeID(empTK.getEmployeeID().getEmployeeID())
                     .shiftID(empTK.getShiftID().getShiftID())
+                    .shiftName(empTK.getShiftID().getName())
                     .date(fmt.format(empTK.getDate()))
                     .salary(empTK.getSalary())
                     .isPaid(empTK.getIsPaid())
@@ -99,14 +99,9 @@ public class EmployeeTimeKeepingApiController {
         etkAdd.setEmployeeID(employees);
         etkAdd.setShiftID(shifts);
         SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
-        try{
-            Date date = fmt.parse(reqBody.getDate());
-            etkAdd.setDate(date);
-        }catch(ParseException e){
-            e.printStackTrace();
-        }
-        etkAdd.setSalary(reqBody.getSalary());
-        etkAdd.setIsPaid(reqBody.isPaid());
+        etkAdd.setDate(new Date());
+        etkAdd.setSalary(shifts.getSalary());
+        etkAdd.setIsPaid(false);
                 
         try {
             employeeTimeKeepingsFacade.create(etkAdd);
@@ -118,10 +113,10 @@ public class EmployeeTimeKeepingApiController {
                     .build());
         } catch (Exception e) {
             // Xử lý exception và trả về thông điệp lỗi cụ thể
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(StandardResponse.builder()
                             .success(false)
-                            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                            .status(HttpStatus.BAD_REQUEST.value())
                             .message("Error creating employee time keeping: " + e.getMessage())
                             .build());
         }

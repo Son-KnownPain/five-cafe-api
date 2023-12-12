@@ -6,6 +6,7 @@ function fetchTableData(searching = null) {
     } else  {
         fetchPath += '/api/employee/all';
     }
+    
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {

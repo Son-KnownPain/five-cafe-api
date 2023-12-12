@@ -4,6 +4,7 @@
  */
 package com.fivecafe.session_beans;
 
+import com.fivecafe.entities.ProductCategories;
 import com.fivecafe.entities.Products;
 import java.util.List;
 import javax.ejb.Local;
@@ -30,5 +31,7 @@ public interface ProductsFacadeLocal {
     int count();
 
     public List<Products> searchProductByName(String name);
+
+    public List<Products> searchProductsByCategoryAndName(ProductCategories productCategoryId, String proName);
     
 }

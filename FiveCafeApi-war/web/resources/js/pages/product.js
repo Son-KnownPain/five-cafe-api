@@ -1,13 +1,19 @@
 // Fetch table data
-function fetchTableData() {
-    const fetchPath = window.APP_NAME + '/api/product/all';
+function fetchTableData(searching = null) {
+    let fetchPath = window.APP_NAME;
+    if (searching) {
+        fetchPath += `/api/product/search?name=${searching.name}${searching.productCategoryID ? `&productCategoryID=${searching.productCategoryID}` : ""}`
+    } else {
+        fetchPath += '/api/product/all';
+    }
+
     fetch(fetchPath)
-    .then(res => res.json())
-    .then(res => {
-        if (res.status == 200) {
-            document.getElementById('table-body').innerHTML = 
-                res.data.map(item => {
-                    return `
+        .then(res => res.json())
+        .then(res => {
+            if (res.status == 200) {
+                document.getElementById('table-body').innerHTML =
+                    res.data.map(item => {
+                        return `
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 <input type="checkbox" name="delete-checkbox" value="${item.productID}" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -34,90 +40,129 @@ function fetchTableData() {
                             </td>
                         </tr>
                     `
-                }).join('');
-            // Init flowbite
-            initFlowbite();
+                    }).join('');
+                // Init flowbite
+                initFlowbite();
 
-            // Handle checkbox
-            let checkedRowsToDelete = [];
+                // Handle checkbox
+                let checkedRowsToDelete = [];
 
-            function renderDeleteBtn() {
-                const dltBtn = document.getElementById('dlt-btn');
-                if (checkedRowsToDelete.length > 0) {
-                    dltBtn.classList.remove('hidden')
-                } else {
-                    dltBtn.classList.add('hidden')
-                }
-
-                // Handle delete
-                const yesDltBtn = document.getElementById('yes-dlt-btn')
-                yesDltBtn.onclick = () => {
-                    fetch(`${window.APP_NAME}/api/product/delete?ids=${checkedRowsToDelete.join(',')}`, {
-                        method: 'DELETE',
-                        credentials: 'same-origin',
-                    })
-                    .then(res => res.json())
-                    .then(res => {
-                        if (res.status == 200) {
-                            hideWarningAlert();
-                            showSuccessAlert('Successfully delete product');
-                            fetchTableData();
-                            checkedRowsToDelete = [];
-                            renderDeleteBtn();
-                        }
-                    })
-                    .catch(_err => {})
-                }
-            }
-
-            const deleteCheckboxs = document.querySelectorAll('input[name="delete-checkbox"]');
-            deleteCheckboxs.forEach(checkbox => {
-                checkbox.oninput = e => {
-                    if (e.target.checked) {
-                        checkedRowsToDelete.push(checkbox.value);
+                function renderDeleteBtn() {
+                    const dltBtn = document.getElementById('dlt-btn');
+                    if (checkedRowsToDelete.length > 0) {
+                        dltBtn.classList.remove('hidden')
                     } else {
-                        checkedRowsToDelete = checkedRowsToDelete.filter(item => item != checkbox.value);
+                        dltBtn.classList.add('hidden')
                     }
-                    renderDeleteBtn();
+
+                    // Handle delete
+                    const yesDltBtn = document.getElementById('yes-dlt-btn')
+                    yesDltBtn.onclick = () => {
+                        fetch(`${window.APP_NAME}/api/product/delete?ids=${checkedRowsToDelete.join(',')}`, {
+                            method: 'DELETE',
+                            credentials: 'same-origin',
+                        })
+                            .then(res => res.json())
+                            .then(res => {
+                                if (res.status == 200) {
+                                    hideWarningAlert();
+                                    showSuccessAlert('Successfully delete product');
+                                    fetchTableData();
+                                    checkedRowsToDelete = [];
+                                    renderDeleteBtn();
+                                }
+                            })
+                            .catch(_err => { })
+                    }
                 }
-            })
 
-            // Handle click edit
-            const editBtns = document.querySelectorAll('a[data-edit-id]');
-            Array.from(editBtns).forEach(btn => {
-                btn.onclick = () => {
-                    const product = res.data.find(item => item.productID == btn.dataset.editId);
+                const deleteCheckboxs = document.querySelectorAll('input[name="delete-checkbox"]');
+                deleteCheckboxs.forEach(checkbox => {
+                    checkbox.oninput = e => {
+                        if (e.target.checked) {
+                            checkedRowsToDelete.push(checkbox.value);
+                        } else {
+                            checkedRowsToDelete = checkedRowsToDelete.filter(item => item != checkbox.value);
+                        }
+                        renderDeleteBtn();
+                    }
+                })
 
-                    document.getElementById('productIDEdit').value = product.productID;
-                    document.getElementById('previewImgEdit').src = product.image;
-                    document.getElementById('previewImgEdit').classList.remove('hidden')
-                    document.getElementById('productCategoryIDEdit').value = product.productCategoryID;
-                    document.getElementById('nameEdit').value = product.name;
-                    document.getElementById('priceEdit').value = product.price;
-                    document.getElementById('isSellingEdit').checked = product.selling;
-                }
-            })
+                // Handle click edit
+                const editBtns = document.querySelectorAll('a[data-edit-id]');
+                Array.from(editBtns).forEach(btn => {
+                    btn.onclick = () => {
+                        const product = res.data.find(item => item.productID == btn.dataset.editId);
 
-            // Handle click view detail
-            const detailBtns = document.querySelectorAll('a[data-detail-id]')
-            Array.from(detailBtns).forEach(btn => {
-                btn.onclick = () => {
-                    const product = res.data.find(item => item.productID == btn.dataset.detailId);
+                        document.getElementById('productIDEdit').value = product.productID;
+                        document.getElementById('previewImgEdit').src = product.image;
+                        document.getElementById('previewImgEdit').classList.remove('hidden')
+                        document.getElementById('productCategoryIDEdit').value = product.productCategoryID;
+                        document.getElementById('nameEdit').value = product.name;
+                        document.getElementById('priceEdit').value = product.price;
+                        document.getElementById('isSellingEdit').checked = product.selling;
+                    }
+                })
 
-                    document.getElementById("detail-image").src = product.image;
-                    document.getElementById("detail-name").textContent = product.name;
-                    document.getElementById("detail-price").textContent = product.price;
-                    document.getElementById("detail-status").textContent = product.selling ? 'Selling' : 'Stop selling';
-                    document.getElementById("detail-category").textContent = product.productCategoryName;
-                }
-            })
-        }
-    })
-    .catch(res => { })
+                // Handle click view detail
+                const detailBtns = document.querySelectorAll('a[data-detail-id]')
+                Array.from(detailBtns).forEach(btn => {
+                    btn.onclick = () => {
+                        const product = res.data.find(item => item.productID == btn.dataset.detailId);
+
+                        document.getElementById("detail-image").src = product.image;
+                        document.getElementById("detail-name").textContent = product.name;
+                        document.getElementById("detail-price").textContent = product.price;
+                        document.getElementById("detail-status").textContent = product.selling ? 'Selling' : 'Stop selling';
+                        document.getElementById("detail-category").textContent = product.productCategoryName;
+                    }
+                })
+            }
+        })
+        .catch(res => { })
 }
 fetchTableData();
 
+// Handle searching
+function renderProCatFilter() {
+    const items = [
+        {
+            productCategoryID: '',
+            name: 'Tất cả danh mục',
+        },
+        ...productCategoryName,
+    ]
+    document.getElementById('procat-filter').innerHTML = items.map(item => {
+        return `
+            <li data-pro-id="${item.productCategoryID}" data-pro-name="${item.name}">
+                <button type="button" class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">${item.name}</button>
+            </li>
+        `
+    }).join('');
+}
 
+function processClickChooseProCat() {
+    Array.from(document.querySelectorAll('li[data-pro-id]')).forEach(li => {
+        li.onclick = () => {
+            document.getElementById('productCategoryIDSearch').value = li.dataset.proId;
+            document.getElementById('dropdown-button').innerHTML = `
+                ${li.dataset.proName}
+                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                </svg>
+            `
+        }
+    })
+}
+document.getElementById('search-form').onsubmit = e => {
+    e.preventDefault();
+    const productCategoryID = document.getElementById('productCategoryIDSearch').value;
+    const name = document.getElementById('nameSearch').value;
+    fetchTableData({
+        productCategoryID: productCategoryID,
+        name: name
+    })
+}
 
 // Alerts
 let successAlert = "";
@@ -168,7 +213,7 @@ Validator({
         Validator.isRequired('#name', 'Name is required'),
         Validator.isRequired('#price', 'Price is required'),
     ],
-    onSubmit: function(data, { resetForm }) {
+    onSubmit: function (data, { resetForm }) {
         const storePath = window.APP_NAME + '/api/product/store';
         // Form Data
         const { image, ...otherData } = data;
@@ -197,26 +242,26 @@ Validator({
             credentials: 'same-origin',
             body: formData,
         })
-        .then(res => res.json())
-        .then(res => {
-            if (res.status == 200) {
-                document.getElementById('close-create-modal-btn').click();
-                hideWarningAlert();
-                showSuccessAlert('Successfully create new product');
-                fetchTableData();
-                resetPreviewImage('#previewImg')
-                resetForm({
-                    image: '',
-                    productCategoryID: otherData.productCategoryID,
-                    name: '',
-                    price: '',
-                })
-            } else if (res.status == 400 && res.invalid) {
-                showWarningAlert('Invalid some fields', res.errors);
-                document.getElementById('close-create-modal-btn').click();
-            }
-        })
-        .catch(_err => {})
+            .then(res => res.json())
+            .then(res => {
+                if (res.status == 200) {
+                    document.getElementById('close-create-modal-btn').click();
+                    hideWarningAlert();
+                    showSuccessAlert('Successfully create new product');
+                    fetchTableData();
+                    resetPreviewImage('#previewImg')
+                    resetForm({
+                        image: '',
+                        productCategoryID: otherData.productCategoryID,
+                        name: '',
+                        price: '',
+                    })
+                } else if (res.status == 400 && res.invalid) {
+                    showWarningAlert('Invalid some fields', res.errors);
+                    document.getElementById('close-create-modal-btn').click();
+                }
+            })
+            .catch(_err => { })
     }
 });
 
@@ -232,7 +277,7 @@ Validator({
         Validator.isRequired('#nameEdit', 'Name is required'),
         Validator.isRequired('#priceEdit', 'Price is required'),
     ],
-    onSubmit: function(data, { resetForm }) {
+    onSubmit: function (data, { resetForm }) {
         const updatePath = window.APP_NAME + '/api/product/update';
         // Form Data
         const { image, ...otherData } = data;
@@ -262,27 +307,27 @@ Validator({
             credentials: 'same-origin',
             body: formData,
         })
-        .then(res => res.json())
-        .then(res => {
-            if (res.status == 200) {
-                document.getElementById('close-update-modal-btn').click();
-                hideWarningAlert();
-                showSuccessAlert('Successfully update product data');
-                fetchTableData();
-                resetPreviewImage('#previewImgEdit')
-                resetForm({
-                    productID: '',
-                    image: '',
-                    productCategoryID: otherData.productCategoryID,
-                    name: '',
-                    price: '',
-                })
-            } else if (res.status == 400 && res.invalid) {
-                showWarningAlert('Invalid some fields', res.errors);
-                document.getElementById('close-update-modal-btn').click();
-            }
-        })
-        .catch(_err => {})
+            .then(res => res.json())
+            .then(res => {
+                if (res.status == 200) {
+                    document.getElementById('close-update-modal-btn').click();
+                    hideWarningAlert();
+                    showSuccessAlert('Successfully update product data');
+                    fetchTableData();
+                    resetPreviewImage('#previewImgEdit')
+                    resetForm({
+                        productID: '',
+                        image: '',
+                        productCategoryID: otherData.productCategoryID,
+                        name: '',
+                        price: '',
+                    })
+                } else if (res.status == 400 && res.invalid) {
+                    showWarningAlert('Invalid some fields', res.errors);
+                    document.getElementById('close-update-modal-btn').click();
+                }
+            })
+            .catch(_err => { })
     }
 });
 
@@ -317,26 +362,34 @@ function resetPreviewImage(previewerSelector) {
     }
 }
 
-// Handle fetch role data
-function fetchProductCategories(selectsID) {
+// Handle fetch product category data
+var productCategoryName = []
+
+function fetchProductCategoryName() {
     const fetchPath = window.APP_NAME + '/api/pro-category/all';
     fetch(fetchPath)
-    .then(res => res.json())
-    .then(res => {
-        if (res.status == 200) {
-            selectsID.forEach(selectID => {
-                document.getElementById(selectID).innerHTML = 
-                res.data.map(item => {
-                    return `
+        .then(res => res.json())
+        .then(res => {
+            if (res.status == 200) {
+                productCategoryName = res.data;
+                renderProductCategorySelects([
+                    'productCategoryID',
+                    'productCategoryIDEdit',
+                ]);
+                renderProCatFilter();
+                processClickChooseProCat();
+            }
+        })
+        .catch(_res => { })
+}
+fetchProductCategoryName();
+function renderProductCategorySelects(selectsID) {
+    selectsID.forEach(selectID => {
+        document.getElementById(selectID).innerHTML =
+            productCategoryName.map(item => {
+                return `
                         <option value="${item.productCategoryID}">${item.name}</option>
                     `
-                }).join('');
-            })
-        }
+            }).join('');
     })
-    .catch(_res => { })
 }
-fetchProductCategories([
-    'productCategoryID',
-    'productCategoryIDEdit',
-]);

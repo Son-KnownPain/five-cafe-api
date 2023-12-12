@@ -28,5 +28,7 @@ public interface BillDetailsFacadeLocal {
     List<BillDetails> findRange(int[] range);
 
     int count();
+
+    public List<BillDetails> findByBillID(int billID);
     
 }

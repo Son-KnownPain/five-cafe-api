@@ -5,6 +5,8 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.ImportDetails;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -30,5 +32,4 @@ public interface ImportDetailsFacadeLocal {
     int count();
 
     public List<ImportDetails> findByImportID(int importID);
-    
 }

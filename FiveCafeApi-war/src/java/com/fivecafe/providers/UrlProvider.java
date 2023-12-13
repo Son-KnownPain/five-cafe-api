@@ -345,6 +345,7 @@ public class UrlProvider {
         public static final String UPDATE_MAT_ITEM = "/update-mat-item";
         public static final String DELETE_MAT_ITEM = "/delete-mat-item";
         public static final String DELETE_IMPORT = "/delete_import";
+        public static final String SEARCH = "/search";
         
         
         @Override

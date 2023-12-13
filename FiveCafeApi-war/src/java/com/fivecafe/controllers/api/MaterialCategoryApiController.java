@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,11 @@ public class MaterialCategoryApiController {
         List<MaterialCategoryResponse> data = new ArrayList<>();
         
         for(MaterialCategories materialCategories : allMaterialCategories){
-            data.add(MaterialCategoryResponse.builder().materialCategoryID(materialCategories.getMaterialCategoryID()).name(materialCategories.getName()).description(materialCategories.getDescription()).build());
+            data.add(MaterialCategoryResponse.builder()
+                    .materialCategoryID(materialCategories.getMaterialCategoryID())
+                    .name(materialCategories.getName())
+                    .description(materialCategories.getDescription())
+                    .build());
         }
         
         DataResponse<List<MaterialCategoryResponse>> res = new DataResponse<>();
@@ -126,19 +131,31 @@ public class MaterialCategoryApiController {
 
     }
     
-//    @GetMapping(""+UrlProvider.MaterialCategory.SEARCH)
-//    public ResponseEntity searchMaterialCategoryByName(@RequestParam("q") String name){
-//        List<MaterialCategories> foundMatCateName= materialCategoriesFacade.searchMaterialCategoryByName(name);
-//        if(foundMatCateName.isEmpty()){
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//        return ResponseEntity.ok(
-//                StandardResponse.builder()
-//                        .success(true)
-//                        .status(200)
-//                        .message("Successfully search material category")
-//                        .build());
-//    }
+@GetMapping("" + UrlProvider.MaterialCategory.SEARCH)
+    public ResponseEntity<DataResponse<List<MaterialCategoryResponse>>> search(
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            HttpServletRequest request) {
+
+        List<MaterialCategories> allMatCat = materialCategoriesFacade.searchMaterialCategory(keyword);
+
+        List<MaterialCategoryResponse> data = new ArrayList<>();
+
+        for (MaterialCategories matPro : allMatCat) {
+            data.add(MaterialCategoryResponse.builder()
+                    .materialCategoryID(matPro.getMaterialCategoryID())
+                    .name(matPro.getName())
+                    .description(matPro.getDescription())
+                    .build());
+        }
+
+        DataResponse<List<MaterialCategoryResponse>> res = new DataResponse<>();
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully searching material category");
+        res.setData(data);
+        return ResponseEntity.ok(res);
+    }
 
     private MaterialCategoriesFacadeLocal lookupMaterialCategoriesFacadeLocal() {
         try {

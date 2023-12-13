@@ -30,5 +30,7 @@ public interface ProductCategoriesFacadeLocal {
     int count();
 
     public List<ProductCategories> searchProductCategoryByName(String name);
+
+    public List<ProductCategories> searchProductCategory(String keyword);
     
 }

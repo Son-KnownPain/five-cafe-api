@@ -28,5 +28,7 @@ public interface SuppliersFacadeLocal {
     List<Suppliers> findRange(int[] range);
 
     int count();
+
+    public List<Suppliers> searchSuppliers(String keyword);
     
 }

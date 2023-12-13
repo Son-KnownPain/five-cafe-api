@@ -15,7 +15,9 @@ import lombok.Setter;
 public class BillResponse {
     private int billID;
     private int employeeID;
+    private String employeeName;
     private int billStatusID;
+    private String billStatusValue;
     private String createDate;
     private String cardCode;
     private List<BillDetailsResponse> details;

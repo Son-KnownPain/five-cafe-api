@@ -10,6 +10,11 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  *
@@ -29,11 +34,31 @@ public class ProductCategoriesFacade extends AbstractFacade<ProductCategories> i
     public ProductCategoriesFacade() {
         super(ProductCategories.class);
     }
-    
+
     @Override
     public List<ProductCategories> searchProductCategoryByName(String name) {
         Query query = em.createNamedQuery("ProductCategories.findByName", ProductCategories.class);
         query.setParameter("name", name);
         return query.getResultList();
     }
+
+    @Override
+    public List<ProductCategories> searchProductCategory(String keyword) {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<ProductCategories> criteriaQuery = criteriaBuilder.createQuery(ProductCategories.class);
+        Root<ProductCategories> root = criteriaQuery.from(ProductCategories.class);
+
+        Predicate combinedPredicate = criteriaBuilder.conjunction();
+
+        Path<String> namePath = root.get("name");
+        Predicate likePredicate = criteriaBuilder.like(namePath, "%" + keyword + "%");
+        combinedPredicate = criteriaBuilder.and(combinedPredicate, likePredicate);
+
+        criteriaQuery.where(combinedPredicate);
+
+        List<ProductCategories> resultList = em.createQuery(criteriaQuery).getResultList();
+
+        return resultList;
+    }
+
 }

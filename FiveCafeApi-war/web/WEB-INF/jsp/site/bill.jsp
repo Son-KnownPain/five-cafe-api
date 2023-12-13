@@ -149,6 +149,38 @@
                         <div id="bill-info" class="mb-4">
                             <!-- RenderByJS -->
                         </div>
+                        <form id="edit-bill-form" class="hidden py-4 border-t border-solid border-gray-500">
+                            <h1 class="text-xs font-semibold dark:text-gray-400 text-gray-700 mb-3 uppercase">Edit bill</h1>
+                            <div class="grid gap-4 mb-4 grid-cols-2">
+                                <div class="col-span-2 form-gr">
+                                    <label for="employeeIDEdit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Employee ID</label>
+                                    <select id="employeeIDEdit" name="employeeID" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                      </select>
+                                    <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
+                                </div>
+                                <div class="col-span-2 form-gr">
+                                    <label for="billStatusIDEdit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bill Status ID</label>
+                                    <select id="billStatusIDEdit" name="billStatusID" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                      </select>
+                                    <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
+                                </div>
+                                <div class="col-span-2 form-gr">
+                                    <label for="cardCodeEdit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Card Code</label>
+                                    <input type="text" name="cardCode" id="cardCodeEdit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="15000">
+                                    <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-end items-center">
+                                <button id="cancel-edit-bill-btn" type="button" class="py-2.5 px-5 mr-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="text-white inline-flex items-center bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                    <i class="fa-solid fa-pencil mr-3"></i>
+                                    Update
+                                </button>
+                            </div>
+                        </form>
                         <div id="add-pro-item-btn-box" class="">
                             <button id="add-pro-item-btn" type="submit" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                 <i class="fa-solid fa-plus mr-3"></i>

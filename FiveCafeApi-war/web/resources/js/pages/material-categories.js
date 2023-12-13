@@ -1,6 +1,11 @@
 // Fetch table data
-function fetchTableData() {
-    const fetchPath = window.APP_NAME + '/api/mat-category/all';
+function fetchTableData(searching = null) {
+    let fetchPath = window.APP_NAME;
+    if (searching) {
+        fetchPath += `/api/mat-category/search?keyword=${searching.keyword}`
+    } else  {
+        fetchPath += '/api/mat-category/all';
+    }
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
@@ -92,6 +97,15 @@ function fetchTableData() {
     .catch(res => { })
 }
 fetchTableData();
+
+// Handle searching 
+document.getElementById('search-form').onsubmit = e => {
+    e.preventDefault();
+    const keyword = document.getElementById('keywordSearch').value;
+    fetchTableData({
+        keyword: keyword
+    })
+}
 
 // Alerts
 let successAlert = "";

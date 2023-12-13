@@ -64,7 +64,7 @@ public class BillApiController {
         DataResponse<List<BillResponse>> res = new DataResponse<>();
         List<BillResponse> data = new ArrayList<>();
         for (Bills billItem : allBills) {
-            // Handle import details
+            // Handle bills details
             List<BillDetailsResponse> listDetail = new ArrayList<>();
 
             for (BillDetails billDetail : billDetailsFacade.findByBillID(billItem.getBillID())) {
@@ -85,7 +85,9 @@ public class BillApiController {
                     BillResponse.builder()
                             .billID(billItem.getBillID())
                             .employeeID(billItem.getEmployeeID().getEmployeeID())
+                            .employeeName(billItem.getEmployeeID().getName())
                             .billStatusID(billItem.getBillStatusID().getBillStatusID())
+                            .billStatusValue(billItem.getBillStatusID().getBillStatusValue())
                             .createDate(formatter.format(billItem.getCreatedDate()))
                             .cardCode(billItem.getCardCode())
                             .details(listDetail)

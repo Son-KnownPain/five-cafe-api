@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +46,11 @@ public class ProductCategoryApiController {
         List<ProductCategoryResponse> data = new ArrayList<>();
 
         for (ProductCategories pc : allProCategories) {
-            data.add(ProductCategoryResponse.builder().productCategoryID(pc.getProductCategoryID()).name(pc.getName()).description(pc.getDescription()).build());
+            data.add(ProductCategoryResponse.builder()
+                    .productCategoryID(pc.getProductCategoryID())
+                    .name(pc.getName())
+                    .description(pc.getDescription())
+                    .build());
         }
 
         DataResponse<List<ProductCategoryResponse>> proCategories = new DataResponse<>();
@@ -100,7 +105,7 @@ public class ProductCategoryApiController {
     @DeleteMapping("" + UrlProvider.ProductCategory.DELETE)
     public ResponseEntity<?> deleteProductCategories(@RequestParam("ids") String ids) {
         String[] idsPC = ids.split(",");
-        
+
         for (String id : idsPC) {
             int idInt;
             try {
@@ -110,7 +115,7 @@ public class ProductCategoryApiController {
                 continue;
             }
             ProductCategories productCategories = productCategoriesFacade.find(idInt);
-            if(productCategories != null){
+            if (productCategories != null) {
                 productCategoriesFacade.remove(productCategories);
             }
         }
@@ -123,32 +128,31 @@ public class ProductCategoryApiController {
         );
     }
 
-//    @GetMapping("" + UrlProvider.ProductCategory.SEARCH)
-//    public ResponseEntity searchProductCategoryByName(@RequestParam("q") String name) {
-//        List<ProductCategories> foundProductCategoryName = productCategoriesFacade.searchProductCategoryByName(name);
-//        List<String> errors = new ArrayList<>();
-//
-//        if (foundProductCategoryName.isEmpty()) {
-//            errors.add("The product category name you are looking for does not exist");
-//
-//            InvalidResponse res = new InvalidResponse();
-//            res.setSuccess(false);
-//            res.setStatus(400);
-//            res.setMessage("The requested product category name is invalid");
-//            res.setInvalid(true);
-//            res.setErrors(errors);
-//
-//            return ResponseEntity.badRequest().body(res);
-//        }
-//
-//        return ResponseEntity.ok(
-//                StandardResponse.builder()
-//                        .success(true)
-//                        .status(200)
-//                        .message("Successfully search product category")
-//                        .build()
-//        );
-//    }
+    @GetMapping("" + UrlProvider.ProductCategory.SEARCH)
+    public ResponseEntity<DataResponse<List<ProductCategoryResponse>>> search(
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            HttpServletRequest request) {
+
+        List<ProductCategories> allProCat = productCategoriesFacade.searchProductCategory(keyword);
+
+        List<ProductCategoryResponse> data = new ArrayList<>();
+
+        for (ProductCategories proCat : allProCat) {
+            data.add(ProductCategoryResponse.builder()
+                    .productCategoryID(proCat.getProductCategoryID())
+                    .name(proCat.getName())
+                    .description(proCat.getDescription())
+                    .build());
+        }
+
+        DataResponse<List<ProductCategoryResponse>> res = new DataResponse<>();
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully searching product category");
+        res.setData(data);
+        return ResponseEntity.ok(res);
+    }
 
     private ProductCategoriesFacadeLocal lookupProductCategoriesFacadeLocal() {
         try {

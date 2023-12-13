@@ -5,9 +5,15 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.MaterialCategories;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  *
@@ -28,4 +34,22 @@ public class MaterialCategoriesFacade extends AbstractFacade<MaterialCategories>
         super(MaterialCategories.class);
     }
     
+    @Override
+    public List<MaterialCategories> searchMaterialCategory(String keyword) {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<MaterialCategories> criteriaQuery = criteriaBuilder.createQuery(MaterialCategories.class);
+        Root<MaterialCategories> root = criteriaQuery.from(MaterialCategories.class);
+
+        Predicate combinedPredicate = criteriaBuilder.conjunction();
+
+        Path<String> namePath = root.get("name");
+        Predicate likePredicate = criteriaBuilder.like(namePath, "%" + keyword + "%");
+        combinedPredicate = criteriaBuilder.and(combinedPredicate, likePredicate);
+
+        criteriaQuery.where(combinedPredicate);
+
+        List<MaterialCategories> resultList = em.createQuery(criteriaQuery).getResultList();
+
+        return resultList;
+    }
 }

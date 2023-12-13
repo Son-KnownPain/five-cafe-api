@@ -5,9 +5,16 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.Bills;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  *
@@ -28,4 +35,17 @@ public class BillsFacade extends AbstractFacade<Bills> implements BillsFacadeLoc
         super(Bills.class);
     }
     
+    @Override
+     public List<Bills> getBillByDaterange(Date dateForm, Date dateTo){
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Bills> cq = cb.createQuery(Bills.class);
+        Root<Bills> root = cq.from(Bills.class);
+        Path<Date> datePath = root.get("createDate");
+        Predicate datePredicate = cb.between(datePath, dateForm, dateTo);
+        
+        cq.where(datePredicate);
+        
+        return em.createQuery(cq).getResultList();
+        
+    }
 }

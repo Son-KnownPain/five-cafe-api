@@ -313,6 +313,7 @@ public class UrlProvider {
         public static final String UPDATE_PRO_ITEM = "/update-pro-item";
         public static final String DELETE_PRO_ITEM = "/delete-pro-item";
         public static final String DELETE_BILL = "/delete_bill";
+        public static final String SEARCH = "/search";
         
         @Override
         public List<String> signInUrls() {

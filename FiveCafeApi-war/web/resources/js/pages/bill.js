@@ -1,8 +1,11 @@
 // Fetch table data
-function fetchTableData(auto  = {}) {
-    const { detailClickID = false } = auto;
-
-    const fetchPath = window.APP_NAME + '/api/bill/all';
+function fetchTableData(searching=null) {
+    let fetchPath = window.APP_NAME;
+    if (searching) {
+        fetchPath += `/api/bill/search?dateForm=${searching.dateForm}&dateTo=${searching.dateTo}`
+    } else  {
+        fetchPath += '/api/bill/all';
+    }
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
@@ -253,6 +256,17 @@ function fetchTableData(auto  = {}) {
     .catch(_res => { })
 }
 fetchTableData();
+
+// Hands Search
+document.getElementById('search-form').onsubmit = e => {
+    e.preventDefault();
+    const dateForm = document.getElementById('dateForm').value;
+    const dateTo = document.getElementById('dateTo').value;
+    fetchTableData({
+        dateForm: dateForm,
+        dateTo: dateTo
+    })
+ }
 
 // Alerts
 let successAlert = "";

@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -34,86 +35,119 @@ public class SupplierApiController {
 
     SuppliersFacadeLocal suppliersFacade = lookupSuppliersFacadeLocal();
 
-    @GetMapping(""+UrlProvider.Supplier.ALL)
-    public ResponseEntity<DataResponse<List<SupplierResponse>>> allSupplier(){
-        
+    @GetMapping("" + UrlProvider.Supplier.ALL)
+    public ResponseEntity<DataResponse<List<SupplierResponse>>> allSupplier() {
+
         List<Suppliers> allSup = suppliersFacade.findAll();
         List<SupplierResponse> data = new ArrayList<>();
-        
-        for(Suppliers supp : allSup){
-            data.add(SupplierResponse.builder().supplierID(supp.getSupplierID()).contactName(supp.getContactName()).contactNumber(supp.getContactNumber()).address(supp.getAddress()).build());
+
+        for (Suppliers supp : allSup) {
+            data.add(
+                    SupplierResponse.builder()
+                            .supplierID(supp.getSupplierID())
+                            .contactName(supp.getContactName())
+                            .contactNumber(supp.getContactNumber())
+                            .address(supp.getAddress())
+                            .build());
         }
-        
+
         DataResponse<List<SupplierResponse>> sup_res = new DataResponse<>();
-        
+
         sup_res.setSuccess(true);
         sup_res.setStatus(200);
         sup_res.setMessage("Successfully get all supplier");
         sup_res.setData(data);
-        
+
         return ResponseEntity.ok(sup_res);
     }
-    
-    @PostMapping(""+UrlProvider.Supplier.STORE)
-    public ResponseEntity<StandardResponse> storeSupplier(@Valid @RequestBody CreateSupplier createReponse, BindingResult br) throws MethodArgumentNotValidException{
-        
-        if(br.hasErrors()){
+
+    @PostMapping("" + UrlProvider.Supplier.STORE)
+    public ResponseEntity<StandardResponse> storeSupplier(@Valid @RequestBody CreateSupplier createReponse, BindingResult br) throws MethodArgumentNotValidException {
+
+        if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
-        
+
         Suppliers newSuppliers = new Suppliers();
-        
+
         newSuppliers.setContactName(createReponse.getContactName());
         newSuppliers.setContactNumber(createReponse.getContactNumber());
         newSuppliers.setAddress(createReponse.getAddress());
-        
+
         suppliersFacade.create(newSuppliers);
-        
+
         return ResponseEntity.ok(StandardResponse.builder().success(true).status(200).message("Successfully create new supplier").build());
     }
-    
-    @PutMapping(""+UrlProvider.Supplier.UPDATE)
-    public ResponseEntity<StandardResponse> updateSupplier(@Valid @RequestBody UpdateAndDeleteSuplier update_res, BindingResult br) throws MethodArgumentNotValidException{
-        
-        if(br.hasErrors()){
+
+    @GetMapping("" + UrlProvider.Supplier.SEARCH)
+    public ResponseEntity<DataResponse<List<SupplierResponse>>> search(
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            HttpServletRequest request) {
+
+        List<Suppliers> allSup = suppliersFacade.searchSuppliers(keyword);
+
+        List<SupplierResponse> data = new ArrayList<>();
+
+        for (Suppliers supp : allSup) {
+            data.add(SupplierResponse.builder()
+                    .supplierID(supp.getSupplierID())
+                    .contactName(supp.getContactName())
+                    .contactNumber(supp.getContactNumber())
+                    .address(supp.getAddress())
+                    .build());
+        }
+
+        DataResponse<List<SupplierResponse>> res = new DataResponse<>();
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully searching Category product");
+        res.setData(data);
+        return ResponseEntity.ok(res);
+    }
+
+    @PutMapping("" + UrlProvider.Supplier.UPDATE)
+    public ResponseEntity<StandardResponse> updateSupplier(@Valid @RequestBody UpdateAndDeleteSuplier update_res, BindingResult br) throws MethodArgumentNotValidException {
+
+        if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
-        
+
         Suppliers updateSup = suppliersFacade.find(update_res.getSupplierID());
-        
-        if(updateSup == null){
+
+        if (updateSup == null) {
             br.rejectValue("supplierID", "error.supplierID", "The supplier ID does not exist");
         }
-        
+
         updateSup.setContactName(update_res.getContactName());
         updateSup.setContactNumber(update_res.getContactNumber());
         updateSup.setAddress(update_res.getAddress());
-        
+
         suppliersFacade.edit(updateSup);
-        
+
         return ResponseEntity.ok(StandardResponse.builder().success(true).status(200).message("Successfully updated data").build());
     }
-    
-    @DeleteMapping(""+UrlProvider.Supplier.DELETE)
-    public ResponseEntity<?> deleteSupplier(@RequestParam("ids") String ids){
-        
+
+    @DeleteMapping("" + UrlProvider.Supplier.DELETE)
+    public ResponseEntity<?> deleteSupplier(@RequestParam("ids") String ids) {
+
         String[] idSupp = ids.split(",");
-        
-        for(String id: idSupp){
+
+        for (String id : idSupp) {
             int idIntSupp;
-            try{
+            try {
                 idIntSupp = Integer.parseInt(id);
-            }catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 e.printStackTrace();
                 continue;
             }
-            
+
             Suppliers suppliers = suppliersFacade.find(idIntSupp);
-            if(suppliers!=null){
+            if (suppliers != null) {
                 suppliersFacade.remove(suppliers);
             }
         }
-        
+
         return ResponseEntity.ok(
                 StandardResponse.builder()
                         .success(true)
@@ -122,7 +156,7 @@ public class SupplierApiController {
                         .build()
         );
     }
-    
+
     private SuppliersFacadeLocal lookupSuppliersFacadeLocal() {
         try {
             Context c = new InitialContext();
@@ -132,7 +166,5 @@ public class SupplierApiController {
             throw new RuntimeException(ne);
         }
     }
-    
-   
-    
+
 }

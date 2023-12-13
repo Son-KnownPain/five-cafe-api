@@ -23,6 +23,7 @@ import com.fivecafe.session_beans.ProductsFacadeLocal;
 import com.fivecafe.supports.FileSupport;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -32,6 +33,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -64,7 +66,7 @@ public class BillApiController {
         DataResponse<List<BillResponse>> res = new DataResponse<>();
         List<BillResponse> data = new ArrayList<>();
         for (Bills billItem : allBills) {
-            // Handle import details
+            // Handle bills details
             List<BillDetailsResponse> listDetail = new ArrayList<>();
 
             for (BillDetails billDetail : billDetailsFacade.findByBillID(billItem.getBillID())) {
@@ -85,7 +87,9 @@ public class BillApiController {
                     BillResponse.builder()
                             .billID(billItem.getBillID())
                             .employeeID(billItem.getEmployeeID().getEmployeeID())
+                            .employeeName(billItem.getEmployeeID().getName())
                             .billStatusID(billItem.getBillStatusID().getBillStatusID())
+                            .billStatusValue(billItem.getBillStatusID().getBillStatusValue())
                             .createDate(formatter.format(billItem.getCreatedDate()))
                             .cardCode(billItem.getCardCode())
                             .details(listDetail)
@@ -223,60 +227,64 @@ public class BillApiController {
 
         return ResponseEntity.ok(res);
     }
-    
-     @PutMapping(""+UrlProvider.Bills.UPDATE_PRO_ITEM)
+
+    @PutMapping("" + UrlProvider.Bills.UPDATE_PRO_ITEM)
     public ResponseEntity<?> updateProItem(@Valid @RequestBody UpdateBillDetail reqBody, BindingResult br
     ) throws MethodArgumentNotValidException {
-        if (br.hasErrors()) throw new MethodArgumentNotValidException(null, br);
-        
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
+        }
+
         // Validate
         Bills bills = billsFacade.find(reqBody.getBillID());
         if (bills == null) {
             br.rejectValue("billID", "error.billID", "Bill ID you provided is not exist");
         }
-        
+
         Products products = productsFacade.find(reqBody.getProductID());
         if (products == null) {
             br.rejectValue("productID", "error.productID", "Product ID you provided is not exist");
         }
-        
-        if (br.hasErrors()) throw new MethodArgumentNotValidException(null, br);
-        
+
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
+        }
+
         // Valid
         BillDetailsPK idPK = new BillDetailsPK();
         idPK.setBillID(reqBody.getBillID());
         idPK.setProductID(reqBody.getProductID());
-        
+
         BillDetails billDetail = billDetailsFacade.find(idPK);
-        
+
         if (billDetail != null) {
 //            // Update material quantity in stock
 //            products.setQuantityInStock(material.getQuantityInStock() + (reqBody.getQuantity() - importDetail.getQuantity()));
-            
+
             // Update import detail
             billDetail.setQuantity(reqBody.getQuantity());
-            
+
             billDetailsFacade.edit(billDetail);
         }
-        
+
         StandardResponse res = StandardResponse.builder()
                 .status(200)
                 .success(true)
                 .message("Successfully update bill product item data")
                 .build();
-        
+
         return ResponseEntity.ok(res);
     }
-    
-     @DeleteMapping(""+UrlProvider.Bills.DELETE_PRO_ITEM)
+
+    @DeleteMapping("" + UrlProvider.Bills.DELETE_PRO_ITEM)
     public ResponseEntity<?> deleteProItem(@RequestParam("productID") int productID, @RequestParam("billID") int billID) {
-        
+
         BillDetailsPK idPK = new BillDetailsPK();
         idPK.setBillID(billID);
         idPK.setProductID(productID);
-        
+
         BillDetails billDetail = billDetailsFacade.find(idPK);
-        
+
         if (billDetail == null) {
             StandardResponse res = new StandardResponse();
             res.setStatus(400);
@@ -285,14 +293,14 @@ public class BillApiController {
 
             return ResponseEntity.ok(res);
         }
-        
+
         billDetailsFacade.remove(billDetail);
-        
+
         StandardResponse res = new StandardResponse();
         res.setStatus(200);
         res.setSuccess(true);
         res.setMessage("Successfully delete bill detail");
-            
+
         return ResponseEntity.ok(res);
     }
 
@@ -319,6 +327,99 @@ public class BillApiController {
                         .message("Successfully delete bills")
                         .build()
         );
+    }
+
+    @GetMapping("" + UrlProvider.Bills.SEARCH)
+    public ResponseEntity<DataResponse<List<BillResponse>>> searchBill(
+            @RequestParam(name = "dateForm", defaultValue = "") String dateFormString,
+            @RequestParam(name = "dateTo", defaultValue = "") String dateToString,
+            HttpServletRequest request) throws java.text.ParseException {
+
+        DataResponse<List<BillResponse>> res = new DataResponse<>();
+
+        // Format date
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        Date dateFrom = null;
+        Date dateTo = null;
+
+        // Check if dateForm and dateTo are empty
+        boolean isDateRangeProvided = !dateFormString.isEmpty() && !dateToString.isEmpty();
+
+        if (isDateRangeProvided) {
+            try {
+                dateFrom = formatter.parse(dateFormString);
+                dateTo = formatter.parse(dateToString);
+            } catch (java.text.ParseException e) {
+                res.setSuccess(false);
+                res.setStatus(400);
+                res.setMessage("Invalid date format");
+                return ResponseEntity.badRequest().body(res);
+            }
+
+            if (dateFrom.compareTo(dateTo) > 0) {
+                res.setSuccess(false);
+                res.setStatus(400);
+                res.setMessage("dateForm cannot be greater than dateTo");
+                return ResponseEntity.badRequest().body(res);
+            }
+
+            // Add one day to dateTo using the Calendar class
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateTo);
+            calendar.add(Calendar.DAY_OF_MONTH, 1); // Add one day
+            dateTo = calendar.getTime();
+        }
+
+        List<Bills> allBills;
+        try {
+            if (isDateRangeProvided) {
+                allBills = billsFacade.getBillByDaterange(dateFrom, dateTo);
+            } else {
+                allBills = billsFacade.findAll();
+            }
+        } catch (Exception e) {
+            res.setSuccess(false);
+            res.setStatus(500);
+            res.setMessage("Failed to retrieve outbound data");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+        }
+
+        List<BillResponse> data = new ArrayList<>();
+        for (Bills billItem : allBills) {
+            // Handle bills details
+            List<BillDetailsResponse> listDetail = new ArrayList<>();
+
+            for (BillDetails billDetail : billDetailsFacade.findByBillID(billItem.getBillID())) {
+                listDetail.add(
+                        BillDetailsResponse.builder()
+                                .productID(billDetail.getProducts().getProductID())
+                                .name(billDetail.getProducts().getName())
+                                .image(FileSupport.perfectImg(request, "products", billDetail.getProducts().getImage()))
+                                .unitPrice(billDetail.getUnitPrice())
+                                .quantity(billDetail.getQuantity())
+                                .build()
+                );
+            }
+
+            data.add(BillResponse.builder()
+                    .billID(billItem.getBillID())
+                    .employeeID(billItem.getEmployeeID().getEmployeeID())
+                    .employeeName(billItem.getEmployeeID().getName())
+                    .billStatusID(billItem.getBillStatusID().getBillStatusID())
+                    .billStatusValue(billItem.getBillStatusID().getBillStatusValue())
+                    .createDate(formatter.format(billItem.getCreatedDate()))
+                    .cardCode(billItem.getCardCode())
+                    .details(listDetail)
+                    .build()
+            );
+        }
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Bill search successful");
+        res.setData(data);
+        return ResponseEntity.ok(res);
     }
 
     /////-----------------/////

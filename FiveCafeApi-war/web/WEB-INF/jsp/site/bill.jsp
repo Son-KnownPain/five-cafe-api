@@ -149,6 +149,38 @@
                         <div id="bill-info" class="mb-4">
                             <!-- RenderByJS -->
                         </div>
+                        <form id="edit-bill-form" class="hidden py-4 border-t border-solid border-gray-500">
+                            <h1 class="text-xs font-semibold dark:text-gray-400 text-gray-700 mb-3 uppercase">Edit bill</h1>
+                            <div class="grid gap-4 mb-4 grid-cols-2">
+                                <div class="col-span-2 form-gr">
+                                    <label for="employeeIDEdit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Employee ID</label>
+                                    <select id="employeeIDEdit" name="employeeID" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                      </select>
+                                    <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
+                                </div>
+                                <div class="col-span-2 form-gr">
+                                    <label for="billStatusIDEdit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bill Status ID</label>
+                                    <select id="billStatusIDEdit" name="billStatusID" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                      </select>
+                                    <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
+                                </div>
+                                <div class="col-span-2 form-gr">
+                                    <label for="cardCodeEdit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Card Code</label>
+                                    <input type="text" name="cardCode" id="cardCodeEdit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="15000">
+                                    <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-end items-center">
+                                <button id="cancel-edit-bill-btn" type="button" class="py-2.5 px-5 mr-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="text-white inline-flex items-center bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                                    <i class="fa-solid fa-pencil mr-3"></i>
+                                    Update
+                                </button>
+                            </div>
+                        </form>
                         <div id="add-pro-item-btn-box" class="">
                             <button id="add-pro-item-btn" type="submit" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                 <i class="fa-solid fa-plus mr-3"></i>
@@ -259,6 +291,23 @@
             <button data-modal-target="bill-detail-modal" data-modal-toggle="bill-detail-modal" class="hidden">Detail</button>
             <button data-modal-target="DC-popup-modal" data-modal-toggle="DC-popup-modal" id="dlt-btn" class="hidden focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete</button>
         </div>
+
+         <!-- Searching form -->
+         <form class="mb-2" id="search-form">
+            <div class="flex">
+              <div class="relative w-full">
+                <input type="search" name="dateForm" id="dateForm" class="w-[500px] text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="Enter date from (dd/MM/yyyy)">
+                <span class="date-separator">To</span>
+                <input type="search" name="dateTo" id="dateTo" class="w-[500px]  text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="Enter date to (dd/MM/yyyy)">
+                <button type="submit" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" style="width: 7rem">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                    <span class="sr-only">Search</span>
+                </button>
+              </div>
+            </div>
+        </form>
 
         <!-- Table -->
         <div>

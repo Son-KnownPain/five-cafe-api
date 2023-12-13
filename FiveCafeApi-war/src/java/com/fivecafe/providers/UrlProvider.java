@@ -177,9 +177,9 @@ public class UrlProvider {
         
         public static final String ALL = "/all";
         public static final String STORE = "/store";
+        public static final String SEARCH = "/search";
         public static final String UPDATE = "/update";
         public static final String DELETE = "/delete";
-        public static final String SEARCH = "/search";
         
         @Override
         public List<String> signInUrls() {
@@ -313,6 +313,7 @@ public class UrlProvider {
         public static final String UPDATE_PRO_ITEM = "/update-pro-item";
         public static final String DELETE_PRO_ITEM = "/delete-pro-item";
         public static final String DELETE_BILL = "/delete_bill";
+        public static final String SEARCH = "/search";
         
         @Override
         public List<String> signInUrls() {
@@ -465,7 +466,39 @@ public class UrlProvider {
         }
     }
     
-    
+    public class MatToPro implements AuthUrl{
+        public static final String PREFIX ="/mat-to-pro";
+        
+        // NONE SIGN IN
+        public static final String INDEX1 = "/index";
+        public static final String INDEX2 = "/";
+        public static final String INDEX3 = "";
+        
+        // NEED TO SIGN IN
+        public static final String ALL ="/all";
+        public static final String BY_PRODUCT_ID ="/{id}";
+        public static final String STORE = "/store";
+        public static final String UPDATE = "/update";
+        public static final String DELETE = "/delete";
+        public static final String SEARCH = "/search";
+        
+        @Override
+        public List<String> signInUrls() {
+            ArrayList<String> signInUrls = new ArrayList<>();
+            
+            return signInUrls;
+        }
+        
+        private String addUserPrefix(final String PATH) {
+            return PREFIX + PATH;
+        }
+
+        
+        @Override
+        public HashMap<String, List<String>> roleUrls() {
+            return null;
+        }
+    }
     
     public List<AuthUrl> getAllAuthUrl() {
         ArrayList<AuthUrl> result = new ArrayList<>();

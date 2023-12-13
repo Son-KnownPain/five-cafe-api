@@ -123,7 +123,7 @@ function fetchTableData(searching = null) {
 }
 fetchTableData();
 
-// Handle searching
+// Handle searching 
 function renderRoleFilter() {
     const items = [
         {

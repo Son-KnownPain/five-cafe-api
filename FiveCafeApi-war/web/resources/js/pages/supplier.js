@@ -1,6 +1,11 @@
 // Fetch table data
-function fetchTableData() {
-    const fetchPath = window.APP_NAME + '/api/supplier/all';
+function fetchTableData(searching = null) {
+    let fetchPath = window.APP_NAME;
+    if (searching) {
+        fetchPath += `/api/supplier/search?keyword=${searching.keyword}`
+    } else  {
+        fetchPath += '/api/supplier/all';
+    }
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
@@ -96,6 +101,16 @@ function fetchTableData() {
     .catch(res => { })
 }
 fetchTableData();
+
+// Handle searching 
+document.getElementById('search-form').onsubmit = e => {
+    e.preventDefault();
+    const keyword = document.getElementById('keywordSearch').value;
+    fetchTableData({
+        keyword: keyword
+    })
+}
+
 
 // Alerts
 let successAlert = "";

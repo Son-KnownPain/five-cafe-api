@@ -28,5 +28,7 @@ public interface MaterialToProductsFacadeLocal {
     List<MaterialToProducts> findRange(int[] range);
 
     int count();
+
+    public List<MaterialToProducts> findByProductID(int productID);
     
 }

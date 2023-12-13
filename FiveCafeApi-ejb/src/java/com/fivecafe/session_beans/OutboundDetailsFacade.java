@@ -5,9 +5,11 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.OutboundDetails;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -26,6 +28,15 @@ public class OutboundDetailsFacade extends AbstractFacade<OutboundDetails> imple
 
     public OutboundDetailsFacade() {
         super(OutboundDetails.class);
+    }
+    
+    @Override
+    public List<OutboundDetails> findByOutboundID(int outboundID) {
+        TypedQuery<OutboundDetails> query = em.createNamedQuery("OutboundDetails.findByOutboundID", OutboundDetails.class);
+        
+        query.setParameter("outboundID", outboundID);
+        
+        return query.getResultList();
     }
     
 }

@@ -18,8 +18,10 @@ import com.fivecafe.session_beans.ImportsFacadeLocal;
 import com.fivecafe.session_beans.MaterialsFacadeLocal;
 import com.fivecafe.session_beans.SuppliersFacadeLocal;
 import com.fivecafe.supports.FileSupport;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -29,6 +31,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -281,7 +284,7 @@ public class ImportApiController {
             res.setSuccess(true);
             res.setMessage("Cannot found import detail with import id and material id you provided");
 
-            return ResponseEntity.ok(res);
+            return ResponseEntity.badRequest().body(res);
         }
         
         importDetailsFacade.remove(importDetail);
@@ -317,6 +320,101 @@ public class ImportApiController {
                         .message("Successfully delete imports")
                         .build()
         );
+    }
+    
+    @GetMapping("" + UrlProvider.Import.SEARCH)
+    public ResponseEntity<DataResponse<List<ImportRes>>> searchImportByDate(
+            @RequestParam(name = "dateForm", defaultValue = "") String dateFromString,
+            @RequestParam(name = "dateTo", defaultValue = "") String dateToString,
+            HttpServletRequest request) throws java.text.ParseException {
+
+        DataResponse<List<ImportRes>> res = new DataResponse<>();
+        
+        //format date
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        
+        Date dateFrom = null;
+        Date dateTo = null;
+
+        // Check if dateForm and dateTo are empty
+        boolean isDateRangeProvided = !dateFromString.isEmpty() && !dateToString.isEmpty();
+        
+        if (isDateRangeProvided) {
+            try {
+                dateFrom = formatter.parse(dateFromString);
+                dateTo = formatter.parse(dateToString);
+            } catch (java.text.ParseException e) {
+                res.setSuccess(false);
+                res.setStatus(400);
+                res.setMessage("Invalid date format");
+                return ResponseEntity.badRequest().body(res);
+            }
+
+            if (dateFrom.compareTo(dateTo) > 0) {
+                res.setSuccess(false);
+                res.setStatus(400);
+                res.setMessage("dateForm cannot be greater than dateTo");
+                return ResponseEntity.badRequest().body(res);
+            }
+
+            // Add one day to dateTo using the Calendar class
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateTo);
+            calendar.add(Calendar.DAY_OF_MONTH, 1); // Add one day
+            dateTo = calendar.getTime();
+        }
+        
+        List<Imports> allImports;
+        try {
+            if (isDateRangeProvided) {
+                allImports = importsFacade.searchImportByDate(dateFrom, dateTo);
+            } else {
+                allImports = importsFacade.findAll();
+            }
+        } catch (ParseException e) {
+            res.setSuccess(false);
+            res.setStatus(500);
+            res.setMessage("Failed to retrieve outbound data");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+        }
+
+        List<ImportRes> data = new ArrayList<>();
+        for (Imports importItem : allImports) {
+            // Handle import details
+            List<ImportDetailRes> listDetail = new ArrayList<>();
+            
+            for (ImportDetails importDetail : importDetailsFacade.findByImportID(importItem.getImportID())) {
+                listDetail.add(
+                    ImportDetailRes.builder()
+                            .materialID(importDetail.getMaterials().getMaterialID())
+                            .materialName(importDetail.getMaterials().getName())
+                            .unit(importDetail.getMaterials().getUnit())
+                            .materialImage(FileSupport.perfectImg(request, "material", importDetail.getMaterials().getImage()))
+                            .supplierID(importDetail.getSupplierID().getSupplierID())
+                            .supplierContactName(importDetail.getSupplierID().getContactName())
+                            .supplierContactNumber(importDetail.getSupplierID().getContactNumber())
+                            .suppplierAddress(importDetail.getSupplierID().getAddress())
+                            .unitPrice(importDetail.getUnitPrice())
+                            .quantity(importDetail.getQuantity())
+                            .build()
+                );
+            }
+            
+            data.add(
+                ImportRes.builder()
+                    .importID(importItem.getImportID())
+                    .importDate(formatter.format(importItem.getDate()))
+                    .details(listDetail)
+                    .build()
+            );
+        }
+
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully searching outbound");
+        res.setData(data);
+        return ResponseEntity.ok(res);
     }
 
     private ImportsFacadeLocal lookupImportsFacadeLocal() {

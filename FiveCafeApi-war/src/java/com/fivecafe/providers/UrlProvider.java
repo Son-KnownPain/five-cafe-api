@@ -145,8 +145,10 @@ public class UrlProvider {
         
         public static final String ALL = "/all";
         public static final String STORE = "/store";
+        public static final String STORE_MAT_ITEM = "/store-mat-item";
         public static final String UPDATE = "/update";
         public static final String DELETE = "/delete";
+        public static final String DELETE_MAT_ITEM = "/delete-mat-item";
         public static final String SEARCH = "/search";
         
         @Override
@@ -343,6 +345,7 @@ public class UrlProvider {
         public static final String UPDATE_MAT_ITEM = "/update-mat-item";
         public static final String DELETE_MAT_ITEM = "/delete-mat-item";
         public static final String DELETE_IMPORT = "/delete_import";
+        public static final String SEARCH = "/search";
         
         
         @Override
@@ -437,6 +440,9 @@ public class UrlProvider {
         // NEED TO SIGN IN
         public static final String ALL ="/all";
         public static final String STORE = "/store";
+        public static final String ADD_DETAILS = "/add-details";
+        public static final String UPDATE_DETAIL_ITEM = "/update-detail-item";
+        public static final String DELETE_DETAIL_ITEM = "/delete-detail-item";
         public static final String UPDATE = "/update";
         public static final String DELETE = "/delete";
         public static final String SEARCH = "/search";

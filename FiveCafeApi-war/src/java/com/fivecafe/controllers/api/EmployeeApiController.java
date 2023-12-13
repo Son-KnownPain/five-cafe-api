@@ -96,6 +96,7 @@ public class EmployeeApiController {
         if (roleID.length() > 0) {
             role = rolesFacade.find(roleID);
         }
+        
         List<Employees> allEmps = employeesFacade.searchEmployees(keyword, role);
         
         List<EmployeeRes> data = new ArrayList<>();

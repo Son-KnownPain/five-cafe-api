@@ -18,6 +18,8 @@ public class WebUrlProvider {
         public static final String MATERIAL = "/material";
         public static final String PRODUCT = "/product";
         public static final String IMPORT = "/import";
+        public static final String EMP_SALARY = "/emp-salary";
+        public static final String OUTBOUND = "/outbound";
         public static final String BILL = "/bill";
         
         public static final String GREET1 = "/greet";
@@ -34,6 +36,8 @@ public class WebUrlProvider {
             signInUrls.add(EMPLOYEE);
             signInUrls.add(MATERIAL);
             signInUrls.add(PRODUCT);
+            signInUrls.add(EMP_SALARY);
+            signInUrls.add(OUTBOUND);
             signInUrls.add(BILL);
             
             return signInUrls;

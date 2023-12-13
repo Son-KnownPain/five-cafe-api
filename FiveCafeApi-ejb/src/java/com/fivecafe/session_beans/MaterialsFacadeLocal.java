@@ -4,6 +4,7 @@
  */
 package com.fivecafe.session_beans;
 
+import com.fivecafe.entities.MaterialCategories;
 import com.fivecafe.entities.Materials;
 import java.util.List;
 import javax.ejb.Local;
@@ -28,5 +29,7 @@ public interface MaterialsFacadeLocal {
     List<Materials> findRange(int[] range);
 
     int count();
+
+    public List<Materials> searchMaterialByCategoryAndName(MaterialCategories materialCategoriesID, String name);
     
 }

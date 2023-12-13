@@ -1,4 +1,4 @@
-package com.fivecafe.body.employeetimekeeping;
+package com.fivecafe.body.employeesalary;
 
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -7,15 +7,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateEmployeeTimeKeeping {
+public class UpdateSalaryReq {
+    @NotNull(message = "Employee Salary ID is required")
+    private int employeeSalaryID;
+    
     @NotNull(message = "Employee ID is required")
     private int employeeID;
-    
-    @NotNull(message = "Shift ID is required")
-    private int shiftID;
 }

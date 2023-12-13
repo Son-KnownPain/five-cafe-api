@@ -8,16 +8,17 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Admin
+ * @author ADMIN
  */
 @Entity
 @Table(name = "EmployeeTimeKeepings")
@@ -59,8 +60,8 @@ public class EmployeeTimeKeepings implements Serializable {
     @NotNull
     @Column(name = "IsPaid")
     private boolean isPaid;
-    @ManyToMany(mappedBy = "employeeTimeKeepingsCollection")
-    private Collection<EmployeeSalaries> employeeSalariesCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "employeeTimeKeepings")
+    private Collection<EmployeeSalaryDetails> employeeSalaryDetailsCollection;
     @JoinColumn(name = "EmployeeID", referencedColumnName = "EmployeeID")
     @ManyToOne(optional = false)
     private Employees employeeID;
@@ -115,12 +116,12 @@ public class EmployeeTimeKeepings implements Serializable {
     }
 
     @XmlTransient
-    public Collection<EmployeeSalaries> getEmployeeSalariesCollection() {
-        return employeeSalariesCollection;
+    public Collection<EmployeeSalaryDetails> getEmployeeSalaryDetailsCollection() {
+        return employeeSalaryDetailsCollection;
     }
 
-    public void setEmployeeSalariesCollection(Collection<EmployeeSalaries> employeeSalariesCollection) {
-        this.employeeSalariesCollection = employeeSalariesCollection;
+    public void setEmployeeSalaryDetailsCollection(Collection<EmployeeSalaryDetails> employeeSalaryDetailsCollection) {
+        this.employeeSalaryDetailsCollection = employeeSalaryDetailsCollection;
     }
 
     public Employees getEmployeeID() {

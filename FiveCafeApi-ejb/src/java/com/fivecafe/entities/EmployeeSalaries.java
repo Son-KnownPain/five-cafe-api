@@ -8,17 +8,17 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Admin
+ * @author ADMIN
  */
 @Entity
 @Table(name = "EmployeeSalaries")
@@ -50,14 +50,11 @@ public class EmployeeSalaries implements Serializable {
     @Column(name = "Date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
-    @JoinTable(name = "EmployeeSalaryDetails", joinColumns = {
-        @JoinColumn(name = "EmployeeSalaryID", referencedColumnName = "EmployeeSalaryID")}, inverseJoinColumns = {
-        @JoinColumn(name = "TimeKeepingID", referencedColumnName = "TimeKeepingID")})
-    @ManyToMany
-    private Collection<EmployeeTimeKeepings> employeeTimeKeepingsCollection;
     @JoinColumn(name = "EmployeeID", referencedColumnName = "EmployeeID")
     @ManyToOne(optional = false)
     private Employees employeeID;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "employeeSalaries")
+    private Collection<EmployeeSalaryDetails> employeeSalaryDetailsCollection;
 
     public EmployeeSalaries() {
     }
@@ -87,21 +84,21 @@ public class EmployeeSalaries implements Serializable {
         this.date = date;
     }
 
-    @XmlTransient
-    public Collection<EmployeeTimeKeepings> getEmployeeTimeKeepingsCollection() {
-        return employeeTimeKeepingsCollection;
-    }
-
-    public void setEmployeeTimeKeepingsCollection(Collection<EmployeeTimeKeepings> employeeTimeKeepingsCollection) {
-        this.employeeTimeKeepingsCollection = employeeTimeKeepingsCollection;
-    }
-
     public Employees getEmployeeID() {
         return employeeID;
     }
 
     public void setEmployeeID(Employees employeeID) {
         this.employeeID = employeeID;
+    }
+
+    @XmlTransient
+    public Collection<EmployeeSalaryDetails> getEmployeeSalaryDetailsCollection() {
+        return employeeSalaryDetailsCollection;
+    }
+
+    public void setEmployeeSalaryDetailsCollection(Collection<EmployeeSalaryDetails> employeeSalaryDetailsCollection) {
+        this.employeeSalaryDetailsCollection = employeeSalaryDetailsCollection;
     }
 
     @Override

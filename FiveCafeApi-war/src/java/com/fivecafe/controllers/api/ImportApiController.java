@@ -284,7 +284,7 @@ public class ImportApiController {
             res.setSuccess(true);
             res.setMessage("Cannot found import detail with import id and material id you provided");
 
-            return ResponseEntity.ok(res);
+            return ResponseEntity.badRequest().body(res);
         }
         
         importDetailsFacade.remove(importDetail);

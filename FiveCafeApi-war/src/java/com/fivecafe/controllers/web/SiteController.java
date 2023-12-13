@@ -69,6 +69,11 @@ public class SiteController {
         return "site/import";
     }
     
+    @GetMapping(""+WebUrlProvider.Site.EMP_SALARY)
+    public String empSalaryManagementPage() {
+        return "site/emp-salary";
+    }
+    
     @GetMapping(""+WebUrlProvider.Site.OUTBOUND)
     public String outboundManagementPage() {
         return "site/outbound";

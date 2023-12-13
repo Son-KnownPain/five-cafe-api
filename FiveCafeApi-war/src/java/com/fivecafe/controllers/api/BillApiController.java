@@ -21,6 +21,7 @@ import com.fivecafe.session_beans.BillsFacadeLocal;
 import com.fivecafe.session_beans.EmployeesFacadeLocal;
 import com.fivecafe.session_beans.ProductsFacadeLocal;
 import com.fivecafe.supports.FileSupport;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -378,10 +379,10 @@ public class BillApiController {
             } else {
                 allBills = billsFacade.findAll();
             }
-        } catch (Exception e) {
+        } catch (ParseException e) {
             res.setSuccess(false);
             res.setStatus(500);
-            res.setMessage("Failed to retrieve outbound data");
+            res.setMessage("Failed to retrieve bill data");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
         }
 

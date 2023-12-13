@@ -5,6 +5,7 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.Bills;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -36,11 +37,11 @@ public class BillsFacade extends AbstractFacade<Bills> implements BillsFacadeLoc
     }
     
     @Override
-     public List<Bills> getBillByDaterange(Date dateForm, Date dateTo){
+     public List<Bills> getBillByDaterange(Date dateForm, Date dateTo) throws ParseException{
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Bills> cq = cb.createQuery(Bills.class);
         Root<Bills> root = cq.from(Bills.class);
-        Path<Date> datePath = root.get("createDate");
+        Path<Date> datePath = root.get("createdDate");
         Predicate datePredicate = cb.between(datePath, dateForm, dateTo);
         
         cq.where(datePredicate);

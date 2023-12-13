@@ -19,8 +19,10 @@ import com.fivecafe.session_beans.EmployeeSalariesFacadeLocal;
 import com.fivecafe.session_beans.EmployeeSalaryDetailsFacadeLocal;
 import com.fivecafe.session_beans.EmployeeTimeKeepingsFacadeLocal;
 import com.fivecafe.session_beans.EmployeesFacadeLocal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,6 +32,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -377,6 +380,96 @@ public class EmployeeSalariesApiController {
                         .message("Successfully delete employee salary detail")
                         .build()
         );
+    }
+    
+    @GetMapping("" + UrlProvider.EmployeeSalaries.SEARCH)
+    public ResponseEntity<DataResponse<List<EmployeeSalariesResponse>>> searchEmployeeSalariesByDate(
+            @RequestParam(name = "dateForm", defaultValue = "") String dateFromString,
+            @RequestParam(name = "dateTo", defaultValue = "") String dateToString,
+            HttpServletRequest request) throws java.text.ParseException {
+
+        DataResponse<List<EmployeeSalariesResponse>> res = new DataResponse<>();
+        
+        //format date
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        
+        Date dateFrom = null;
+        Date dateTo = null;
+
+        // Check if dateForm and dateTo are empty
+        boolean isDateRangeProvided = !dateFromString.isEmpty() && !dateToString.isEmpty();
+        
+        if (isDateRangeProvided) {
+            try {
+                dateFrom = formatter.parse(dateFromString);
+                dateTo = formatter.parse(dateToString);
+            } catch (java.text.ParseException e) {
+                res.setSuccess(false);
+                res.setStatus(400);
+                res.setMessage("Invalid date format");
+                return ResponseEntity.badRequest().body(res);
+            }
+
+            if (dateFrom.compareTo(dateTo) > 0) {
+                res.setSuccess(false);
+                res.setStatus(400);
+                res.setMessage("dateForm cannot be greater than dateTo");
+                return ResponseEntity.badRequest().body(res);
+            }
+
+            // Add one day to dateTo using the Calendar class
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateTo);
+            calendar.add(Calendar.DAY_OF_MONTH, 1); // Add one day
+            dateTo = calendar.getTime();
+        }
+        
+        List<EmployeeSalaries> allEmployeeSalaries;
+        try {
+            if (isDateRangeProvided) {
+                allEmployeeSalaries = employeeSalariesFacade.searchEmployeeSalariesByDate(dateFrom, dateTo);
+            } else {
+                allEmployeeSalaries = employeeSalariesFacade.findAll();
+            }
+        } catch (java.text.ParseException e) {
+            res.setSuccess(false);
+            res.setStatus(500);
+            res.setMessage("Failed to retrieve outbound data");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+        }
+
+        List<EmployeeSalariesResponse> data = new ArrayList<>();
+        for (EmployeeSalaries employeeSalaries : allEmployeeSalaries) {
+            List<EmployeeSalaryDetailResponse> details = new ArrayList<>();
+            for (EmployeeSalaryDetails detail : employeeSalaryDetailsFacade.findByEmpSalaryID(employeeSalaries.getEmployeeSalaryID())) {
+                
+                EmployeeSalaryDetailResponse detailResponse = new EmployeeSalaryDetailResponse();
+                detailResponse.setEmployeeTimekeepingID(detail.getEmployeeTimeKeepings().getTimeKeepingID());
+                detailResponse.setShiftName(detail.getEmployeeTimeKeepings().getShiftID().getName());
+                detailResponse.setSalary(detail.getEmployeeTimeKeepings().getSalary());
+                detailResponse.setTimeKeepingDate(formatter.format(detail.getEmployeeTimeKeepings().getDate()));
+                detailResponse.setBonus((int) (detail.getBonus() * 100));
+                detailResponse.setDeduction(detail.getDeduction());
+                
+                details.add(detailResponse);
+            }
+            
+            data.add(EmployeeSalariesResponse.builder()
+                    .employeeSalaryID(employeeSalaries.getEmployeeSalaryID())
+                    .employeeID(employeeSalaries.getEmployeeID().getEmployeeID())
+                    .employeeName(employeeSalaries.getEmployeeID().getName())
+                    .date(formatter.format(employeeSalaries.getDate()))
+                    .details(details)
+                    .build()
+            );
+        }
+
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully searching outbound");
+        res.setData(data);
+        return ResponseEntity.ok(res);
     }
     
     private EmployeeSalariesFacadeLocal lookupEmployeeSalariesFacadeLocal() {

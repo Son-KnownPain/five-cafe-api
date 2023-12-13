@@ -5,6 +5,8 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.EmployeeSalaries;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -28,5 +30,8 @@ public interface EmployeeSalariesFacadeLocal {
     List<EmployeeSalaries> findRange(int[] range);
 
     int count();
+
+    public List<EmployeeSalaries> searchEmployeeSalariesByDate(Date dateFrom, Date dateTo) throws ParseException;
+
     
 }

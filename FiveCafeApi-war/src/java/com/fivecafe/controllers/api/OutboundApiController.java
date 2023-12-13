@@ -20,6 +20,7 @@ import com.fivecafe.session_beans.OutboundsFacadeLocal;
 import com.fivecafe.supports.FileSupport;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,9 +29,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import org.springframework.expression.ParseException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -328,15 +328,59 @@ public class OutboundApiController {
 
     @GetMapping("" + UrlProvider.Outbound.SEARCH)
     public ResponseEntity<DataResponse<List<OutboundResponse>>> searchOutbound(
-            @RequestParam(name = "dateForm", defaultValue = "") Date dateForm,
-            @RequestParam(name = "dateTo", defaultValue = "") Date dateTo,
-            HttpServletRequest request) {
+            @RequestParam(name = "dateForm", defaultValue = "") String dateFormString,
+            @RequestParam(name = "dateTo", defaultValue = "") String dateToString,
+            HttpServletRequest request) throws java.text.ParseException {
 
-        //format date
-        SimpleDateFormat formDate = new SimpleDateFormat("dd/MM/yyyy");
-        formDate.setLenient(false); // Không cho phép ngày tháng không hợp lệ
+        DataResponse<List<OutboundResponse>> res = new DataResponse<>();
 
-        List<Outbounds> allOuts = outboundsFacade.getOutboundsByDaterange(dateForm, dateTo);
+        // Format date
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        Date dateFrom = null;
+        Date dateTo = null;
+
+        // Check if dateForm and dateTo are empty
+        boolean isDateRangeProvided = !dateFormString.isEmpty() && !dateToString.isEmpty();
+
+        if (isDateRangeProvided) {
+            try {
+                dateFrom = formatter.parse(dateFormString);
+                dateTo = formatter.parse(dateToString);
+            } catch (java.text.ParseException e) {
+                res.setSuccess(false);
+                res.setStatus(400);
+                res.setMessage("Invalid date format");
+                return ResponseEntity.badRequest().body(res);
+            }
+
+            if (dateFrom.compareTo(dateTo) > 0) {
+                res.setSuccess(false);
+                res.setStatus(400);
+                res.setMessage("dateForm cannot be greater than dateTo");
+                return ResponseEntity.badRequest().body(res);
+            }
+
+            // Add one day to dateTo using the Calendar class
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateTo);
+            calendar.add(Calendar.DAY_OF_MONTH, 1); // Add one day
+            dateTo = calendar.getTime();
+        }
+
+        List<Outbounds> allOuts;
+        try {
+            if (isDateRangeProvided) {
+                allOuts = outboundsFacade.getOutboundsByDaterange(dateFrom, dateTo);
+            } else {
+                allOuts = outboundsFacade.findAll();
+            }
+        } catch (Exception e) {
+            res.setSuccess(false);
+            res.setStatus(500);
+            res.setMessage("Failed to retrieve outbound data");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+        }
 
         List<OutboundResponse> data = new ArrayList<>();
 
@@ -345,16 +389,15 @@ public class OutboundApiController {
                     OutboundResponse.builder()
                             .outboundID(outbounds.getOutboundID())
                             .employeeID(outbounds.getEmployeeID().getEmployeeID())
-                            .date(formDate.format(outbounds.getDate()))
+                            .date(formatter.format(outbounds.getDate()))
+                            .name(outbounds.getEmployeeID().getName())
                             .build()
             );
         }
 
-        DataResponse<List<OutboundResponse>> res = new DataResponse<>();
-
         res.setSuccess(true);
         res.setStatus(200);
-        res.setMessage("Successfully searching outbound");
+        res.setMessage("Outbound search successful");
         res.setData(data);
         return ResponseEntity.ok(res);
     }

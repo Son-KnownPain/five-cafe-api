@@ -1,8 +1,13 @@
 // Fetch table data
-function fetchTableData(auto  = {}) {
-    const { detailClickID = false } = auto;
+function fetchTableData(searching=null) {
+    
+    let fetchPath = window.APP_NAME;
+    if (searching) {
+        fetchPath += `/api/import/search?dateForm=${searching.dateForm}&dateTo=${searching.dateTo}`
+    } else {
+        fetchPath += `/api/import/all`;
+    }
 
-    const fetchPath = window.APP_NAME + '/api/import/all';
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
@@ -215,6 +220,18 @@ function fetchTableData(auto  = {}) {
     .catch(_res => { })
 }
 fetchTableData();
+
+// Hands Search
+document.getElementById('search-form').onsubmit = e => {
+    e.preventDefault();
+    const dateForm = document.getElementById('dateForm').value;
+    const dateTo = document.getElementById('dateTo').value;
+    fetchTableData({
+        dateForm: dateForm,
+        dateTo: dateTo
+    })
+ }
+ 
 
 // Alerts
 let successAlert = "";

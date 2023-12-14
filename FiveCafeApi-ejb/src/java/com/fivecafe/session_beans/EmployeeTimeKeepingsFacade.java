@@ -5,12 +5,9 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.EmployeeTimeKeepings;
-import com.fivecafe.entities.Employees;
-import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 /**
  *
@@ -31,11 +28,4 @@ public class EmployeeTimeKeepingsFacade extends AbstractFacade<EmployeeTimeKeepi
         super(EmployeeTimeKeepings.class);
     }
     
-    @Override
-    public List<EmployeeTimeKeepings> findByEmployeeID(Employees emp) {
-        Query query = em.createNamedQuery("EmployeeTimeKeepings.findByEmployeeID", EmployeeTimeKeepings.class);
-        query.setParameter("employeeID", emp);
-        
-        return query.getResultList();
-    }
 }

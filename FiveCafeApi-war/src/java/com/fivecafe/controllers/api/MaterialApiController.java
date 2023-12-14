@@ -67,6 +67,33 @@ public class MaterialApiController {
         res.setData(data);
         return ResponseEntity.ok(res);
     }
+    
+    @GetMapping(""+UrlProvider.Material.GETQUANTITYINSTOCK)
+    public ResponseEntity<DataResponse<List<MaterialResponse>>> allQuantityInStockBelowFive(HttpServletRequest request){
+        List<Materials> allMaterial = materialsFacade.getMaterialsBelowStockQuantity(5);
+
+        List<MaterialResponse> data = new ArrayList<>();
+
+        for (Materials materials : allMaterial) {
+            data.add(MaterialResponse.builder()
+                    .materialID(materials.getMaterialID())
+                    .materialCategoryID(materials.getMaterialCategoryID().getMaterialCategoryID())
+                    .materialCategoryName(materials.getMaterialCategoryID().getName())
+                    .name(materials.getName())
+                    .unit(materials.getUnit())
+                    .quantityInStock(materials.getQuantityInStock())
+                    .image(FileSupport.perfectImg(request, "material", materials.getImage()))
+                    .build());
+        }
+        
+        DataResponse<List<MaterialResponse>> res = new DataResponse<>();
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully get all quantity in stock < 5");
+        res.setData(data);
+        return ResponseEntity.ok(res);
+    }
 
     @PostMapping("" + UrlProvider.Material.STORE)
     public ResponseEntity<StandardResponse> store(

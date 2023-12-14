@@ -98,4 +98,9 @@ public class SiteController {
     public String myBillsPage() {
         return "site/my-bills";
     }
+
+    @GetMapping(""+WebUrlProvider.Site.TIMEKEEPING)
+    public String timekeepingPage() {
+        return "site/etk";
+    }
 }

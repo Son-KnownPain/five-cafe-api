@@ -29,14 +29,28 @@ public class UrlProvider {
         public static final String INFO = "/info";
         public static final String ORDERING = "/ordering";
         public static final String CREATE_OUTBOUND = "/create-outbound";
+        public static final String ALL_MY_BILLS = "/all-my-bills";
+        public static final String UPDATE_MY_BILL = "/update-my-bill";
+        public static final String ADD_PRO_OF_BILL = "/add-pro-of-bill";
+        public static final String UPDATE_PRO_OF_BILL = "/update-pro-of-bill";
+        public static final String DELETE_PRO_OF_BILL = "/delete-pro-of-bill";
+        public static final String ALL_MY_ETK = "/all-my-etk";
         
         @Override
         public List<String> signInUrls() {
             ArrayList<String> signInUrls = new ArrayList<>();
             signInUrls.add(addApiPrefix(addEmployeePrefix(INFO)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(LOGOUT)));
+            
+            // Employee interactive
             signInUrls.add(addApiPrefix(addEmployeePrefix(ORDERING)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(CREATE_OUTBOUND)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_BILLS)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_ETK)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_MY_BILL)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(ADD_PRO_OF_BILL)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_PRO_OF_BILL)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(DELETE_PRO_OF_BILL)));
             return signInUrls;
         }
         
@@ -249,6 +263,8 @@ public class UrlProvider {
         public static final String UPDATE = "/update";
         public static final String DELETE = "/delete";
         public static final String SEARCH = "/search";
+        public static final String GETQUANTITYINSTOCK = "/get-the-quantityinstock-below-five";
+        
         
         
         @Override

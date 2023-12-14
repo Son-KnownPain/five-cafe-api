@@ -1,5 +1,7 @@
 // Fetch table data
-function fetchTableData(searching=null) {
+function fetchTableData(prop = {}) {
+    const { detailClickID = null, searching = null } = prop;
+
     let fetchPath = window.APP_NAME;
     if (searching) {
         fetchPath += `/api/bill/search?dateForm=${searching.dateForm}&dateTo=${searching.dateTo}`
@@ -17,14 +19,11 @@ function fetchTableData(searching=null) {
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 <input type="checkbox" name="delete-checkbox" value="${item.billID}" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             </th>
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                ${item.billID}
-                            </th>
                             <td class="px-6 py-4">
-                                ${item.employeeID}
+                                ${item.employeeName}
                             </td>
                             <td class="px-6 py-4">
-                                ${item.billStatusID}
+                                ${item.billStatusValue}
                             </td>
                             <td class="px-6 py-4">
                                 ${item.createDate}
@@ -264,8 +263,10 @@ document.getElementById('search-form').onsubmit = e => {
     const dateForm = document.getElementById('dateForm').value;
     const dateTo = document.getElementById('dateTo').value;
     fetchTableData({
-        dateForm: dateForm,
-        dateTo: dateTo
+        searching: {
+            dateForm: dateForm,
+            dateTo: dateTo
+        }
     })
  }
 

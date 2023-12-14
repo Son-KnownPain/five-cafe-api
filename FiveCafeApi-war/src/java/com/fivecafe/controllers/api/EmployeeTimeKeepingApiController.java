@@ -15,6 +15,7 @@ import com.fivecafe.session_beans.ShiftsFacadeLocal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -48,7 +49,7 @@ public class EmployeeTimeKeepingApiController {
     EmployeeTimeKeepingsFacadeLocal employeeTimeKeepingsFacade = lookupEmployeeTimeKeepingsFacadeLocal();
 
     @GetMapping("" + UrlProvider.EmployeeTimeKeeping.ALL)
-    public ResponseEntity<DataResponse<List<EmployeeTimeKeepingResponse>>> all(HttpServletRequest request) {
+    public ResponseEntity<DataResponse<List<EmployeeTimeKeepingResponse>>> all() {
         List<EmployeeTimeKeepings> allETK = employeeTimeKeepingsFacade.findAll();
         SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
         List<EmployeeTimeKeepingResponse> data = new ArrayList<>();
@@ -57,6 +58,7 @@ public class EmployeeTimeKeepingApiController {
             data.add(EmployeeTimeKeepingResponse.builder()
                     .timeKeepingID(empTK.getTimeKeepingID())
                     .employeeID(empTK.getEmployeeID().getEmployeeID())
+                    .employeeName(empTK.getEmployeeID().getName())
                     .shiftID(empTK.getShiftID().getShiftID())
                     .shiftName(empTK.getShiftID().getName())
                     .date(fmt.format(empTK.getDate()))
@@ -197,6 +199,84 @@ public class EmployeeTimeKeepingApiController {
                         .message("Successfully delete employee time keepings")
                         .build()
         );
+    }
+    
+    @GetMapping("" + UrlProvider.Import.SEARCH)
+    public ResponseEntity<DataResponse<List<EmployeeTimeKeepingResponse>>> searchImportByDate(
+            @RequestParam(name = "dateFrom", defaultValue = "") String dateFromString,
+            @RequestParam(name = "dateTo", defaultValue = "") String dateToString,
+            HttpServletRequest request) throws java.text.ParseException {
+
+        DataResponse<List<EmployeeTimeKeepingResponse>> res = new DataResponse<>();
+        
+        //format date
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        
+        Date dateFrom = null;
+        Date dateTo = null;
+
+        // Check if dateForm and dateTo are empty
+        boolean isDateRangeProvided = !dateFromString.isEmpty() && !dateToString.isEmpty();
+        
+        if (isDateRangeProvided) {
+            try {
+                dateFrom = formatter.parse(dateFromString);
+                dateTo = formatter.parse(dateToString);
+            } catch (java.text.ParseException e) {
+                res.setSuccess(false);
+                res.setStatus(400);
+                res.setMessage("Invalid date format");
+                return ResponseEntity.badRequest().body(res);
+            }
+
+            if (dateFrom.compareTo(dateTo) > 0) {
+                res.setSuccess(false);
+                res.setStatus(400);
+                res.setMessage("dateForm cannot be greater than dateTo");
+                return ResponseEntity.badRequest().body(res);
+            }
+
+            // Add one day to dateTo using the Calendar class
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateTo);
+            calendar.add(Calendar.DAY_OF_MONTH, 1); // Add one day
+            dateTo = calendar.getTime();
+        }
+        
+        List<EmployeeTimeKeepings> allEmployeeTimeKeepingResponse;
+        try {
+            if (isDateRangeProvided) {
+                allEmployeeTimeKeepingResponse = employeeTimeKeepingsFacade.searchEmployeeTimeKeepingByDate(dateFrom, dateTo);
+            } else {
+                allEmployeeTimeKeepingResponse = employeeTimeKeepingsFacade.findAll();
+            }
+        } catch (ParseException e) {
+            res.setSuccess(false);
+            res.setStatus(500);
+            res.setMessage("Failed to retrieve outbound data");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+        }
+
+        List<EmployeeTimeKeepingResponse> data = new ArrayList<>();
+        for (EmployeeTimeKeepings employeeTimeKeepings : allEmployeeTimeKeepingResponse) {
+            data.add(EmployeeTimeKeepingResponse.builder()
+                    .timeKeepingID(employeeTimeKeepings.getTimeKeepingID())
+                    .employeeID(employeeTimeKeepings.getEmployeeID().getEmployeeID())
+                    .shiftID(employeeTimeKeepings.getShiftID().getShiftID())
+                    .shiftName(employeeTimeKeepings.getShiftID().getName())
+                    .date(formatter.format(employeeTimeKeepings.getDate()))
+                    .salary(employeeTimeKeepings.getSalary())
+                    .isPaid(employeeTimeKeepings.getIsPaid())
+                    .build()
+            );
+        }
+
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully searching employee time keeping");
+        res.setData(data);
+        return ResponseEntity.ok(res);
     }
 
     private EmployeeTimeKeepingsFacadeLocal lookupEmployeeTimeKeepingsFacadeLocal() {

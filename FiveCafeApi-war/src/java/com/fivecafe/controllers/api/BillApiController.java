@@ -211,11 +211,7 @@ public class BillApiController {
         newbillDetail.setProducts(products);
         newbillDetail.setUnitPrice(products.getPrice());
         newbillDetail.setQuantity(reqBody.getQuantity());
-
-        // Update material quantity in stock
-//        products.setQuantityInStock(products.getQuantityInStock() + reqBody.getQuantity());
         billDetailsFacade.create(newbillDetail);
-        productsFacade.edit(products);
 
         StandardResponse res = StandardResponse.builder()
                 .status(200)

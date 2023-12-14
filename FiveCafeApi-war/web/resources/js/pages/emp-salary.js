@@ -1,8 +1,14 @@
 // Fetch table data
-function fetchTableData(auto  = {}) {
-    const { detailClickID = false } = auto;
+function fetchTableData(searching = null) {
+
+    let fetchPath = window.APP_NAME;
     
-    const fetchPath = window.APP_NAME + '/api/salary/all';
+    if (searching) {
+        fetchPath += `/api/salary/search?dateForm=${searching.dateForm}&dateTo=${searching.dateTo}`
+    } else {
+        fetchPath += `/api/salary/all`;
+    }
+
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
@@ -243,6 +249,17 @@ function fetchTableData(auto  = {}) {
     .catch(res => { })
 }
 fetchTableData();
+
+// Hands Search
+document.getElementById('search-form').onsubmit = e => {
+    e.preventDefault();
+    const dateForm = document.getElementById('dateForm').value;
+    const dateTo = document.getElementById('dateTo').value;
+    fetchTableData({
+        dateForm: dateForm,
+        dateTo: dateTo
+    })
+ }
 
 // Alerts
 let successAlert = "";

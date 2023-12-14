@@ -1,8 +1,11 @@
 // Fetch table data
-function fetchTableData(auto  = {}) {
-    const { detailClickID = false } = auto;
-
-    const fetchPath = window.APP_NAME + '/api/bill/all';
+function fetchTableData(searching=null) {
+    let fetchPath = window.APP_NAME;
+    if (searching) {
+        fetchPath += `/api/bill/search?dateForm=${searching.dateForm}&dateTo=${searching.dateTo}`
+    } else  {
+        fetchPath += '/api/bill/all';
+    }
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
@@ -94,8 +97,14 @@ function fetchTableData(auto  = {}) {
             if (!document.getElementById('detail-add-form').classList.contains('hidden')) {
                 document.getElementById('detail-add-form').classList.add('hidden');
             }
+            if (!document.getElementById('edit-bill-form').classList.contains('hidden')) {
+                document.getElementById('edit-bill-form').classList.add('hidden');
+            }
             document.getElementById('cancel-update-pro-btn').onclick = () => {
                 document.getElementById('detail-update-form').classList.add('hidden');
+            }
+            document.getElementById('cancel-edit-bill-btn').onclick = () => {
+                document.getElementById('edit-bill-form').classList.add('hidden');
             }
             document.getElementById('cancel-add-pro-btn').onclick = () => {
                 document.getElementById('detail-add-form').classList.add('hidden');
@@ -105,15 +114,27 @@ function fetchTableData(auto  = {}) {
             Array.from(detailBtns).forEach(btn => {
                 btn.onclick = () => {
                     document.getElementById('detail-update-form').classList.add('hidden');
+                    document.getElementById('edit-bill-form').classList.add('hidden');
 
                     const billItem = res.data.find(item => item.billID == btn.dataset.detailId);
 
                     document.getElementById('billIDEdit').value = billItem.billID;
 
                     document.getElementById('bill-info').innerHTML = `
-                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Bill ID: <span class="font-bold dark:text-white text-black">${billItem.billID}</span></p>
+                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">
+                            Bill ID: 
+                            <span class="font-bold dark:text-white text-black">
+                                ${billItem.billID}
+                            </span>
+                            <button data-edit-bill-id="${billItem.billID}" class="ml-2 text-yellow-700 border border-yellow-700 hover:bg-yellow-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-yellow-500 dark:text-yellow-500 dark:hover:text-white dark:focus:ring-yellow-800 dark:hover:bg-yellow-500">
+                                <i class="fa-solid fa-pencil"></i>
+                            </button>
+                        </p>
                         <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Bill Create Date: <span class="font-bold dark:text-white text-black">${billItem.createDate}</span></p>
-                        <p class="text-base font-normal dark:text-gray-400 text-gray-700">Total price: <span class="font-bold dark:text-white text-black">${window.currencyOutput(billItem.details.reduce((acc, cur) => acc + cur.unitPrice * cur.quantity, 0))}</span></p>
+                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Total price: <span class="font-bold dark:text-white text-black">${window.currencyOutput(billItem.details.reduce((acc, cur) => acc + cur.unitPrice * cur.quantity, 0))}</span></p>
+                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Employee: <span class="font-bold dark:text-white text-black">${billItem.employeeName}</span></p>
+                        <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">Bill Status: <span class="font-bold dark:text-white text-black">${billItem.billStatusValue}</span></p>
+                        <p class="text-base font-normal dark:text-gray-400 text-gray-700">Card Code: <span class="font-bold dark:text-white text-black">${billItem.cardCode}</span></p>
                     `
 
                     document.getElementById("details-content").innerHTML = billItem.details.map(detail => `
@@ -210,6 +231,19 @@ function fetchTableData(auto  = {}) {
                             document.getElementById('detail-update-form').classList.remove('hidden');
                         }
                     })
+
+                    // Handle click edit Bill item
+                    const editBillBtns = document.querySelectorAll('button[data-edit-bill-id]');
+                    
+                    Array.from(editBillBtns).forEach(btn => {
+                        btn.onclick = () => {
+                            const billItemEdit = res.data.find(x => x.billID == btn.dataset.editBillId)
+                            document.getElementById('employeeIDEdit').value = billItemEdit.employeeID;
+                            document.getElementById('billStatusIDEdit').value = billItemEdit.billStatusID;
+                            document.getElementById('cardCodeEdit').value = billItemEdit.cardCode;
+                            document.getElementById('edit-bill-form').classList.remove('hidden');
+                        }
+                    })
                 }
             })
             
@@ -222,6 +256,17 @@ function fetchTableData(auto  = {}) {
     .catch(_res => { })
 }
 fetchTableData();
+
+// Hands Search
+document.getElementById('search-form').onsubmit = e => {
+    e.preventDefault();
+    const dateForm = document.getElementById('dateForm').value;
+    const dateTo = document.getElementById('dateTo').value;
+    fetchTableData({
+        dateForm: dateForm,
+        dateTo: dateTo
+    })
+ }
 
 // Alerts
 let successAlert = "";
@@ -516,6 +561,7 @@ function fetchEmployees(selectsID) {
 }
 fetchEmployees([
     'employeeID',
+    'employeeIDEdit',
 ]);
 
 function fetchBillStatus(selectsID) {
@@ -538,4 +584,5 @@ function fetchBillStatus(selectsID) {
 }
 fetchBillStatus([
     'billStatusID',
+    'billStatusIDEdit',
 ]);

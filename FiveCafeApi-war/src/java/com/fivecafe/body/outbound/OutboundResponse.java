@@ -18,4 +18,5 @@ public class OutboundResponse {
     private int employeeID;
     private String name;
     private List<OutboundDetailResponse> details;
+    
 }

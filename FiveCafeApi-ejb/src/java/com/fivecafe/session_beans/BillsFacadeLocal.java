@@ -5,6 +5,8 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.Bills;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -28,5 +30,8 @@ public interface BillsFacadeLocal {
     List<Bills> findRange(int[] range);
 
     int count();
+
+    public List<Bills> getBillByDaterange(Date dateForm, Date dateTo) throws ParseException;
+
     
 }

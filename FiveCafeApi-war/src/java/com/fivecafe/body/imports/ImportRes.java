@@ -15,5 +15,8 @@ import lombok.Setter;
 public class ImportRes {
     private int importID;
     private String importDate;
+    private double unitPrice;
+    private int quantity;
+    private int supplierID;
     private List<ImportDetailRes> details;
 }

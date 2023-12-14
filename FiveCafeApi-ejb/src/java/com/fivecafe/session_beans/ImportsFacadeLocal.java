@@ -5,6 +5,8 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.Imports;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -28,5 +30,7 @@ public interface ImportsFacadeLocal {
     List<Imports> findRange(int[] range);
 
     int count();
+
+    public List<Imports> searchImportByDate(Date dateForm, Date dateTo) throws ParseException;
     
 }

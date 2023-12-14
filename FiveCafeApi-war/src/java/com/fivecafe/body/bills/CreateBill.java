@@ -2,6 +2,7 @@
 
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,7 +41,8 @@ public class CreateBill {
         @NotNull(message = "Bill status ID is required")
         private int productID;
 
-        @NotNull(message = "quatity is required")
+        @NotNull(message = "Quatity is required")
+        @Min(value = 1, message = "Min quantity is 1")
         private int quantity;
 
     }

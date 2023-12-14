@@ -1,5 +1,6 @@
 package com.fivecafe.body.material;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,7 @@ public class CreateMaterial {
     private String unit;
     
     @NotNull(message = "Quantity in stock is required")
+    @Min(value = 0, message = "Min quantity in stock value is 0")
     private int quantityInStock;
     
     private String image;

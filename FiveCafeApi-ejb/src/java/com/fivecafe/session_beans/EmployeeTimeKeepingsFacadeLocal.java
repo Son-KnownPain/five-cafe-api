@@ -7,6 +7,7 @@ package com.fivecafe.session_beans;
 import com.fivecafe.entities.EmployeeTimeKeepings;
 import java.text.ParseException;
 import java.util.Date;
+import com.fivecafe.entities.Employees;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -32,5 +33,6 @@ public interface EmployeeTimeKeepingsFacadeLocal {
     int count();
 
     public List<EmployeeTimeKeepings> searchEmployeeTimeKeepingByDate(Date dateFrom, Date dateTo) throws ParseException;
+    public List<EmployeeTimeKeepings> findByEmployeeID(Employees emp);
     
 }

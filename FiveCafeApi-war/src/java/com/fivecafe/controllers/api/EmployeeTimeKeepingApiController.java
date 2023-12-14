@@ -49,7 +49,7 @@ public class EmployeeTimeKeepingApiController {
     EmployeeTimeKeepingsFacadeLocal employeeTimeKeepingsFacade = lookupEmployeeTimeKeepingsFacadeLocal();
 
     @GetMapping("" + UrlProvider.EmployeeTimeKeeping.ALL)
-    public ResponseEntity<DataResponse<List<EmployeeTimeKeepingResponse>>> all(HttpServletRequest request) {
+    public ResponseEntity<DataResponse<List<EmployeeTimeKeepingResponse>>> all() {
         List<EmployeeTimeKeepings> allETK = employeeTimeKeepingsFacade.findAll();
         SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
         List<EmployeeTimeKeepingResponse> data = new ArrayList<>();
@@ -58,6 +58,7 @@ public class EmployeeTimeKeepingApiController {
             data.add(EmployeeTimeKeepingResponse.builder()
                     .timeKeepingID(empTK.getTimeKeepingID())
                     .employeeID(empTK.getEmployeeID().getEmployeeID())
+                    .employeeName(empTK.getEmployeeID().getName())
                     .shiftID(empTK.getShiftID().getShiftID())
                     .shiftName(empTK.getShiftID().getName())
                     .date(fmt.format(empTK.getDate()))

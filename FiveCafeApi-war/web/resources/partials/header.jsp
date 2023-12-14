@@ -20,13 +20,13 @@
         </div>
     </div>
     <div class="mt-3">
-        <div class="flex items-center text-gray-700 dark:text-green-300 text-sm">
+        <div class="flex items-center text-gray-700 dark:text-gray-300 text-sm">
             <i class="fa-solid fa-square-phone-flip mr-2"></i>
             <span id="info-phone">
                 <!-- Rendered by JS -->
             </span>
         </div>
-        <div class="mt-2 flex items-center text-gray-700 dark:text-green-300 text-sm">
+        <div class="mt-2 flex items-center text-gray-700 dark:text-gray-300 text-sm">
             <i class="fa-solid fa-clipboard-user mr-2"></i>
             <span id="info-role-name">
                 <!-- Rendered by JS -->
@@ -35,15 +35,19 @@
     </div>
     <!-- Actions -->
     <div class="mt-2">
-        <a href="#" class="w-full mt-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        <a href="/FiveCafeApi-war/my-bills" class="w-full mt-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
             <i class="fa-solid fa-receipt mr-2"></i>
             My Bills
+        </a>
+        <a href="#" class="w-full mt-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            <i class="fa-solid fa-business-time mr-2"></i>
+            My Timekeepings
         </a>
         <a href="#" class="w-full mt-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
             <i class="fa-solid fa-money-bill mr-2"></i>
             My Salaries
         </a>
-        <a onclick="logout()" class="w-full mt-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        <a onclick="logout()" class="cursor-pointer w-full mt-3 text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
             <i class="fa-solid fa-right-from-bracket mr-2"></i>
             Logout
         </a>

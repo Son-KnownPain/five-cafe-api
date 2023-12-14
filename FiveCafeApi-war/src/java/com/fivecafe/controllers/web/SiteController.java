@@ -83,4 +83,24 @@ public class SiteController {
     public String billManagementPage() {
         return "site/bill";
     }
+
+    @GetMapping(""+WebUrlProvider.Site.ORDERING)
+    public String orderingPage() {
+        return "site/ordering";
+    }
+
+    @GetMapping(""+WebUrlProvider.Site.CREATE_OUTBOUND)
+    public String createOutboundPage() {
+        return "site/create-outbound";
+    }
+
+    @GetMapping(""+WebUrlProvider.Site.MY_BILLS)
+    public String myBillsPage() {
+        return "site/my-bills";
+    }
+
+    @GetMapping(""+WebUrlProvider.Site.TIMEKEEPING)
+    public String timekeepingPage() {
+        return "site/etk";
+    }
 }

@@ -10,7 +10,6 @@ import com.fivecafe.entities.BillDetailsPK;
 import com.fivecafe.entities.BillStatuses;
 import com.fivecafe.entities.Bills;
 import com.fivecafe.entities.Employees;
-import com.fivecafe.entities.ImportDetails;
 import com.fivecafe.entities.Products;
 import com.fivecafe.models.responses.DataResponse;
 import com.fivecafe.models.responses.StandardResponse;
@@ -123,9 +122,6 @@ public class BillApiController {
             }
 
         }
-        if (br.hasErrors()) {
-            throw new MethodArgumentNotValidException(null, br);
-        }
         Employees employees = employeesFacade.find(reqBody.getEmployeeID());
         if (employees == null) {
             br.rejectValue("employeeID", "error.employeeID", "Employee ID is not exist");
@@ -134,6 +130,9 @@ public class BillApiController {
         BillStatuses billStatuses = billStatusesFacade.find(reqBody.getBillStatusID());
         if (billStatuses == null) {
             br.rejectValue("billStatusID", "error.billStatusID", "billStatus ID is not exist");
+        }
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
         }
         // All params is valid, insert record right now
 
@@ -163,9 +162,6 @@ public class BillApiController {
                 billDetailRecord.setQuantity(detail.getQuantity());
 
                 billDetailsFacade.create(billDetailRecord);
-//                
-//                material.setQuantityInStock(material.getQuantityInStock() + detail.getQuantity());
-                productsFacade.edit(products);
             }
         } catch (Exception e) {
             billsFacade.remove(billRecord);
@@ -214,11 +210,7 @@ public class BillApiController {
         newbillDetail.setProducts(products);
         newbillDetail.setUnitPrice(products.getPrice());
         newbillDetail.setQuantity(reqBody.getQuantity());
-
-        // Update material quantity in stock
-//        products.setQuantityInStock(products.getQuantityInStock() + reqBody.getQuantity());
         billDetailsFacade.create(newbillDetail);
-        productsFacade.edit(products);
 
         StandardResponse res = StandardResponse.builder()
                 .status(200)
@@ -331,48 +323,23 @@ public class BillApiController {
     }
 
     @GetMapping("" + UrlProvider.Bills.SEARCH)
-    public ResponseEntity<DataResponse<List<BillResponse>>> searchBill(
-            @RequestParam(name = "dateForm", defaultValue = "") String dateFormString,
-            @RequestParam(name = "dateTo", defaultValue = "") String dateToString,
-            HttpServletRequest request) throws java.text.ParseException {
+public ResponseEntity<DataResponse<List<BillResponse>>> searchBill(
+        @RequestParam(name = "dateForm", defaultValue = "") String dateFormString,
+        @RequestParam(name = "dateTo", defaultValue = "") String dateToString,
+        HttpServletRequest request) throws java.text.ParseException {
 
-        DataResponse<List<BillResponse>> res = new DataResponse<>();
+    DataResponse<List<BillResponse>> res = new DataResponse<>();
 
-        // Format date
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    // Format date
+    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        Date dateFrom = null;
-        Date dateTo = null;
+    Date dateFrom = null;
+    Date dateTo = null;
 
-        // Check if dateForm and dateTo are empty
-        boolean isDateRangeProvided = !dateFormString.isEmpty() && !dateToString.isEmpty();
+    // Check if dateForm and dateTo are empty
+    boolean isDateRangeProvided = !dateFormString.isEmpty() && !dateToString.isEmpty();
 
-        if (isDateRangeProvided) {
-            try {
-                dateFrom = formatter.parse(dateFormString);
-                dateTo = formatter.parse(dateToString);
-            } catch (java.text.ParseException e) {
-                res.setSuccess(false);
-                res.setStatus(400);
-                res.setMessage("Invalid date format");
-                return ResponseEntity.badRequest().body(res);
-            }
-
-            if (dateFrom.compareTo(dateTo) > 0) {
-                res.setSuccess(false);
-                res.setStatus(400);
-                res.setMessage("dateForm cannot be greater than dateTo");
-                return ResponseEntity.badRequest().body(res);
-            }
-
-            // Add one day to dateTo using the Calendar class
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(dateTo);
-            calendar.add(Calendar.DAY_OF_MONTH, 1); // Add one day
-            dateTo = calendar.getTime();
-        }
-
-        List<Bills> allBills;
+    if (isDateRangeProvided) {
         try {
             if (isDateRangeProvided) {
                 allBills = billsFacade.getBillByDaterange(dateFrom, dateTo);
@@ -386,42 +353,77 @@ public class BillApiController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
         }
 
-        List<BillResponse> data = new ArrayList<>();
-        for (Bills billItem : allBills) {
-            // Handle bills details
-            List<BillDetailsResponse> listDetail = new ArrayList<>();
+        if (dateFrom.compareTo(dateTo) > 0) {
+            res.setSuccess(false);
+            res.setStatus(400);
+            res.setMessage("dateForm cannot be greater than dateTo");
+            return ResponseEntity.badRequest().body(res);
+        }
 
-            for (BillDetails billDetail : billDetailsFacade.findByBillID(billItem.getBillID())) {
-                listDetail.add(
-                        BillDetailsResponse.builder()
-                                .productID(billDetail.getProducts().getProductID())
-                                .name(billDetail.getProducts().getName())
-                                .image(FileSupport.perfectImg(request, "products", billDetail.getProducts().getImage()))
-                                .unitPrice(billDetail.getUnitPrice())
-                                .quantity(billDetail.getQuantity())
-                                .build()
-                );
-            }
+        // Add one day to dateTo using the Calendar class
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateTo);
+        calendar.add(Calendar.DAY_OF_MONTH, 1); // Add one day
+        dateTo = calendar.getTime();
+    }
 
-            data.add(BillResponse.builder()
-                    .billID(billItem.getBillID())
-                    .employeeID(billItem.getEmployeeID().getEmployeeID())
-                    .employeeName(billItem.getEmployeeID().getName())
-                    .billStatusID(billItem.getBillStatusID().getBillStatusID())
-                    .billStatusValue(billItem.getBillStatusID().getBillStatusValue())
-                    .createDate(formatter.format(billItem.getCreatedDate()))
-                    .cardCode(billItem.getCardCode())
-                    .details(listDetail)
-                    .build()
+    List<Bills> allBills;
+    try {
+        if (isDateRangeProvided) {
+            allBills = billsFacade.getBillByDaterange(dateFrom, dateTo);
+        } else {
+            allBills = billsFacade.findAll();
+        }
+
+        if (allBills == null || allBills.isEmpty()) {
+            res.setSuccess(false);
+            res.setStatus(404);
+            res.setMessage("No data found for the given date range");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+        }
+    } catch (Exception e) {
+        res.setSuccess(false);
+        res.setStatus(500);
+        res.setMessage("Failed to retrieve bill data");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+    }
+
+    List<BillResponse> data = new ArrayList<>();
+    for (Bills billItem : allBills) {
+        // Handle bills details
+        List<BillDetailsResponse> listDetail = new ArrayList<>();
+
+        for (BillDetails billDetail : billDetailsFacade.findByBillID(billItem.getBillID())) {
+            listDetail.add(
+                    BillDetailsResponse.builder()
+                            .productID(billDetail.getProducts().getProductID())
+                            .name(billDetail.getProducts().getName())
+                            .image(FileSupport.perfectImg(request, "products", billDetail.getProducts().getImage()))
+                            .unitPrice(billDetail.getUnitPrice())
+                            .quantity(billDetail.getQuantity())
+                            .build()
             );
         }
 
-        res.setSuccess(true);
-        res.setStatus(200);
-        res.setMessage("Bill search successful");
-        res.setData(data);
-        return ResponseEntity.ok(res);
+        data.add(BillResponse.builder()
+                .billID(billItem.getBillID())
+                .employeeID(billItem.getEmployeeID().getEmployeeID())
+                .employeeName(billItem.getEmployeeID().getName())
+                .billStatusID(billItem.getBillStatusID().getBillStatusID())
+                .billStatusValue(billItem.getBillStatusID().getBillStatusValue())
+                .createDate(formatter.format(billItem.getCreatedDate()))
+                .cardCode(billItem.getCardCode())
+                .details(listDetail)
+                .build()
+        );
     }
+
+    res.setSuccess(true);
+    res.setStatus(200);
+    res.setMessage("Bill search successful");
+    res.setData(data);
+    return ResponseEntity.ok(res);
+}
 
     /////-----------------/////
     private BillDetailsFacadeLocal lookupBillDetailsFacadeLocal() {

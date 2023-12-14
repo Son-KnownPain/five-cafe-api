@@ -10,7 +10,6 @@ import com.fivecafe.entities.BillDetailsPK;
 import com.fivecafe.entities.BillStatuses;
 import com.fivecafe.entities.Bills;
 import com.fivecafe.entities.Employees;
-import com.fivecafe.entities.ImportDetails;
 import com.fivecafe.entities.Products;
 import com.fivecafe.models.responses.DataResponse;
 import com.fivecafe.models.responses.StandardResponse;
@@ -21,6 +20,7 @@ import com.fivecafe.session_beans.BillsFacadeLocal;
 import com.fivecafe.session_beans.EmployeesFacadeLocal;
 import com.fivecafe.session_beans.ProductsFacadeLocal;
 import com.fivecafe.supports.FileSupport;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -122,9 +122,6 @@ public class BillApiController {
             }
 
         }
-        if (br.hasErrors()) {
-            throw new MethodArgumentNotValidException(null, br);
-        }
         Employees employees = employeesFacade.find(reqBody.getEmployeeID());
         if (employees == null) {
             br.rejectValue("employeeID", "error.employeeID", "Employee ID is not exist");
@@ -133,6 +130,9 @@ public class BillApiController {
         BillStatuses billStatuses = billStatusesFacade.find(reqBody.getBillStatusID());
         if (billStatuses == null) {
             br.rejectValue("billStatusID", "error.billStatusID", "billStatus ID is not exist");
+        }
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
         }
         // All params is valid, insert record right now
 
@@ -162,9 +162,6 @@ public class BillApiController {
                 billDetailRecord.setQuantity(detail.getQuantity());
 
                 billDetailsFacade.create(billDetailRecord);
-//                
-//                material.setQuantityInStock(material.getQuantityInStock() + detail.getQuantity());
-                productsFacade.edit(products);
             }
         } catch (Exception e) {
             billsFacade.remove(billRecord);
@@ -348,13 +345,16 @@ public ResponseEntity<DataResponse<List<BillResponse>>> searchBill(
 
     if (isDateRangeProvided) {
         try {
-            dateFrom = formatter.parse(dateFormString);
-            dateTo = formatter.parse(dateToString);
-        } catch (java.text.ParseException e) {
+            if (isDateRangeProvided) {
+                allBills = billsFacade.getBillByDaterange(dateFrom, dateTo);
+            } else {
+                allBills = billsFacade.findAll();
+            }
+        } catch (ParseException e) {
             res.setSuccess(false);
-            res.setStatus(400);
-            res.setMessage("Invalid date format");
-            return ResponseEntity.badRequest().body(res);
+            res.setStatus(500);
+            res.setMessage("Failed to retrieve bill data");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
         }
 
         if (dateFrom.compareTo(dateTo) > 0) {

@@ -40,8 +40,5 @@ public class CreateOutboundResq {
         @Min(value = 1, message = "Min quantity is 1")
         private int quantity;
     }
-//    @NotEmpty(message = "Date is required")
-//    @Pattern(regexp = "\\d{2}/\\d{2}/\\d{4}", message = "Invalid date format (dd/MM/yyyy)")
-//    private String date;
 
 }

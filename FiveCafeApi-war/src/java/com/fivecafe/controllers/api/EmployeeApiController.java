@@ -1,11 +1,23 @@
 package com.fivecafe.controllers.api;
 
 import com.fivecafe.body.employee.CreEmpReq;
+import com.fivecafe.body.employee.CreateOutboundReq;
 import com.fivecafe.body.employee.EmpInfoRes;
 import com.fivecafe.body.employee.EmpLoginCredentials;
 import com.fivecafe.body.employee.EmployeeRes;
 import com.fivecafe.body.employee.UpdEmpReq;
+import com.fivecafe.body.employee.OrderingReq;
+import com.fivecafe.body.outbound.CreateOutboundResq;
+import com.fivecafe.entities.BillDetails;
+import com.fivecafe.entities.BillDetailsPK;
+import com.fivecafe.entities.BillStatuses;
+import com.fivecafe.entities.Bills;
 import com.fivecafe.entities.Employees;
+import com.fivecafe.entities.Materials;
+import com.fivecafe.entities.OutboundDetails;
+import com.fivecafe.entities.OutboundDetailsPK;
+import com.fivecafe.entities.Outbounds;
+import com.fivecafe.entities.Products;
 import com.fivecafe.entities.Roles;
 import com.fivecafe.enums.RequestAttributeKeys;
 import com.fivecafe.enums.TokenNames;
@@ -14,11 +26,19 @@ import com.fivecafe.models.responses.DataResponse;
 import com.fivecafe.models.responses.StandardResponse;
 import com.fivecafe.providers.UrlProvider;
 import com.fivecafe.services.UserTokenService;
+import com.fivecafe.session_beans.BillDetailsFacadeLocal;
+import com.fivecafe.session_beans.BillStatusesFacadeLocal;
+import com.fivecafe.session_beans.BillsFacadeLocal;
 import com.fivecafe.session_beans.EmployeesFacadeLocal;
+import com.fivecafe.session_beans.MaterialsFacadeLocal;
+import com.fivecafe.session_beans.OutboundDetailsFacadeLocal;
+import com.fivecafe.session_beans.OutboundsFacadeLocal;
+import com.fivecafe.session_beans.ProductsFacadeLocal;
 import com.fivecafe.session_beans.RolesFacadeLocal;
 import com.fivecafe.supports.FileSupport;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,6 +68,20 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping(UrlProvider.API_PREFIX + UrlProvider.Employee.PREFIX)
 public class EmployeeApiController {
+
+    OutboundDetailsFacadeLocal outboundDetailsFacade = lookupOutboundDetailsFacadeLocal();
+
+    OutboundsFacadeLocal outboundsFacade = lookupOutboundsFacadeLocal();
+
+    MaterialsFacadeLocal materialsFacade = lookupMaterialsFacadeLocal();
+
+    BillDetailsFacadeLocal billDetailsFacade = lookupBillDetailsFacadeLocal();
+
+    BillsFacadeLocal billsFacade = lookupBillsFacadeLocal();
+
+    BillStatusesFacadeLocal billStatusesFacade = lookupBillStatusesFacadeLocal();
+
+    ProductsFacadeLocal productsFacade = lookupProductsFacadeLocal();
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
     
@@ -378,6 +412,172 @@ public class EmployeeApiController {
                 .build()
         );
     }
+    
+    // EMPLOYEE INTERACTIVE
+    @PostMapping(""+UrlProvider.Employee.ORDERING)
+    public ResponseEntity<?> ordering(
+            @Valid @RequestBody OrderingReq reqBody, BindingResult br,
+            HttpServletRequest request
+    )
+            throws MethodArgumentNotValidException
+    {
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
+        }
+
+        // Validate details
+        for (OrderingReq.OrderingDetail detail : reqBody.getDetails()) {
+            Products product = productsFacade.find(detail.getProductID());
+            if (product == null) {
+                br.rejectValue("forError", "error.forError", "Product ID you provided is not exist");
+                break;
+            }
+
+        }
+        String userID = (String) request.getAttribute(RequestAttributeKeys.USER_ID.toString());
+        int employeeIDInt = 0;
+        try {
+            employeeIDInt = Integer.parseInt(userID);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        Employees employees = employeesFacade.find(employeeIDInt);
+        if (employees == null) {
+            br.rejectValue("employeeID", "error.employeeID", "Employee ID is not exist");
+        }
+
+        BillStatuses billStatuses = billStatusesFacade.find(reqBody.getBillStatusID());
+        if (billStatuses == null) {
+            br.rejectValue("billStatusID", "error.billStatusID", "billStatus ID is not exist");
+        }
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
+        }
+        // All params is valid, insert record right now
+
+        Bills billRecord = new Bills();
+        billRecord.setEmployeeID(employees);
+        billRecord.setBillStatusID(billStatuses);
+        billRecord.setCreatedDate(new Date());
+        billRecord.setCardCode(reqBody.getCardCode());
+
+        billsFacade.create(billRecord);
+
+        // Create detail
+        try {
+            for (OrderingReq.OrderingDetail detail : reqBody.getDetails()) {
+                Products products = productsFacade.find(detail.getProductID());
+
+                BillDetails billDetailRecord = new BillDetails();
+
+                BillDetailsPK idPK = new BillDetailsPK();
+                idPK.setBillID(billRecord.getBillID());
+                idPK.setProductID(detail.getProductID());
+
+                billDetailRecord.setBillDetailsPK(idPK);
+                billDetailRecord.setBills(billRecord);
+                billDetailRecord.setProducts(products);
+                billDetailRecord.setUnitPrice(products.getPrice());
+                billDetailRecord.setQuantity(detail.getQuantity());
+
+                billDetailsFacade.create(billDetailRecord);
+            }
+        } catch (Exception e) {
+            billsFacade.remove(billRecord);
+        }
+
+        StandardResponse res = StandardResponse.builder()
+                .status(200)
+                .success(true)
+                .message("Successfully create new bill and bill details")
+                .build();
+
+        return ResponseEntity.ok(res);
+    }
+        
+    @PostMapping(""+UrlProvider.Employee.CREATE_OUTBOUND)
+    public ResponseEntity<?> createOutbound(
+            @Valid @RequestBody CreateOutboundReq reqBody, BindingResult br,
+            HttpServletRequest request
+    ) 
+            throws MethodArgumentNotValidException
+    {
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
+        }
+
+        String userID = (String) request.getAttribute(RequestAttributeKeys.USER_ID.toString());
+        int employeeIDInt = 0;
+        try {
+            employeeIDInt = Integer.parseInt(userID);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        
+        Employees employees = employeesFacade.find(employeeIDInt);
+        if (employees == null) {
+            br.rejectValue("employeeID", "error.employeeID", "That employee ID does not exist");
+        }
+
+        for (CreateOutboundReq.CreateOutboundDetailReq detail : reqBody.getDetails()) {
+            Materials materials = materialsFacade.find(detail.getMaterialID());
+
+            if (materials.getQuantityInStock() < detail.getQuantity()) {
+                br.rejectValue("forError", "error.forError", "Not enough materials, please add more materials");
+                break;
+            }
+        }
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
+        }
+
+        for (CreateOutboundReq.CreateOutboundDetailReq detail : reqBody.getDetails()) {
+            Materials materials = materialsFacade.find(detail.getMaterialID());
+            if (materials == null) {
+                br.rejectValue("materialID", "error.materialID", "That material ID does not exist");
+                break;
+            }
+        }
+
+        // After valid
+        Outbounds obNew = new Outbounds();
+        obNew.setDate(new Date());
+        obNew.setEmployeeID(employees);
+
+        outboundsFacade.create(obNew);
+
+        //Details
+        try {
+            for (CreateOutboundReq.CreateOutboundDetailReq detail : reqBody.getDetails()) {
+                Materials materials = materialsFacade.find(detail.getMaterialID());
+
+                OutboundDetails outboundDetailNew = new OutboundDetails();
+
+                OutboundDetailsPK idPK = new OutboundDetailsPK();
+                idPK.setOutboundID(obNew.getOutboundID());
+                idPK.setMaterialID(detail.getMaterialID());
+
+                outboundDetailNew.setOutboundDetailsPK(idPK);
+                outboundDetailNew.setOutbounds(obNew);
+                outboundDetailNew.setMaterials(materials);
+                outboundDetailNew.setQuantity(detail.getQuantity());
+
+                outboundDetailsFacade.create(outboundDetailNew);
+                materials.setQuantityInStock(materials.getQuantityInStock() - detail.getQuantity());
+                materialsFacade.edit(materials);
+            }
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", e);
+        }
+
+        return ResponseEntity.ok(
+                StandardResponse.builder()
+                        .success(true)
+                        .status(200)
+                        .message("Successfully create new outbound")
+                        .build()
+        );
+    }
 
     private EmployeesFacadeLocal lookupEmployeesFacadeLocal() {
         try {
@@ -393,6 +593,76 @@ public class EmployeeApiController {
         try {
             Context c = new InitialContext();
             return (RolesFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/RolesFacade!com.fivecafe.session_beans.RolesFacadeLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private ProductsFacadeLocal lookupProductsFacadeLocal() {
+        try {
+            Context c = new InitialContext();
+            return (ProductsFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/ProductsFacade!com.fivecafe.session_beans.ProductsFacadeLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private BillStatusesFacadeLocal lookupBillStatusesFacadeLocal() {
+        try {
+            Context c = new InitialContext();
+            return (BillStatusesFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/BillStatusesFacade!com.fivecafe.session_beans.BillStatusesFacadeLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private BillsFacadeLocal lookupBillsFacadeLocal() {
+        try {
+            Context c = new InitialContext();
+            return (BillsFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/BillsFacade!com.fivecafe.session_beans.BillsFacadeLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private BillDetailsFacadeLocal lookupBillDetailsFacadeLocal() {
+        try {
+            Context c = new InitialContext();
+            return (BillDetailsFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/BillDetailsFacade!com.fivecafe.session_beans.BillDetailsFacadeLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private MaterialsFacadeLocal lookupMaterialsFacadeLocal() {
+        try {
+            Context c = new InitialContext();
+            return (MaterialsFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/MaterialsFacade!com.fivecafe.session_beans.MaterialsFacadeLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private OutboundsFacadeLocal lookupOutboundsFacadeLocal() {
+        try {
+            Context c = new InitialContext();
+            return (OutboundsFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/OutboundsFacade!com.fivecafe.session_beans.OutboundsFacadeLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private OutboundDetailsFacadeLocal lookupOutboundDetailsFacadeLocal() {
+        try {
+            Context c = new InitialContext();
+            return (OutboundDetailsFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/OutboundDetailsFacade!com.fivecafe.session_beans.OutboundDetailsFacadeLocal");
         } catch (NamingException ne) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
             throw new RuntimeException(ne);

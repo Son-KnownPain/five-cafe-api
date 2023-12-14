@@ -5,12 +5,14 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.Bills;
+import com.fivecafe.entities.Employees;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
@@ -37,7 +39,7 @@ public class BillsFacade extends AbstractFacade<Bills> implements BillsFacadeLoc
     }
     
     @Override
-     public List<Bills> getBillByDaterange(Date dateForm, Date dateTo) throws ParseException{
+    public List<Bills> getBillByDaterange(Date dateForm, Date dateTo) throws ParseException{
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Bills> cq = cb.createQuery(Bills.class);
         Root<Bills> root = cq.from(Bills.class);
@@ -47,6 +49,13 @@ public class BillsFacade extends AbstractFacade<Bills> implements BillsFacadeLoc
         cq.where(datePredicate);
         
         return em.createQuery(cq).getResultList();
+    }
+    
+    @Override
+    public List<Bills> findByEmployeeID(Employees emp) {
+        Query query = em.createNamedQuery("Bills.findByEmployeeID", Bills.class);
+        query.setParameter("employeeID", emp);
         
+        return query.getResultList();
     }
 }

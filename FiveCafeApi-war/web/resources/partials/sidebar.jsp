@@ -62,9 +62,9 @@
                     Materials
                 </a>
             </li>
-            <li class="p-2 rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
-                <a href="#">
-                    Time keepings
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/timekeeping" class="p-2 block">
+                    Timekeepings
                 </a>
             </li>
             <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">

@@ -16,6 +16,7 @@ import lombok.Setter;
 public class EmployeeTimeKeepingResponse {
     private int timeKeepingID;
     private int employeeID;
+    private String employeeName;
     private int shiftID;
     private String shiftName;
     private String date;

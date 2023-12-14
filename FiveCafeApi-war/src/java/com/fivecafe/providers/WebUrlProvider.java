@@ -24,6 +24,7 @@ public class WebUrlProvider {
         public static final String ORDERING = "/ordering";
         public static final String CREATE_OUTBOUND = "/create-outbound";
         public static final String MY_BILLS = "/my-bills";
+        public static final String TIMEKEEPING = "/timekeeping";
         
         public static final String GREET1 = "/greet";
         public static final String GREET2 = "/";

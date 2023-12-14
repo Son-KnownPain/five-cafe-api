@@ -1,5 +1,7 @@
 package com.fivecafe.controllers.api;
 
+import com.fivecafe.body.bills.BillDetailsResponse;
+import com.fivecafe.body.bills.BillResponse;
 import com.fivecafe.body.employee.CreEmpReq;
 import com.fivecafe.body.employee.CreateOutboundReq;
 import com.fivecafe.body.employee.EmpInfoRes;
@@ -7,11 +9,12 @@ import com.fivecafe.body.employee.EmpLoginCredentials;
 import com.fivecafe.body.employee.EmployeeRes;
 import com.fivecafe.body.employee.UpdEmpReq;
 import com.fivecafe.body.employee.OrderingReq;
-import com.fivecafe.body.outbound.CreateOutboundResq;
+import com.fivecafe.body.employeetimekeeping.EmployeeTimeKeepingResponse;
 import com.fivecafe.entities.BillDetails;
 import com.fivecafe.entities.BillDetailsPK;
 import com.fivecafe.entities.BillStatuses;
 import com.fivecafe.entities.Bills;
+import com.fivecafe.entities.EmployeeTimeKeepings;
 import com.fivecafe.entities.Employees;
 import com.fivecafe.entities.Materials;
 import com.fivecafe.entities.OutboundDetails;
@@ -29,6 +32,7 @@ import com.fivecafe.services.UserTokenService;
 import com.fivecafe.session_beans.BillDetailsFacadeLocal;
 import com.fivecafe.session_beans.BillStatusesFacadeLocal;
 import com.fivecafe.session_beans.BillsFacadeLocal;
+import com.fivecafe.session_beans.EmployeeTimeKeepingsFacadeLocal;
 import com.fivecafe.session_beans.EmployeesFacadeLocal;
 import com.fivecafe.session_beans.MaterialsFacadeLocal;
 import com.fivecafe.session_beans.OutboundDetailsFacadeLocal;
@@ -37,6 +41,7 @@ import com.fivecafe.session_beans.ProductsFacadeLocal;
 import com.fivecafe.session_beans.RolesFacadeLocal;
 import com.fivecafe.supports.FileSupport;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,6 +56,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -68,6 +74,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping(UrlProvider.API_PREFIX + UrlProvider.Employee.PREFIX)
 public class EmployeeApiController {
+
+    EmployeeTimeKeepingsFacadeLocal employeeTimeKeepingsFacade = lookupEmployeeTimeKeepingsFacadeLocal();
 
     OutboundDetailsFacadeLocal outboundDetailsFacade = lookupOutboundDetailsFacadeLocal();
 
@@ -414,6 +422,8 @@ public class EmployeeApiController {
     }
     
     // EMPLOYEE INTERACTIVE
+    
+    // ---- Ordering: /api/employee/ordering
     @PostMapping(""+UrlProvider.Employee.ORDERING)
     public ResponseEntity<?> ordering(
             @Valid @RequestBody OrderingReq reqBody, BindingResult br,
@@ -495,6 +505,7 @@ public class EmployeeApiController {
         return ResponseEntity.ok(res);
     }
         
+    // ---- Ordering: /api/employee/create-outbound
     @PostMapping(""+UrlProvider.Employee.CREATE_OUTBOUND)
     public ResponseEntity<?> createOutbound(
             @Valid @RequestBody CreateOutboundReq reqBody, BindingResult br,
@@ -579,6 +590,111 @@ public class EmployeeApiController {
         );
     }
 
+    @GetMapping(""+UrlProvider.Employee.ALL_MY_BILLS)
+    public ResponseEntity<?> allMyBills(HttpServletRequest request) {
+        String userID = (String) request.getAttribute(RequestAttributeKeys.USER_ID.toString());
+        int employeeIDInt = 0;
+        try {
+            employeeIDInt = Integer.parseInt(userID);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        Employees emp = employeesFacade.find(employeeIDInt);
+        if (emp == null) {
+            StandardResponse res = new StandardResponse();
+            res.setSuccess(false);
+            res.setStatus(401);
+            res.setMessage("Cannot found your information");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+        }
+        List<Bills> allBills = billsFacade.findByEmployeeID(emp);
+        DataResponse<List<BillResponse>> res = new DataResponse<>();
+        List<BillResponse> data = new ArrayList<>();
+        for (Bills billItem : allBills) {
+            // Handle bills details
+            List<BillDetailsResponse> listDetail = new ArrayList<>();
+
+            for (BillDetails billDetail : billDetailsFacade.findByBillID(billItem.getBillID())) {
+                listDetail.add(
+                        BillDetailsResponse.builder()
+                                .productID(billDetail.getProducts().getProductID())
+                                .name(billDetail.getProducts().getName())
+                                .image(FileSupport.perfectImg(request, "products", billDetail.getProducts().getImage()))
+                                .unitPrice(billDetail.getUnitPrice())
+                                .quantity(billDetail.getQuantity())
+                                .build()
+                );
+            }
+
+            // Add item
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            data.add(
+                    BillResponse.builder()
+                            .billID(billItem.getBillID())
+                            .employeeID(billItem.getEmployeeID().getEmployeeID())
+                            .employeeName(billItem.getEmployeeID().getName())
+                            .billStatusID(billItem.getBillStatusID().getBillStatusID())
+                            .billStatusValue(billItem.getBillStatusID().getBillStatusValue())
+                            .createDate(formatter.format(billItem.getCreatedDate()))
+                            .cardCode(billItem.getCardCode())
+                            .details(listDetail)
+                            .build()
+            );
+        }
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully get all my bills");
+        res.setData(data);
+
+        return ResponseEntity.ok(res);
+    }
+    
+    @GetMapping(""+UrlProvider.Employee.ALL_MY_ETK)
+    public ResponseEntity<?> allMyETK(HttpServletRequest request) {
+        String userID = (String) request.getAttribute(RequestAttributeKeys.USER_ID.toString());
+        int employeeIDInt = 0;
+        try {
+            employeeIDInt = Integer.parseInt(userID);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        Employees emp = employeesFacade.find(employeeIDInt);
+        if (emp == null) {
+            StandardResponse res = new StandardResponse();
+            res.setSuccess(false);
+            res.setStatus(401);
+            res.setMessage("Cannot found your information");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+        }
+        List<EmployeeTimeKeepings> allETK = employeeTimeKeepingsFacade.findByEmployeeID(emp);
+        SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
+        List<EmployeeTimeKeepingResponse> data = new ArrayList<>();
+
+        for (EmployeeTimeKeepings empTK : allETK) {
+            data.add(EmployeeTimeKeepingResponse.builder()
+                    .timeKeepingID(empTK.getTimeKeepingID())
+                    .employeeID(empTK.getEmployeeID().getEmployeeID())
+                    .employeeName(empTK.getEmployeeID().getName())
+                    .shiftID(empTK.getShiftID().getShiftID())
+                    .shiftName(empTK.getShiftID().getName())
+                    .date(fmt.format(empTK.getDate()))
+                    .salary(empTK.getSalary())
+                    .isPaid(empTK.getIsPaid())
+                    .build()
+            );
+        }
+
+        DataResponse<List<EmployeeTimeKeepingResponse>> res = new DataResponse<>();
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully get all my employee time keepings");
+        res.setData(data);
+        return ResponseEntity.ok(res);
+    }
+    
     private EmployeesFacadeLocal lookupEmployeesFacadeLocal() {
         try {
             Context c = new InitialContext();
@@ -663,6 +779,16 @@ public class EmployeeApiController {
         try {
             Context c = new InitialContext();
             return (OutboundDetailsFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/OutboundDetailsFacade!com.fivecafe.session_beans.OutboundDetailsFacadeLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private EmployeeTimeKeepingsFacadeLocal lookupEmployeeTimeKeepingsFacadeLocal() {
+        try {
+            Context c = new InitialContext();
+            return (EmployeeTimeKeepingsFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/EmployeeTimeKeepingsFacade!com.fivecafe.session_beans.EmployeeTimeKeepingsFacadeLocal");
         } catch (NamingException ne) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
             throw new RuntimeException(ne);

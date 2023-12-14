@@ -319,16 +319,13 @@
                                 Check
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Bill ID
+                                Employee
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Employee ID
+                                Bill Status
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Bill Status ID
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Create Date
+                                Created Date
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Card Code

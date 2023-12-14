@@ -118,6 +118,7 @@ function fetchTableData(searching=null) {
 
                     const billItem = res.data.find(item => item.billID == btn.dataset.detailId);
 
+                    document.getElementById('billItemIDEdit').value = billItem.billID;
                     document.getElementById('billIDEdit').value = billItem.billID;
 
                     document.getElementById('bill-info').innerHTML = `
@@ -373,6 +374,56 @@ Validator({
             } else if (res.status == 400 && res.invalid) {
                 showWarningAlert('Invalid some fields', res.errors);
                 document.getElementById('close-create-modal-btn').click();
+            }
+        })
+        .catch(_err => {})
+    }
+});
+
+// Validate update bill
+Validator({
+    form: '#edit-bill-form',
+    formGroup: '.form-gr',
+    errorSelector: '.form-message',
+    rules: [
+        Validator.isRequired('#employeeIDEdit', 'Employee ID is required'),
+        Validator.isRequired('#billStatusIDEdit', 'Bill Status ID is required'),
+        Validator.isRequired('#cardCodeEdit', 'Card Code is required'),
+    ],
+    onSubmit: function(data, {resetForm}) {
+        const storePath = window.APP_NAME + '/api/bill/update';
+
+        fetch(storePath, {
+            method: 'PUT',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                billID: data.billID,
+                billStatusID: data.billStatusID,
+                cardCode: data.cardCode,
+                employeeID: data.employeeID,
+                details: productsBill,
+            }),
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.status == 200) {
+                document.getElementById('close-bill-detail-modal-btn').click();
+                hideWarningAlert();
+                showSuccessAlert(res.message);
+                resetForm({
+                    cardCode: '',
+                })
+                showDetailSuccessAlert("Update bill success");
+                if (document.getElementById('update-item-btn-box').classList.contains("hidden")) {
+                    document.getElementById('update-item-btn-box').classList.remove("hidden")
+                }
+                fetchTableData({ detailClickID: data.billID })
+            } else if (res.status == 400 && res.invalid) {
+                showWarningAlert('Invalid some fields', res.errors);
+                document.getElementById('close-bill-detail-modal-btn').click();
             }
         })
         .catch(_err => {})

@@ -153,6 +153,10 @@
                             <h1 class="text-xs font-semibold dark:text-gray-400 text-gray-700 mb-3 uppercase">Edit bill</h1>
                             <div class="grid gap-4 mb-4 grid-cols-2">
                                 <div class="col-span-2 form-gr">
+                                    <input type="hidden" name="billID" id="billItemIDEdit">
+                                    <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
+                                </div>
+                                <div class="col-span-2 form-gr">
                                     <label for="employeeIDEdit" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Employee ID</label>
                                     <select id="employeeIDEdit" name="employeeID" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                       </select>

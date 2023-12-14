@@ -4,7 +4,7 @@
 
 <t:admin_layout>
     <jsp:attribute name="title">
-        bills management
+        Bills management
     </jsp:attribute>
     <jsp:attribute name="styles">
 

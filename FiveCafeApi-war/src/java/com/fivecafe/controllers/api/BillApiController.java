@@ -10,7 +10,6 @@ import com.fivecafe.entities.BillDetailsPK;
 import com.fivecafe.entities.BillStatuses;
 import com.fivecafe.entities.Bills;
 import com.fivecafe.entities.Employees;
-import com.fivecafe.entities.ImportDetails;
 import com.fivecafe.entities.Products;
 import com.fivecafe.models.responses.DataResponse;
 import com.fivecafe.models.responses.StandardResponse;
@@ -118,9 +117,6 @@ public class BillApiController {
             }
 
         }
-        if (br.hasErrors()) {
-            throw new MethodArgumentNotValidException(null, br);
-        }
         Employees employees = employeesFacade.find(reqBody.getEmployeeID());
         if (employees == null) {
             br.rejectValue("employeeID", "error.employeeID", "Employee ID is not exist");
@@ -129,6 +125,9 @@ public class BillApiController {
         BillStatuses billStatuses = billStatusesFacade.find(reqBody.getBillStatusID());
         if (billStatuses == null) {
             br.rejectValue("billStatusID", "error.billStatusID", "billStatus ID is not exist");
+        }
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
         }
         // All params is valid, insert record right now
 
@@ -158,9 +157,6 @@ public class BillApiController {
                 billDetailRecord.setQuantity(detail.getQuantity());
 
                 billDetailsFacade.create(billDetailRecord);
-//                
-//                material.setQuantityInStock(material.getQuantityInStock() + detail.getQuantity());
-                productsFacade.edit(products);
             }
         } catch (Exception e) {
             billsFacade.remove(billRecord);

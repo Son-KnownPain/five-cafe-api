@@ -27,13 +27,16 @@ public class UrlProvider {
         public static final String LOGOUT = "/logout";
         
         public static final String INFO = "/info";
-        
+        public static final String ORDERING = "/ordering";
+        public static final String CREATE_OUTBOUND = "/create-outbound";
         
         @Override
         public List<String> signInUrls() {
             ArrayList<String> signInUrls = new ArrayList<>();
             signInUrls.add(addApiPrefix(addEmployeePrefix(INFO)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(LOGOUT)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(ORDERING)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(CREATE_OUTBOUND)));
             return signInUrls;
         }
         
@@ -298,7 +301,7 @@ public class UrlProvider {
         }
     }
     
-     public class Bills implements AuthUrl{
+    public class Bills implements AuthUrl{
         public static final String PREFIX ="/bill";
         
         // NONE SIGN IN
@@ -332,6 +335,33 @@ public class UrlProvider {
         }
     }
     
+    public class Ordering implements AuthUrl {
+        public static final String PREFIX ="/ordering";
+        
+        // NONE SIGN IN
+        
+        // NEED TO SIGN IN
+        public static final String STORE = "/store";
+        public static final String TEST = "/test";
+        
+        @Override
+        public List<String> signInUrls() {
+            ArrayList<String> signInUrls = new ArrayList<>();
+            signInUrls.add(STORE);
+            
+            return signInUrls;
+        }
+        
+        private String addUserPrefix(final String PATH) {
+            return PREFIX + PATH;
+        }
+
+        
+        @Override
+        public HashMap<String, List<String>> roleUrls() {
+            return null;
+        }
+    }
     
     public class Import implements AuthUrl {
         public static final String PREFIX = "/import";

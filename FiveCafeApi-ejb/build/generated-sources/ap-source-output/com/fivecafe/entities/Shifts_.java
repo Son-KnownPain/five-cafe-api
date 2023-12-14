@@ -7,11 +7,7 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-<<<<<<< HEAD
-@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2023-12-10T10:54:39")
-=======
-@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2023-12-12T18:12:47")
->>>>>>> main
+@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2023-12-14T03:09:54")
 @StaticMetamodel(Shifts.class)
 public class Shifts_ { 
 

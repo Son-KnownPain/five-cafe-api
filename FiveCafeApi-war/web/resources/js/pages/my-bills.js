@@ -63,6 +63,7 @@ function fetchTableData(prop = {}) {
                     const billItem = res.data.find(item => item.billID == btn.dataset.detailId);
 
                     document.getElementById('billIDEdit').value = billItem.billID;
+                    document.getElementById('detailBillIDEdit').value = billItem.billID;
 
                     document.getElementById('bill-info').innerHTML = `
                         <p class="text-base font-normal mb-2 dark:text-gray-400 text-gray-700">
@@ -125,7 +126,7 @@ function fetchTableData(prop = {}) {
                             document.querySelector(`button[data-yes-dc-pro-id='${productID}']`).onclick = () => {
                                 const billID = billItem.billID;
 
-                                const deletePath = `${window.APP_NAME}/api/bill/delete-pro-item?productID=${productID}&billID=${billID}`;
+                                const deletePath = `${window.APP_NAME}/api/employee/delete-pro-of-bill?productID=${productID}&billID=${billID}`;
                                 fetch(deletePath, {
                                     method: 'DELETE',
                                     credentials: 'same-origin',
@@ -257,8 +258,34 @@ Validator({
         Validator.isRequired('#billStatusIDEdit', 'Bill status'),
         Validator.isRequired('#cardCodeEdit', 'Card code is required'),
     ],
-    onSubmit: function(data) {
-        console.log(data);
+    onSubmit: function(data, { resetForm }) {
+        const updatePath = window.APP_NAME + "/api/employee/update-my-bill"
+
+        fetch(updatePath, {
+            method: 'PUT',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.status == 200) {
+                document.getElementById('close-bill-detail-modal-btn').click();
+                hideWarningAlert();
+                showSuccessAlert(res.message);
+                resetForm({
+                    cardCode: '',
+                })
+                showDetailSuccessAlert("Update success");
+                fetchTableData({ detailClickID: data.billID })
+            } else if (res.status == 400 && res.invalid) {
+                showWarningAlert('Invalid some fields', res.errors);
+                document.getElementById('close-bill-detail-modal-btn').click();
+            }
+        })
+        .catch(_err => {})
     }
 });
 
@@ -272,7 +299,7 @@ Validator({
         Validator.isRequired('#quantityAdd', 'Quantity is required'),
     ],
     onSubmit: function(data, { resetForm }) {
-        const addPath = `${window.APP_NAME}/api/bill/store-pro-item`
+        const addPath = `${window.APP_NAME}/api/employee/add-pro-of-bill`
         fetch(addPath, {
             method: 'POST',
             credentials: 'same-origin',
@@ -310,13 +337,12 @@ Validator({
     formGroup: '.form-gr',
     errorSelector: '.form-message',
     rules: [
-        Validator.isRequired('#billIDEdit', 'bill ID is required'),
+        Validator.isRequired('#detailBillIDEdit', 'Bill ID is required'),
         Validator.isRequired('#productIDEdit', 'Product ID is required'),
-        // Validator.isRequired('#unitPriceEdit', 'Unit price is required'),
         Validator.isRequired('#quantityEdit', 'Quantity is required'),
     ],
     onSubmit: function(data, { resetForm }) {
-        const updatePath = window.APP_NAME + '/api/bill/update-pro-item';
+        const updatePath = window.APP_NAME + '/api/employee/update-pro-of-bill';
 
         fetch(updatePath, {
             method: 'PUT',
@@ -334,7 +360,6 @@ Validator({
                 showSuccessAlert(res.message);
                 resetForm({
                     quantity: 0,
-                    // unitPrice: 0,
                 });
                 showDetailSuccessAlert("Update success")
                 fetchTableData({ detailClickID: data.billID })
@@ -351,30 +376,29 @@ Validator({
 
 // var products = [];
 
-// // Handle fetch product data
-// function fetchProducts(selectsID) {
-//     const fetchPath = window.APP_NAME + '/api/product/all';
-//     fetch(fetchPath)
-//     .then(res => res.json())
-//     .then(res => {
-//         if (res.status == 200) {
-//             products = res.data;
-//             selectsID.forEach(selectID => {
-//                 document.getElementById(selectID).innerHTML = 
-//                 res.data.map(item => {
-//                     return `
-//                         <option value="${item.productID}">${item.name}</option>
-//                     `
-//                 }).join('');
-//             })
-//         }
-//     })
-//     .catch(_res => { })
-// }
-// fetchProducts([
-//     'productID',
-//     'productIDAdd',
-// ]);
+// Handle fetch product data
+function fetchProducts(selectsID) {
+    const fetchPath = window.APP_NAME + '/api/product/all';
+    fetch(fetchPath)
+    .then(res => res.json())
+    .then(res => {
+        if (res.status == 200) {
+            // products = res.data;
+            selectsID.forEach(selectID => {
+                document.getElementById(selectID).innerHTML = 
+                res.data.map(item => {
+                    return `
+                        <option value="${item.productID}">${item.name}</option>
+                    `
+                }).join('');
+            })
+        }
+    })
+    .catch(_res => { })
+}
+fetchProducts([
+    'productIDAdd',
+]);
 
 // function fetchEmployees(selectsID) {
 //     const fetchPath = window.APP_NAME + '/api/employee/all';

@@ -339,6 +339,8 @@ public ResponseEntity<DataResponse<List<BillResponse>>> searchBill(
     // Check if dateForm and dateTo are empty
     boolean isDateRangeProvided = !dateFormString.isEmpty() && !dateToString.isEmpty();
 
+    List<Bills> allBills;
+
     if (isDateRangeProvided) {
         try {
             if (isDateRangeProvided) {
@@ -366,8 +368,6 @@ public ResponseEntity<DataResponse<List<BillResponse>>> searchBill(
         calendar.add(Calendar.DAY_OF_MONTH, 1); // Add one day
         dateTo = calendar.getTime();
     }
-
-    List<Bills> allBills;
     try {
         if (isDateRangeProvided) {
             allBills = billsFacade.getBillByDaterange(dateFrom, dateTo);

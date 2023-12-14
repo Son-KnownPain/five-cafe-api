@@ -119,7 +119,7 @@
                             <form id="update-product-form">
                                 <div class="grid gap-4 mb-4 grid-cols-2">
                                     <div class="form-gr">
-                                        <input type="hidden" name="billID" id="billIDEdit">
+                                        <input type="hidden" name="billID" id="detailBillIDEdit">
                                         <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
                                     </div>
                                     <div class="form-gr">

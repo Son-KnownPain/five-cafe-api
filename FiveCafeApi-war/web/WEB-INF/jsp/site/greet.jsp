@@ -10,7 +10,7 @@
 
     </jsp:attribute>
     <jsp:attribute name="scripts">
-        
+        <script src="${pageContext.request.contextPath}/resources/js/pages/greet.js"></script>
     </jsp:attribute>
     <jsp:body>
         <div class="flex items-center justify-center mt-5">
@@ -20,6 +20,11 @@
                 </div>
                 <h1 class="font-semibold text-5xl text-gray-900">Hi, welcome to Five Cafe management website</h1>
             </div>
+        </div>
+
+        <!-- Material quantityInStock below 5 -->
+        <div id="product-out-quantityinstock">
+
         </div>
     </jsp:body>
 </t:admin_layout>

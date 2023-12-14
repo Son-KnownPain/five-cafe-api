@@ -31,5 +31,7 @@ public interface MaterialsFacadeLocal {
     int count();
 
     public List<Materials> searchMaterialByCategoryAndName(MaterialCategories materialCategoriesID, String name);
+
+    public List<Materials> getMaterialsBelowStockQuantity(int stockQuantityThreshold);
     
 }

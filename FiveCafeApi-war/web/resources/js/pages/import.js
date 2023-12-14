@@ -1,5 +1,6 @@
 // Fetch table data
-function fetchTableData(searching=null) {
+function fetchTableData(prop = {}) {
+    const { detailClickID = null, searching = null } = prop;
     
     let fetchPath = window.APP_NAME;
     if (searching) {
@@ -227,8 +228,10 @@ document.getElementById('search-form').onsubmit = e => {
     const dateForm = document.getElementById('dateForm').value;
     const dateTo = document.getElementById('dateTo').value;
     fetchTableData({
-        dateForm: dateForm,
-        dateTo: dateTo
+        searching: {
+            dateForm: dateForm,
+            dateTo: dateTo
+        }
     })
  }
  

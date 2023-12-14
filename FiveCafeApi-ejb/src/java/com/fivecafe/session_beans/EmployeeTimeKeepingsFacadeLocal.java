@@ -5,6 +5,7 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.EmployeeTimeKeepings;
+import com.fivecafe.entities.Employees;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -28,5 +29,7 @@ public interface EmployeeTimeKeepingsFacadeLocal {
     List<EmployeeTimeKeepings> findRange(int[] range);
 
     int count();
+
+    public List<EmployeeTimeKeepings> findByEmployeeID(Employees emp);
     
 }

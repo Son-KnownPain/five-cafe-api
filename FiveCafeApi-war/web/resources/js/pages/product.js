@@ -25,7 +25,7 @@ function fetchTableData(searching = null) {
                                 ${item.name}
                             </th>
                             <td class="px-6 py-4">
-                                ${item.price}
+                                ${window.currencyOutput(item.price)}
                             </td>
                             <td class="px-6 py-4">
                                 ${item.selling ? 'Selling' : 'Stop selling'}

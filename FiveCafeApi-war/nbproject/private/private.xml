@@ -5,12 +5,6 @@
         <group>
             <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/ImportApiController.java</file>
         </group>
-        <group>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/EmployeeTimeKeepingApiController.java</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/MaterialApiController.java</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/BillApiController.java</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/providers/UrlProvider.java</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/body/material/MaterialResponse.java</file>
-        </group>
+        
     </open-files>
 </project-private>

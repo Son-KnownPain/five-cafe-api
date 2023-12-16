@@ -35,6 +35,8 @@ public class UrlProvider {
         public static final String UPDATE_PRO_OF_BILL = "/update-pro-of-bill";
         public static final String DELETE_PRO_OF_BILL = "/delete-pro-of-bill";
         public static final String ALL_MY_ETK = "/all-my-etk";
+        public static final String ALL_MY_SALARIES = "/all-my-salaries";
+        public static final String ALL_MY_OUTBOUNDS = "/all-my-outbounds";
         
         @Override
         public List<String> signInUrls() {
@@ -47,10 +49,12 @@ public class UrlProvider {
             signInUrls.add(addApiPrefix(addEmployeePrefix(CREATE_OUTBOUND)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_BILLS)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_ETK)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_SALARIES)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_MY_BILL)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(ADD_PRO_OF_BILL)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_PRO_OF_BILL)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(DELETE_PRO_OF_BILL)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_OUTBOUNDS)));
             return signInUrls;
         }
         

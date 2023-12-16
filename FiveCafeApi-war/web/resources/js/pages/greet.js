@@ -4,29 +4,19 @@ function fetchTableData() {
     .then(res => res.json())
     .then(res => {
         if (res.status == 200) {
-            document.getElementById('product-out-quantityinstock').innerHTML = 
-                res.data.reverse().map(item => {
-                    return `
-                    <div class="p-4 md:p-5 space-y-4">
-                        <div class="flex items-center gap-4">
-                            <img class="w-32 h-32 rounded object-cover" src="${item.image}" alt="">
-                            <div class="font-medium dark:text-white">
-                                <div id="detail-name">${item.name}</div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                                    <span>Unit: ${item.unit}</span>
-                                </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                                    <span>quantityInStock: ${item.quantityInStock}</span>
-                                </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                                    <span>Material category: ${item.materialCategoryName}</span>
-                                </div>
+            if (res.data?.length) {
+                document.getElementById('product-out-quantityinstock-content').innerHTML = 
+                    res.data.reverse().map(item => {
+                        return `
+                            <div class="mt-3 bg-slate-300 p-2 rounded-md text-base font-normal">
+                                "${item.name}" material with quantity in stock is ${item.quantityInStock} ${item.unit}
                             </div>
-                        </div>
-                    </div>
-                    `
-                }
-            ).join('');
+                        `
+                    }
+                ).join('');
+            } else {
+                document.getElementById('product-out-quantityinstock-box').classList.add('hidden')
+            }
         }
     })
     .catch(_res => { })

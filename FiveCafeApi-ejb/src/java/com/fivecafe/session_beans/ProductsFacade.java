@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -44,30 +45,30 @@ public class ProductsFacade extends AbstractFacade<Products> implements Products
     }
     
     @Override
-    public List<Products> searchProductsByCategoryAndName(ProductCategories productCategoryId, String proName) {
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<Products> criteriaQuery = criteriaBuilder.createQuery(Products.class);
-        Root<Products> productRoot = criteriaQuery.from(Products.class);
-        
-        // Tạo đối tượng Predicate để thêm điều kiện tìm kiếm
-        Predicate predicate = criteriaBuilder.conjunction();
-        
-        // Thêm điều kiện tìm kiếm theo danh mục sản phẩm
+    public List<Products> searchProductsByCategoryAndName(ProductCategories productCategoryId, String proName, String selling) {
+        String sqlQuery = "SELECT * FROM Products WHERE ";
         if (productCategoryId != null) {
-            Predicate whereProCatID = criteriaBuilder.equal(productRoot.get("productCategoryID"), productCategoryId);
-            predicate = criteriaBuilder.and(predicate, whereProCatID);
+            sqlQuery += "ProductCategoryID = " + productCategoryId.getProductCategoryID() + " AND ";
         }
-        
-        // Thêm điều kiện tìm kiếm theo tên sản phẩm
-        if (proName != null && !proName.isEmpty()) {
-            Path<String> namePath = productRoot.get("name");
-            Predicate likePredicate = criteriaBuilder.like(namePath, "%" + proName + "%");
-            predicate = criteriaBuilder.and(predicate, likePredicate);
+        sqlQuery += "[Name] COLLATE Latin1_General_CI_AI LIKE N'%" + proName + "%' AND ";
+        if (selling != null) {
+            sqlQuery += "IsSelling = 1 AND ";
         }
-        
-        criteriaQuery.where(predicate);
-        List<Products> resultList = em.createQuery(criteriaQuery).getResultList();
-        
+        sqlQuery += "1 = 1"; // Dummy condition to complete the query
+
+        Query query = em.createNativeQuery(sqlQuery, Products.class);
+
+        List<Products> resultList = query.getResultList();
         return resultList;
+    }
+    
+    @Override
+    public List<Products> findActiveProducts() {
+        String jpql = "SELECT p FROM Products p WHERE p.isSelling = :isSelling";
+        
+        Query query = em.createQuery(jpql, Products.class);
+        query.setParameter("isSelling", true);
+
+        return query.getResultList();
     }
 }

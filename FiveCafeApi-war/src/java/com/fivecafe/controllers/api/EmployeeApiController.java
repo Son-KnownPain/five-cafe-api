@@ -12,11 +12,17 @@ import com.fivecafe.body.employee.UpdEmpReq;
 import com.fivecafe.body.employee.OrderingReq;
 import com.fivecafe.body.employee.UpdateMyBillReq;
 import com.fivecafe.body.employee.UpdateProOfBillReq;
+import com.fivecafe.body.employeesalary.EmployeeSalariesResponse;
+import com.fivecafe.body.employeesalary.EmployeeSalaryDetailResponse;
 import com.fivecafe.body.employeetimekeeping.EmployeeTimeKeepingResponse;
+import com.fivecafe.body.outbound.OutboundDetailResponse;
+import com.fivecafe.body.outbound.OutboundResponse;
 import com.fivecafe.entities.BillDetails;
 import com.fivecafe.entities.BillDetailsPK;
 import com.fivecafe.entities.BillStatuses;
 import com.fivecafe.entities.Bills;
+import com.fivecafe.entities.EmployeeSalaries;
+import com.fivecafe.entities.EmployeeSalaryDetails;
 import com.fivecafe.entities.EmployeeTimeKeepings;
 import com.fivecafe.entities.Employees;
 import com.fivecafe.entities.Materials;
@@ -35,6 +41,8 @@ import com.fivecafe.services.UserTokenService;
 import com.fivecafe.session_beans.BillDetailsFacadeLocal;
 import com.fivecafe.session_beans.BillStatusesFacadeLocal;
 import com.fivecafe.session_beans.BillsFacadeLocal;
+import com.fivecafe.session_beans.EmployeeSalariesFacadeLocal;
+import com.fivecafe.session_beans.EmployeeSalaryDetailsFacadeLocal;
 import com.fivecafe.session_beans.EmployeeTimeKeepingsFacadeLocal;
 import com.fivecafe.session_beans.EmployeesFacadeLocal;
 import com.fivecafe.session_beans.MaterialsFacadeLocal;
@@ -78,6 +86,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping(UrlProvider.API_PREFIX + UrlProvider.Employee.PREFIX)
 public class EmployeeApiController {
+
+    EmployeeSalaryDetailsFacadeLocal employeeSalaryDetailsFacade = lookupEmployeeSalaryDetailsFacadeLocal();
+
+    EmployeeSalariesFacadeLocal employeeSalariesFacade = lookupEmployeeSalariesFacadeLocal();
 
     EmployeeTimeKeepingsFacadeLocal employeeTimeKeepingsFacade = lookupEmployeeTimeKeepingsFacadeLocal();
 
@@ -699,6 +711,60 @@ public class EmployeeApiController {
         return ResponseEntity.ok(res);
     }
     
+    @GetMapping("" + UrlProvider.Employee.ALL_MY_SALARIES)
+    public ResponseEntity<?> allMySalaries(HttpServletRequest request) {
+        String userID = (String) request.getAttribute(RequestAttributeKeys.USER_ID.toString());
+        int employeeIDInt = 0;
+        try {
+            employeeIDInt = Integer.parseInt(userID);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        Employees emp = employeesFacade.find(employeeIDInt);
+        if (emp == null) {
+            StandardResponse res = new StandardResponse();
+            res.setSuccess(false);
+            res.setStatus(401);
+            res.setMessage("Cannot found your information");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+        }
+        List<EmployeeSalaries> allSalary = employeeSalariesFacade.findByEmployeeID(emp);
+        SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
+        List<EmployeeSalariesResponse> data = new ArrayList<>();
+
+        for (EmployeeSalaries empSalary : allSalary) {
+            List<EmployeeSalaryDetailResponse> details = new ArrayList<>();
+            for (EmployeeSalaryDetails detail : employeeSalaryDetailsFacade.findByEmpSalaryID(empSalary.getEmployeeSalaryID())) {
+                EmployeeSalaryDetailResponse detailResponse = new EmployeeSalaryDetailResponse();
+                detailResponse.setEmployeeTimekeepingID(detail.getEmployeeTimeKeepings().getTimeKeepingID());
+                detailResponse.setShiftName(detail.getEmployeeTimeKeepings().getShiftID().getName());
+                detailResponse.setSalary(detail.getEmployeeTimeKeepings().getSalary());
+                detailResponse.setTimeKeepingDate(fmt.format(detail.getEmployeeTimeKeepings().getDate()));
+                detailResponse.setBonus((int) (detail.getBonus() * 100));
+                detailResponse.setDeduction(detail.getDeduction());
+                
+                details.add(detailResponse);
+            }
+            
+            data.add(EmployeeSalariesResponse.builder()
+                    .employeeSalaryID(empSalary.getEmployeeSalaryID())
+                    .employeeID(empSalary.getEmployeeID().getEmployeeID())
+                    .employeeName(empSalary.getEmployeeID().getName())
+                    .date(fmt.format(empSalary.getDate()))
+                    .details(details)
+                    .build()
+            );
+        }
+
+        DataResponse<List<EmployeeSalariesResponse>> res = new DataResponse<>();
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully get all employee salary");
+        res.setData(data);
+        return ResponseEntity.ok(res);
+    }
+    
     @PutMapping(""+UrlProvider.Employee.UPDATE_MY_BILL)
     public ResponseEntity<?> updateMyBill(@Valid @RequestBody UpdateMyBillReq reqBody, BindingResult br, HttpServletRequest request) throws MethodArgumentNotValidException {
         if (br.hasErrors()) {
@@ -951,6 +1017,67 @@ public class EmployeeApiController {
         return ResponseEntity.ok(res);
     }
     
+    @GetMapping(""+UrlProvider.Employee.ALL_MY_OUTBOUNDS)
+    public ResponseEntity<?> allMyOutbounds(HttpServletRequest request) {
+        String userID = (String) request.getAttribute(RequestAttributeKeys.USER_ID.toString());
+        int employeeIDInt = 0;
+        try {
+            employeeIDInt = Integer.parseInt(userID);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        Employees emp = employeesFacade.find(employeeIDInt);
+        if (emp == null) {
+            StandardResponse res = new StandardResponse();
+            res.setSuccess(false);
+            res.setStatus(401);
+            res.setMessage("Cannot found your information");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+        }
+        
+        List<Outbounds> allOut = outboundsFacade.findByEmployeeID(emp);
+
+        //format date
+        SimpleDateFormat formDate = new SimpleDateFormat("dd/MM/yyyy");
+
+        DataResponse<List<OutboundResponse>> responses = new DataResponse<>();
+        List<OutboundResponse> dataOut = new ArrayList<>();
+
+        for (Outbounds outboundItem : allOut) {
+            List<OutboundDetailResponse> listOutboundDetail = new ArrayList<>();
+            for (OutboundDetails outboundDetailItem : outboundDetailsFacade.findByOutboundID(outboundItem.getOutboundID())) {
+                listOutboundDetail.add(
+                        OutboundDetailResponse.builder()
+                                .materialID(outboundDetailItem.getMaterials().getMaterialID())
+                                .materialName(outboundDetailItem.getMaterials().getName())
+                                .unit(outboundDetailItem.getMaterials().getUnit())
+                                .materialImage(FileSupport.perfectImg(request, "material", outboundDetailItem.getMaterials().getImage()))
+                                .quantity(outboundDetailItem.getQuantity())
+                                .build()
+                );
+            }
+
+            //add item
+            dataOut.add(
+                    OutboundResponse.builder()
+                            .outboundID(outboundItem.getOutboundID())
+                            .employeeID(outboundItem.getEmployeeID().getEmployeeID())
+                            .name(outboundItem.getEmployeeID().getName())
+                            .date(formDate.format(outboundItem.getDate()))
+                            .details(listOutboundDetail)
+                            .build()
+            );
+        }
+
+        responses.setSuccess(true);
+        responses.setStatus(200);
+        responses.setMessage("Successfully get all my outbounds");
+        responses.setData(dataOut);
+
+        return ResponseEntity.ok(responses);
+    }
+    
     private EmployeesFacadeLocal lookupEmployeesFacadeLocal() {
         try {
             Context c = new InitialContext();
@@ -1045,6 +1172,26 @@ public class EmployeeApiController {
         try {
             Context c = new InitialContext();
             return (EmployeeTimeKeepingsFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/EmployeeTimeKeepingsFacade!com.fivecafe.session_beans.EmployeeTimeKeepingsFacadeLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private EmployeeSalariesFacadeLocal lookupEmployeeSalariesFacadeLocal() {
+        try {
+            Context c = new InitialContext();
+            return (EmployeeSalariesFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/EmployeeSalariesFacade!com.fivecafe.session_beans.EmployeeSalariesFacadeLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private EmployeeSalaryDetailsFacadeLocal lookupEmployeeSalaryDetailsFacadeLocal() {
+        try {
+            Context c = new InitialContext();
+            return (EmployeeSalaryDetailsFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/EmployeeSalaryDetailsFacade!com.fivecafe.session_beans.EmployeeSalaryDetailsFacadeLocal");
         } catch (NamingException ne) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
             throw new RuntimeException(ne);

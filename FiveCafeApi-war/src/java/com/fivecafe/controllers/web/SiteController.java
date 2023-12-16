@@ -99,8 +99,23 @@ public class SiteController {
         return "site/my-bills";
     }
 
+    @GetMapping(""+WebUrlProvider.Site.MY_TIMEKEEPINGS)
+    public String myTimekeepingsPage() {
+        return "site/my-timekeepings";
+    }
+
+    @GetMapping(""+WebUrlProvider.Site.MY_SALARIES)
+    public String mySalariesPage() {
+        return "site/my-salaries";
+    }
+
     @GetMapping(""+WebUrlProvider.Site.TIMEKEEPING)
     public String timekeepingPage() {
         return "site/etk";
+    }
+
+    @GetMapping(""+WebUrlProvider.Site.MY_OUTBOUNDS)
+    public String myOutboundsPage() {
+        return "site/my-outbounds";
     }
 }

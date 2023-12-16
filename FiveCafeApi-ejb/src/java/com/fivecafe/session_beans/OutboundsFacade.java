@@ -4,12 +4,14 @@
  */
 package com.fivecafe.session_beans;
 
+import com.fivecafe.entities.Employees;
 import com.fivecafe.entities.Outbounds;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
@@ -46,8 +48,14 @@ public class OutboundsFacade extends AbstractFacade<Outbounds> implements Outbou
         cq.where(datePredicate);
         
         return em.createQuery(cq).getResultList();
-        
     }
 
-    
+    @Override
+    public List<Outbounds> findByEmployeeID(Employees emp) {
+        Query query = em.createNamedQuery("Outbounds.findByEmployeeID", Outbounds.class);
+        
+        query.setParameter("employeeID", emp);
+        
+        return query.getResultList();
+    } 
 }

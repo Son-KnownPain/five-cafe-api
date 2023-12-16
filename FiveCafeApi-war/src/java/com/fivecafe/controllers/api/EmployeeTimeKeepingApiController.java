@@ -201,7 +201,7 @@ public class EmployeeTimeKeepingApiController {
         );
     }
     
-    @GetMapping("" + UrlProvider.Import.SEARCH)
+    @GetMapping("" + UrlProvider.EmployeeTimeKeeping.SEARCH)
     public ResponseEntity<DataResponse<List<EmployeeTimeKeepingResponse>>> searchImportByDate(
             @RequestParam(name = "dateFrom", defaultValue = "") String dateFromString,
             @RequestParam(name = "dateTo", defaultValue = "") String dateToString,

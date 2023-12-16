@@ -54,6 +54,7 @@
                 <root id="test.src.dir"/>
             </test-roots>
         </data>
+        <libraries xmlns="http://www.netbeans.org/ns/cdnjs-libraries/1"/>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
                 <foreign-project>FiveCafeApi-ejb</foreign-project>
@@ -65,15 +66,9 @@
             </reference>
         </references>
         <spring-data xmlns="http://www.netbeans.org/ns/spring-data/1">
-            <config-files>
-                <config-file>web/WEB-INF/applicationContext.xml</config-file>
-                <config-file>web/WEB-INF/dispatcher-servlet.xml</config-file>
-            </config-files>
+            <config-files/>
             <config-file-groups>
-                <config-file-group name="Default Group">
-                    <config-file>web/WEB-INF/applicationContext.xml</config-file>
-                    <config-file>web/WEB-INF/dispatcher-servlet.xml</config-file>
-                </config-file-group>
+                <config-file-group name="Default Group"/>
             </config-file-groups>
         </spring-data>
     </configuration>

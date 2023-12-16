@@ -11,6 +11,7 @@ import com.fivecafe.providers.UrlProvider;
 import com.fivecafe.session_beans.ProductCategoriesFacadeLocal;
 import com.fivecafe.session_beans.ProductsFacadeLocal;
 import com.fivecafe.supports.FileSupport;
+import com.fivecafe.supports.Supports;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +45,18 @@ public class ProductApiController {
     ProductsFacadeLocal productsFacade = lookupProductsFacadeLocal();
 
     @GetMapping("" + UrlProvider.Product.ALL)
-    public ResponseEntity<DataResponse<List<ProductResponse>>> allPro(HttpServletRequest request) {
-        List<Products> allProduct = productsFacade.findAll();
+    public ResponseEntity<DataResponse<List<ProductResponse>>> allPro(
+            HttpServletRequest request,
+            @RequestParam(value = "selling", required = false) String selling
+    ) {
+        List<Products> allProduct;
+        
+        if (selling != null) {
+            allProduct = productsFacade.findActiveProducts();
+        } else {
+            allProduct = productsFacade.findAll();
+        }
+        
         List<ProductResponse> data = new ArrayList<>();
 
         for (Products p : allProduct) {
@@ -70,6 +81,50 @@ public class ProductApiController {
         proResponse.setData(data);
 
         return ResponseEntity.ok(proResponse);
+    }
+    
+    @GetMapping("" + UrlProvider.Product.SEARCH)
+    public ResponseEntity<DataResponse<List<ProductResponse>>> searchProductByProCatIDAndProName(
+            @RequestParam(name = "productCategoryID", defaultValue = "") String productCategoryID,
+            @RequestParam(name = "name", defaultValue = "") String name,
+            HttpServletRequest request,
+            @RequestParam(value = "selling", required = false) String selling
+    ) {
+        ProductCategories productCategories = null;
+        if(productCategoryID.length() > 0){
+            try {
+                int proCateIDInt = Integer.parseInt(productCategoryID);
+                productCategories = productCategoriesFacade.find(proCateIDInt);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        List<Products> productses = productsFacade.searchProductsByCategoryAndName(productCategories, name, selling);;
+        
+        List<ProductResponse> data = new ArrayList<>();
+
+        for (Products products : productses) {
+            data.add(
+                    ProductResponse.builder()
+                            .productID(products.getProductID())
+                            .productCategoryID(products.getProductCategoryID().getProductCategoryID())
+                            .productCategoryName(products.getProductCategoryID().getName())
+                            .name(products.getName())
+                            .price(products.getPrice())
+                            .isSelling(products.getIsSelling())
+                            .image(FileSupport.perfectImg(request, "products", products.getImage()))
+                            .build()
+            );
+        }
+
+        DataResponse<List<ProductResponse>> res = new DataResponse<>();
+
+        res.setSuccess(true);
+        res.setStatus(200);
+        res.setMessage("Successfully searching product");
+        res.setData(data);
+        return ResponseEntity.ok(res);
     }
 
     @PostMapping("" + UrlProvider.Product.STORE)
@@ -205,49 +260,6 @@ public class ProductApiController {
                         .message("Successfully delete product")
                         .build()
         );
-    }
-
-    @GetMapping("" + UrlProvider.Product.SEARCH)
-    public ResponseEntity<DataResponse<List<ProductResponse>>> searchProductByProCatIDAndProName(
-            @RequestParam(name = "productCategoryID", defaultValue = "") String productCategoryID,
-            @RequestParam(name = "name", defaultValue = "") String name,
-            HttpServletRequest request) {
-
-        ProductCategories productCategories = null;
-        if(productCategoryID.length() > 0){
-            try {
-                int proCateIDInt = Integer.parseInt(productCategoryID);
-                productCategories = productCategoriesFacade.find(proCateIDInt);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        
-        List<Products> productses = productsFacade.searchProductsByCategoryAndName(productCategories, name);
-        
-        List<ProductResponse> data = new ArrayList<>();
-
-        for (Products products : productses) {
-            data.add(
-                    ProductResponse.builder()
-                            .productID(products.getProductID())
-                            .productCategoryID(products.getProductCategoryID().getProductCategoryID())
-                            .productCategoryName(products.getProductCategoryID().getName())
-                            .name(products.getName())
-                            .price(products.getPrice())
-                            .isSelling(products.getIsSelling())
-                            .image(FileSupport.perfectImg(request, "products", products.getImage()))
-                            .build()
-            );
-        }
-
-        DataResponse<List<ProductResponse>> res = new DataResponse<>();
-
-        res.setSuccess(true);
-        res.setStatus(200);
-        res.setMessage("Successfully searching product");
-        res.setData(data);
-        return ResponseEntity.ok(res);
     }
     
     private ProductsFacadeLocal lookupProductsFacadeLocal() {

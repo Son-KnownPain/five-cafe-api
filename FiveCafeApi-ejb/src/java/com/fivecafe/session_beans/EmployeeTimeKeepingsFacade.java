@@ -37,6 +37,14 @@ public class EmployeeTimeKeepingsFacade extends AbstractFacade<EmployeeTimeKeepi
     public EmployeeTimeKeepingsFacade() {
         super(EmployeeTimeKeepings.class);
     }
+
+    @Override
+    public List<EmployeeTimeKeepings> findByEmployeeID(Employees emp) {
+        Query query = em.createNamedQuery("EmployeeTimeKeepings.findByEmployeeID", EmployeeTimeKeepings.class);
+        query.setParameter("employeeID", emp);
+
+        return query.getResultList();
+    }
     
      @Override
     public List<EmployeeTimeKeepings> findByEmployeeID(Employees emp) {
@@ -61,7 +69,7 @@ public class EmployeeTimeKeepingsFacade extends AbstractFacade<EmployeeTimeKeepi
 
         // Thực hiện truy vấn
         List<EmployeeTimeKeepings> results = em.createQuery(criteriaQuery).getResultList();
-
+        
         return results;
     }
 }

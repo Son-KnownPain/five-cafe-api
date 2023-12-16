@@ -279,7 +279,7 @@
                                 Outbound ID
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Employee ID
+                                Employee
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Date

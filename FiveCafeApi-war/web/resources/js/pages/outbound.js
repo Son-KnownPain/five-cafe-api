@@ -9,9 +9,6 @@ function fetchTableData(prop = {}) {
         fetchPath += '/api/outbound/all';
     }
 
-    // const { detailClickID = false } = auto;
-
-    // const fetchPath = window.APP_NAME + '/api/outbound/all';
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
@@ -23,12 +20,12 @@ function fetchTableData(prop = {}) {
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 <input type="checkbox" name="delete-checkbox" value="${item.outboundID}" class="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             </th>
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <td scope="row" class="px-6 py-4">
                                 ${item.outboundID}
-                            </th>
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                ${item.employeeID}
-                            </th>
+                            </td>
+                            <td scope="row" class="px-6 py-4">
+                                ${item.name}
+                            </td>
                             <td class="px-6 py-4">
                                 ${item.date}
                             </td>

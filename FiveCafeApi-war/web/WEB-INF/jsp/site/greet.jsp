@@ -14,17 +14,18 @@
     </jsp:attribute>
     <jsp:body>
         <div class="flex items-center justify-center mt-5">
-            <div>
-                <div class="flex items-center justify-center mb-5">
-                    <img width="200px" src="${pageContext.request.contextPath}/resources/images/layout/FiveCafeLogo.png" alt="Logo" />
-                </div>
-                <h1 class="font-semibold text-5xl text-gray-900">Hi, welcome to Five Cafe management website</h1>
+            <div class="text-center">
+                <h1 class="font-bold text-4xl text-gray-900">Five Cafe management website</h1>
+                <p class="mt-3 font-normal text-gray-500 text-sm">Hi, welcome to the Five Cafe Management Website, where you can effortlessly oversee and optimize all aspects of your cafe operations. Explore intuitive tools for employee management, inventory control, bill tracking, and more to enhance the efficiency and success of your cafe business.</p>
             </div>
         </div>
 
         <!-- Material quantityInStock below 5 -->
-        <div id="product-out-quantityinstock">
-
+        <div class="mt-5 bg-slate-100 rounded-md p-4" id="product-out-quantityinstock-box">
+            <h1 class="text-sm font-semibold text-gray-500">The product has very little inventory</h1>
+            <div class="grid grid-cols-1 gap-4" id="product-out-quantityinstock-content">
+                <!-- RenderedByJS -->
+            </div>
         </div>
     </jsp:body>
 </t:admin_layout>

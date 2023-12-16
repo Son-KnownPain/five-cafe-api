@@ -32,6 +32,8 @@ public interface ProductsFacadeLocal {
 
     public List<Products> searchProductByName(String name);
 
-    public List<Products> searchProductsByCategoryAndName(ProductCategories productCategoryId, String proName);
+    public List<Products> searchProductsByCategoryAndName(ProductCategories productCategoryId, String proName, String selling);
+
+    public List<Products> findActiveProducts();
     
 }

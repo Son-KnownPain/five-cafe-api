@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Outbounds.findAll", query = "SELECT o FROM Outbounds o"),
+    @NamedQuery(name = "Outbounds.findByEmployeeID", query = "SELECT o FROM Outbounds o WHERE o.employeeID = :employeeID"),
     @NamedQuery(name = "Outbounds.findByOutboundID", query = "SELECT o FROM Outbounds o WHERE o.outboundID = :outboundID"),
     @NamedQuery(name = "Outbounds.findByDate", query = "SELECT o FROM Outbounds o WHERE o.date = :date")})
 public class Outbounds implements Serializable {

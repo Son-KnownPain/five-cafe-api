@@ -46,6 +46,14 @@ public class EmployeeTimeKeepingsFacade extends AbstractFacade<EmployeeTimeKeepi
         return query.getResultList();
     }
     
+     @Override
+    public List<EmployeeTimeKeepings> findByEmployeeID(Employees emp) {
+        Query query = em.createNamedQuery("EmployeeTimeKeepings.findByEmployeeID", EmployeeTimeKeepings.class);
+        query.setParameter("employeeID", emp);
+
+        return query.getResultList();
+    }
+    
     @Override
     public List<EmployeeTimeKeepings> searchEmployeeTimeKeepingByDate(Date dateFrom, Date dateTo) throws ParseException {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();

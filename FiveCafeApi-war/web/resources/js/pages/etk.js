@@ -1,9 +1,10 @@
 // Fetch table data
-function fetchTableData(searching = null) {
-    // search cái j không biết.
+function fetchTableData(prop = {}) {
+    const { detailClickID = null, searching = null } = prop;
+
     let fetchPath = window.APP_NAME;
     if (searching) {
-        fetchPath += `/api/etk/search?keyword=${searching.keyword}${searching.roleID ? `&roleID=${searching.roleID}` : ""}`
+        fetchPath += `/api/etk/search?dateFrom=${searching.dateFrom}&dateTo=${searching.dateTo}`
     } else  {
         fetchPath += '/api/etk/all';
     }
@@ -120,6 +121,19 @@ function fetchTableData(searching = null) {
     .catch(res => { })
 }
 fetchTableData();
+
+// Hands Search
+document.getElementById('search-form').onsubmit = e => {
+    e.preventDefault();
+    const dateFrom = document.getElementById('dateFrom').value;
+    const dateTo = document.getElementById('dateTo').value;
+    fetchTableData({
+        searching: {
+            dateFrom: dateFrom,
+            dateTo: dateTo
+        }
+    })
+ }
 
  // Handle searching
 // function renderRoleFilter() {

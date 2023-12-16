@@ -202,7 +202,7 @@ public class EmployeeTimeKeepingApiController {
     }
     
     @GetMapping("" + UrlProvider.EmployeeTimeKeeping.SEARCH)
-    public ResponseEntity<DataResponse<List<EmployeeTimeKeepingResponse>>> searchImportByDate(
+    public ResponseEntity<DataResponse<List<EmployeeTimeKeepingResponse>>> searchEmployeeTimeKeepingByDate(
             @RequestParam(name = "dateFrom", defaultValue = "") String dateFromString,
             @RequestParam(name = "dateTo", defaultValue = "") String dateToString,
             HttpServletRequest request) throws java.text.ParseException {
@@ -262,6 +262,7 @@ public class EmployeeTimeKeepingApiController {
             data.add(EmployeeTimeKeepingResponse.builder()
                     .timeKeepingID(employeeTimeKeepings.getTimeKeepingID())
                     .employeeID(employeeTimeKeepings.getEmployeeID().getEmployeeID())
+                    .employeeName(employeeTimeKeepings.getEmployeeID().getName())
                     .shiftID(employeeTimeKeepings.getShiftID().getShiftID())
                     .shiftName(employeeTimeKeepings.getShiftID().getName())
                     .date(formatter.format(employeeTimeKeepings.getDate()))

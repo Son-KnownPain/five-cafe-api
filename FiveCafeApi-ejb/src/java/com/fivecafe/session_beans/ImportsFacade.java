@@ -1,27 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.fivecafe.session_beans;
 
+import com.fivecafe.dto.DailyCostDTO;
+import com.fivecafe.dto.DailyRevenueDTO;
 import com.fivecafe.entities.Imports;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/**
- *
- * @author ADMIN
- */
 @Stateless
 public class ImportsFacade extends AbstractFacade<Imports> implements ImportsFacadeLocal {
 
@@ -54,5 +49,23 @@ public class ImportsFacade extends AbstractFacade<Imports> implements ImportsFac
         List<Imports> results = em.createQuery(criteriaQuery).getResultList();
 
         return results;
+    }
+    
+    @Override
+    public List<DailyCostDTO> getDailyCost(String startDate, String endDate) {
+        String sql = "SELECT * FROM CostByDays\n" +
+                        "WHERE [Date] >= '" + startDate + "' AND [Date] <= '" + endDate + "' ";
+        
+        Query nativeQuery = em.createNativeQuery(sql);
+        List<Object[]> resultList = nativeQuery.getResultList();
+
+        List<DailyCostDTO> result = new ArrayList<>();
+        for (Object[] row : resultList) {
+            double cost = (Double) row[0];
+            Date date = (Date) row[1];
+            result.add(new DailyCostDTO(cost, date));
+        }
+
+        return result;
     }
 }

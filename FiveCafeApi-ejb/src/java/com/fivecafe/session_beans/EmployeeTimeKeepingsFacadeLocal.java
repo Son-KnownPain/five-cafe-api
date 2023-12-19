@@ -35,7 +35,5 @@ public interface EmployeeTimeKeepingsFacadeLocal {
     public List<EmployeeTimeKeepings> searchEmployeeTimeKeepingByDate(Date dateFrom, Date dateTo) throws ParseException;
     
     public List<EmployeeTimeKeepings> findByEmployeeID(Employees emp);
-
-    public List<EmployeeTimeKeepings> searchEmployeeTimeKeepingByDate(Date dateFrom, Date dateTo) throws ParseException;
     
 }

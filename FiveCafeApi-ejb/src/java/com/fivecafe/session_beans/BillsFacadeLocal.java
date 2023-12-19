@@ -4,6 +4,7 @@
  */
 package com.fivecafe.session_beans;
 
+import com.fivecafe.dto.DailyRevenueDTO;
 import com.fivecafe.entities.Bills;
 import com.fivecafe.entities.Employees;
 import java.text.ParseException;
@@ -36,5 +37,6 @@ public interface BillsFacadeLocal {
 
     public List<Bills> findByEmployeeID(Employees empID);
 
+    public List<DailyRevenueDTO> getDailyRevenue(String startDate, String endDate);
     
 }

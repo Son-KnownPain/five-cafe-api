@@ -94,4 +94,14 @@
             </li>
         </ul>
     </section>
+    <section class="section mb-4">
+        <p class="section-title">Statistic</p>
+        <ul class="pl-1 m-0">
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/cost-statistic" class="p-2 block">
+                    View statistic
+                </a>
+            </li>
+        </ul>
+    </section>
 </aside>

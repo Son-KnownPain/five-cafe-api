@@ -106,6 +106,7 @@ public class EmployeeApiController {
     BillStatusesFacadeLocal billStatusesFacade = lookupBillStatusesFacadeLocal();
 
     ProductsFacadeLocal productsFacade = lookupProductsFacadeLocal();
+    
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
     

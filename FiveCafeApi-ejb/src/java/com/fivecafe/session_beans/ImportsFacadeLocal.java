@@ -4,6 +4,7 @@
  */
 package com.fivecafe.session_beans;
 
+import com.fivecafe.dto.DailyCostDTO;
 import com.fivecafe.entities.Imports;
 import java.text.ParseException;
 import java.util.Date;
@@ -32,5 +33,7 @@ public interface ImportsFacadeLocal {
     int count();
 
     public List<Imports> searchImportByDate(Date dateForm, Date dateTo) throws ParseException;
+
+    public List<DailyCostDTO> getDailyCost(String startDate, String endDate);
     
 }

@@ -32,6 +32,8 @@ public class WebUrlProvider {
         public static final String GREET1 = "/greet";
         public static final String GREET2 = "/";
         public static final String GREET3 = "";
+        
+        public static final String COST_STATISTIC = "/cost-statistic";
 
         @Override
         public List<String> signInUrls() {
@@ -53,6 +55,7 @@ public class WebUrlProvider {
             signInUrls.add(MY_TIMEKEEPINGS);
             signInUrls.add(MY_SALARIES);
             signInUrls.add(MY_OUTBOUNDS);
+            signInUrls.add(COST_STATISTIC);
             
             return signInUrls;
         }

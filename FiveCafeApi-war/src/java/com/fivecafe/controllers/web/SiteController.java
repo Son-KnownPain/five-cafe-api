@@ -118,4 +118,9 @@ public class SiteController {
     public String myOutboundsPage() {
         return "site/my-outbounds";
     }
+
+    @GetMapping(""+WebUrlProvider.Site.COST_STATISTIC)
+    public String costStatisticPage() {
+        return "statistic/all";
+    }
 }

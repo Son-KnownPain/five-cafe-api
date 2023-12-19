@@ -68,6 +68,34 @@ public class UrlProvider {
         }
     }
     
+    public class Statistic implements AuthUrl {
+        public static final String PREFIX = "/statistic";
+        
+        // NONE SIGN IN
+        
+        // NEED TO SIGN IN
+        public static final String REVENUE = "/revenue";
+        public static final String COST = "/cost";
+        
+        @Override
+        public List<String> signInUrls() {
+            ArrayList<String> signInUrls = new ArrayList<>();
+            signInUrls.add(addApiPrefix(addStatisticPrefix(REVENUE)));
+            signInUrls.add(addApiPrefix(addStatisticPrefix(COST)));
+            
+            return signInUrls;
+        }
+        
+        private String addStatisticPrefix(final String PATH) {
+            return PREFIX + PATH;
+        }
+
+        @Override
+        public HashMap<String, List<String>> roleUrls() {
+            return null;
+        }
+    }
+    
     public class Role implements AuthUrl {
         public static final String PREFIX = "/role";
         

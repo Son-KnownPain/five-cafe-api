@@ -1,6 +1,5 @@
 package com.fivecafe.controllers.api;
 
-import com.fivecafe.body.employeesalary.AddDetailItemReq;
 import com.fivecafe.body.employeesalary.AddESDetailsReq;
 import com.fivecafe.body.employeesalary.CreateEmployeeSalaryReq;
 import com.fivecafe.body.employeesalary.EmployeeSalariesResponse;
@@ -19,7 +18,6 @@ import com.fivecafe.session_beans.EmployeeSalariesFacadeLocal;
 import com.fivecafe.session_beans.EmployeeSalaryDetailsFacadeLocal;
 import com.fivecafe.session_beans.EmployeeTimeKeepingsFacadeLocal;
 import com.fivecafe.session_beans.EmployeesFacadeLocal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -297,7 +295,7 @@ public class EmployeeSalariesApiController {
                 
         EmployeeSalaryDetails salaryDetailRecord = employeeSalaryDetailsFacade.find(PK);
 
-        salaryDetailRecord.setBonus(reqBody.getBonus() / 100);
+        salaryDetailRecord.setBonus((double) reqBody.getBonus() / 100);
         salaryDetailRecord.setDeduction(reqBody.getDeduction());
 
         employeeSalaryDetailsFacade.edit(salaryDetailRecord);

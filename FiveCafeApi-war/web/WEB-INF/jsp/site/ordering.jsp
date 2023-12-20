@@ -58,6 +58,12 @@
                             <input type="text" name="cardCode" id="cardCode" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Card code">
                             <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
                         </div>
+                        <div class="col-span-2 form-gr">
+                            <div class="text-right">
+                                <p class="font-normal text-base mt-4 mb-2 text-gray-500">Total</p>
+                                <p class="font-semibold text-2xl text-black" id="total-price-val">0 VNĐ</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="flex justify-end items-center">
                         <button type="submit" class="text-white inline-flex items-center bg-cyan-700 hover:bg-cyan-800 focus:ring-4 focus:outline-none focus:ring-cyan-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800">
@@ -85,7 +91,7 @@
                         <button type="submit" id="search-btn" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
                     </div>
                 </form>
-                <div id="search-product-result" class="bg-white dark:bg-gray-700 mt-4 p-4 rounded-md grid gap-4">
+                <div id="search-product-result" class="bg-white dark:bg-gray-700 mt-4 p-4 rounded-md grid gap-4 max-h-96 overflow-y-auto">
                     <!-- Render By JS -->
                 </div>
             </div>

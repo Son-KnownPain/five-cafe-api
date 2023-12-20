@@ -18,7 +18,6 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-
 @Stateless
 public class EmployeeTimeKeepingsFacade extends AbstractFacade<EmployeeTimeKeepings> implements EmployeeTimeKeepingsFacadeLocal {
 
@@ -32,6 +31,14 @@ public class EmployeeTimeKeepingsFacade extends AbstractFacade<EmployeeTimeKeepi
 
     public EmployeeTimeKeepingsFacade() {
         super(EmployeeTimeKeepings.class);
+    }
+
+    @Override
+    public List<EmployeeTimeKeepings> findByEmployeeID(Employees emp) {
+        Query query = em.createNamedQuery("EmployeeTimeKeepings.findByEmployeeID", EmployeeTimeKeepings.class);
+        query.setParameter("employeeID", emp);
+
+        return query.getResultList();
     }
     
     @Override
@@ -49,13 +56,7 @@ public class EmployeeTimeKeepingsFacade extends AbstractFacade<EmployeeTimeKeepi
 
         // Thực hiện truy vấn
         List<EmployeeTimeKeepings> results = em.createQuery(criteriaQuery).getResultList();
-
+        
         return results;
     }
-
-    @Override
-    public List<EmployeeTimeKeepings> findByEmployeeID(Employees emp) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    
 }

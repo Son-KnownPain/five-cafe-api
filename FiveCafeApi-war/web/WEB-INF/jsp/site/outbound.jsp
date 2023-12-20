@@ -215,8 +215,8 @@
 
         <!-- Page head introduction -->
         <div class="mb-4">
-            <h1 class="font-semibold text-3xl text-gray-800">Outbound management</h1>
-            <p class="font-normala text-gray-500 text-base mt-3">chưa mô ta.</p>
+            <h1 class="font-semibold text-3xl text-gray-800">Outbounds management</h1>
+            <p class="font-normala text-gray-500 text-base mt-3">The "Outbound Management" function is a crucial part of the cafe management system, focusing on tracking and overseeing the process of outgoing inventory of raw materials and products from the cafe's warehouse. This feature ensures efficiency in inventory maintenance, minimizes discrepancies, and provides a comprehensive overview of consumption and outbound activities.</p>
         </div>
         <!-- Alerts -->
             <!-- Success alert -->
@@ -279,7 +279,7 @@
                                 Outbound ID
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Employee ID
+                                Employee
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Date

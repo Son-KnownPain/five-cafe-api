@@ -28,7 +28,7 @@ function fetchTableData(prop = {}) {
                                 ${item.employeeName}
                             </td>
                             <td class="px-6 py-4">
-                            ${window.currencyOutput(item.details.reduce((acc, cur) => acc + cur.salary * (1 + cur.bonus / 100) - cur.deduction, 0))}
+                                ${window.currencyOutput(item.details.reduce((acc, cur) => acc + cur.salary * (1 + cur.bonus / 100) - cur.deduction, 0))}
                             </td>
                             <td class="px-6 py-4">
                                 ${item.date}

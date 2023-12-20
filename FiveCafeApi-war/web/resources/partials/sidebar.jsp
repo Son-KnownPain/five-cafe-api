@@ -3,6 +3,11 @@
         <p class="section-title">For you</p>
         <ul class="pl-1 m-0">
             <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war" class="p-2 block">
+                    Home page
+                </a>
+            </li>
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
                 <a href="/FiveCafeApi-war/ordering" class="p-2 block">
                     Ordering
                 </a>
@@ -34,7 +39,7 @@
             </li>
             <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
                 <a href="/FiveCafeApi-war/bill-status" class="p-2 block">
-                    Bill status
+                    Bill statuses
                 </a>
             </li>
             <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
@@ -84,7 +89,17 @@
             </li>
             <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
                 <a href="/FiveCafeApi-war/bill" class="p-2 block">
-                    Bill
+                    Bills
+                </a>
+            </li>
+        </ul>
+    </section>
+    <section class="section mb-4">
+        <p class="section-title">Statistic</p>
+        <ul class="pl-1 m-0">
+            <li class="rounded-md transition duration-200 ease-in-out bg-white hover:bg-sky-700 hover:text-white cursor-pointer">
+                <a href="/FiveCafeApi-war/cost-statistic" class="p-2 block">
+                    View statistic
                 </a>
             </li>
         </ul>

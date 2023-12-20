@@ -35,6 +35,8 @@ public class UrlProvider {
         public static final String UPDATE_PRO_OF_BILL = "/update-pro-of-bill";
         public static final String DELETE_PRO_OF_BILL = "/delete-pro-of-bill";
         public static final String ALL_MY_ETK = "/all-my-etk";
+        public static final String ALL_MY_SALARIES = "/all-my-salaries";
+        public static final String ALL_MY_OUTBOUNDS = "/all-my-outbounds";
         
         @Override
         public List<String> signInUrls() {
@@ -47,14 +49,44 @@ public class UrlProvider {
             signInUrls.add(addApiPrefix(addEmployeePrefix(CREATE_OUTBOUND)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_BILLS)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_ETK)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_SALARIES)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_MY_BILL)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(ADD_PRO_OF_BILL)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_PRO_OF_BILL)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(DELETE_PRO_OF_BILL)));
+            signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_OUTBOUNDS)));
             return signInUrls;
         }
         
         private String addEmployeePrefix(final String PATH) {
+            return PREFIX + PATH;
+        }
+
+        @Override
+        public HashMap<String, List<String>> roleUrls() {
+            return null;
+        }
+    }
+    
+    public class Statistic implements AuthUrl {
+        public static final String PREFIX = "/statistic";
+        
+        // NONE SIGN IN
+        
+        // NEED TO SIGN IN
+        public static final String REVENUE = "/revenue";
+        public static final String COST = "/cost";
+        
+        @Override
+        public List<String> signInUrls() {
+            ArrayList<String> signInUrls = new ArrayList<>();
+            signInUrls.add(addApiPrefix(addStatisticPrefix(REVENUE)));
+            signInUrls.add(addApiPrefix(addStatisticPrefix(COST)));
+            
+            return signInUrls;
+        }
+        
+        private String addStatisticPrefix(final String PATH) {
             return PREFIX + PATH;
         }
 

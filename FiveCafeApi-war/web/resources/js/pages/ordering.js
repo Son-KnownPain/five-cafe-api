@@ -1,11 +1,11 @@
 var products = [];
 
 function fetchProducts({ searching }) {
-    let fetchPath = window.APP_NAME + '/api/product/all';
+    let fetchPath
     if (searching) {
-        fetchPath = window.APP_NAME + `/api/product/search?name=${searching.name}`;
+        fetchPath = window.APP_NAME + `/api/product/search?name=${searching.name}&selling`;
     } else {
-        fetchPath = window.APP_NAME + '/api/product/all';
+        fetchPath = window.APP_NAME + '/api/product/all?selling';
     }
     fetch(fetchPath)
     .then(res => res.json())
@@ -80,6 +80,18 @@ function removeChosenProduct(productID) {
     renderProducts();
 }
 
+function calculateTotalPrice() {
+    const total = document.getElementById('total-price-val');
+
+    total.textContent = window.currencyOutput(chosenProducts.reduce((acc, cur) => acc + cur.price * cur.quantity, 0))
+}
+
+function resetChosenProduct() {
+    chosenProducts = [];
+    renderChooseProducts();
+    renderProducts();
+}
+
 function renderChooseProducts() {
     document.getElementById('chosen-product').innerHTML = chosenProducts.map(product => `
         <div class="flex gap-4 mt-2">
@@ -113,6 +125,8 @@ function renderChooseProducts() {
         </div>
     `).join('')
 
+    calculateTotalPrice();
+
     // Handle quantity change
     const quantityInputs = document.querySelectorAll('input[data-quantity-input]');
     Array.from(quantityInputs).forEach(input => {
@@ -122,6 +136,8 @@ function renderChooseProducts() {
             const product = chosenProducts.find(x => x.productID == productID);
 
             product.quantity = e.target.value;
+
+            calculateTotalPrice();
         }
     })
 
@@ -207,10 +223,10 @@ Validator({
             if (res.status == 200) {
                 hideWarningAlert();
                 showSuccessAlert('Successfully ordering');
-                fetchTableData();
                 resetForm({
                     cardCode: '',
                 })
+                resetChosenProduct();
             } else if (res.status == 400 && res.invalid) {
                 showWarningAlert('Invalid some fields', res.errors);
             }

@@ -1,12 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.fivecafe.session_beans;
 
+import com.fivecafe.dto.DailyRevenueDTO;
 import com.fivecafe.entities.Bills;
 import com.fivecafe.entities.Employees;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -19,10 +17,6 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/**
- *
- * @author ADMIN
- */
 @Stateless
 public class BillsFacade extends AbstractFacade<Bills> implements BillsFacadeLocal {
 
@@ -58,4 +52,29 @@ public class BillsFacade extends AbstractFacade<Bills> implements BillsFacadeLoc
         
         return query.getResultList();
     }
+    
+    @Override
+    public List<DailyRevenueDTO> getDailyRevenue(String startDate, String endDate) {
+        String sql = "SELECT \n" +
+                "	SUM(BD.UnitPrice * BD.Quantity) AS [Revenue], \n" +
+                "	CONVERT(DATE, B.CreatedDate) AS [Date]\n" +
+                "FROM Bills AS B\n" +
+                "	JOIN BillDetails AS BD \n" +
+                "ON BD.BillID = B.BillID\n" +
+                "WHERE B.CreatedDate >= '" + startDate + "' AND B.CreatedDate <= '" + endDate + "'\n" + 
+                "GROUP BY CONVERT(DATE, B.CreatedDate)";
+        
+        Query nativeQuery = em.createNativeQuery(sql);
+        List<Object[]> resultList = nativeQuery.getResultList();
+
+        List<DailyRevenueDTO> result = new ArrayList<>();
+        for (Object[] row : resultList) {
+            double revenue = (Double) row[0];
+            Date date = (Date) row[1];
+            result.add(new DailyRevenueDTO(revenue, date));
+        }
+
+        return result;
+    }
+
 }

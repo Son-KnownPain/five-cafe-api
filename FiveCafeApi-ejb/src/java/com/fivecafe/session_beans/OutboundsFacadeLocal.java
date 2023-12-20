@@ -4,6 +4,7 @@
  */
 package com.fivecafe.session_beans;
 
+import com.fivecafe.entities.Employees;
 import com.fivecafe.entities.Outbounds;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,8 @@ public interface OutboundsFacadeLocal {
     int count();
 
     public List<Outbounds> getOutboundsByDaterange(Date dateForm, Date dateTo);
+
+    public List<Outbounds> findByEmployeeID(Employees emp);
 
     
 }

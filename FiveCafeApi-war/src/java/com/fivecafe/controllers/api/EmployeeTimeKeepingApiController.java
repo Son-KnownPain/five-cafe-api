@@ -201,8 +201,8 @@ public class EmployeeTimeKeepingApiController {
         );
     }
     
-    @GetMapping("" + UrlProvider.Import.SEARCH)
-    public ResponseEntity<DataResponse<List<EmployeeTimeKeepingResponse>>> searchImportByDate(
+    @GetMapping("" + UrlProvider.EmployeeTimeKeeping.SEARCH)
+    public ResponseEntity<DataResponse<List<EmployeeTimeKeepingResponse>>> searchETKByDate(
             @RequestParam(name = "dateFrom", defaultValue = "") String dateFromString,
             @RequestParam(name = "dateTo", defaultValue = "") String dateToString,
             HttpServletRequest request) throws java.text.ParseException {

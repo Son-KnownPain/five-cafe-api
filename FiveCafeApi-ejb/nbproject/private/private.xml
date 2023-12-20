@@ -2,23 +2,7 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-ejb/src/java/com/fivecafe/session_beans/EmployeeTimeKeepingsFacade.java</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-ejb/src/java/com/fivecafe/session_beans/ImportsFacade.java</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-ejb/src/java/com/fivecafe/session_beans/MaterialsFacade.java</file>
-            <file>file:/C:/Users/PC%20HP/OneDrive/Documents/GitHub/five-cafe-api/FiveCafeApi-ejb/src/java/com/fivecafe/session_beans/EmployeeTimeKeepingsFacadeLocal.java</file>
-        </group>
-        <group>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-ejb/src/java/com/fivecafe/session_beans/BillsFacade.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-ejb/src/java/com/fivecafe/session_beans/BillsFacadeLocal.java</file>
-        </group>
-        <group>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-ejb/src/java/com/fivecafe/session_beans/BillsFacade.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-ejb/src/java/com/fivecafe/session_beans/ImportsFacade.java</file>
-        </group>
-        <group>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-ejb/src/java/com/fivecafe/session_beans/BillsFacade.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-ejb/src/java/com/fivecafe/session_beans/ImportsFacade.java</file>
-        </group>
+        <group/>
+        <group/>
     </open-files>
 </project-private>

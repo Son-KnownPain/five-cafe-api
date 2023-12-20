@@ -4,6 +4,7 @@ import com.fivecafe.body.bills.AddBillDetail;
 import com.fivecafe.body.bills.BillDetailsResponse;
 import com.fivecafe.body.bills.BillResponse;
 import com.fivecafe.body.bills.CreateBill;
+import com.fivecafe.body.bills.UpdateBill;
 import com.fivecafe.body.bills.UpdateBillDetail;
 import com.fivecafe.entities.BillDetails;
 import com.fivecafe.entities.BillDetailsPK;
@@ -251,9 +252,6 @@ public class BillApiController {
         BillDetails billDetail = billDetailsFacade.find(idPK);
 
         if (billDetail != null) {
-//            // Update material quantity in stock
-//            products.setQuantityInStock(material.getQuantityInStock() + (reqBody.getQuantity() - importDetail.getQuantity()));
-
             // Update import detail
             billDetail.setQuantity(reqBody.getQuantity());
 
@@ -268,6 +266,46 @@ public class BillApiController {
 
         return ResponseEntity.ok(res);
     }
+
+    @PutMapping("" + UrlProvider.Bills.UPDATE)
+    public ResponseEntity<?> updateBill(@Valid @RequestBody UpdateBill reqBody, BindingResult br
+    ) throws MethodArgumentNotValidException {
+        // Validate
+        Bills bills = billsFacade.find(reqBody.getBillID());
+        if (bills == null) {
+            br.rejectValue("billID", "error.billID", "Bill ID you provided is not exist");
+        }
+
+        Employees employees = employeesFacade.find(reqBody.getEmployeeID());
+        if (employees == null) {
+            br.rejectValue("employeeID", "error.employeeID", "Employee ID you provided is not exist");
+        }
+
+        BillStatuses billStatuses = billStatusesFacade.find(reqBody.getBillStatusID());
+        if (billStatuses == null) {
+            br.rejectValue("billStatusID", "error.billStatusID", "BillStatus ID you provided is not exist");
+        }
+
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
+        }
+        
+        bills.setEmployeeID(employees);
+        bills.setBillStatusID(billStatuses);
+        bills.setCreatedDate(new Date());
+        bills.setCardCode(reqBody.getCardCode());
+        
+        billsFacade.edit(bills);
+
+        StandardResponse res = StandardResponse.builder()
+                .status(200)
+                .success(true)
+                .message("Successfully update bill")
+                .build();
+
+        return ResponseEntity.ok(res);
+    }
+
 
     @DeleteMapping("" + UrlProvider.Bills.DELETE_PRO_ITEM)
     public ResponseEntity<?> deleteProItem(@RequestParam("productID") int productID, @RequestParam("billID") int billID) {

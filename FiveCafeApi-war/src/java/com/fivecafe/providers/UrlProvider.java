@@ -360,6 +360,7 @@ public class UrlProvider {
         // NEED TO SIGN IN
         public static final String ALL ="/all";
         public static final String STORE = "/store";
+        public static final String UPDATE = "/update";
         public static final String STORE_PRO_ITEM = "/store-pro-item";
         public static final String UPDATE_PRO_ITEM = "/update-pro-item";
         public static final String DELETE_PRO_ITEM = "/delete-pro-item";

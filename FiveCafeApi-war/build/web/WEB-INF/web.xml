@@ -5,16 +5,4 @@
             index.html
         </welcome-file>
     </welcome-file-list>
-    <ejb-local-ref>
-        <ejb-ref-name>BillsFacade</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>com.fivecafe.session_beans.BillsFacadeLocal</local>
-        <ejb-link>FiveCafeApi-ejb.jar#BillsFacade</ejb-link>
-    </ejb-local-ref>
-    <ejb-local-ref>
-        <ejb-ref-name>ImportsFacade</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local>com.fivecafe.session_beans.ImportsFacadeLocal</local>
-        <ejb-link>FiveCafeApi-ejb.jar#ImportsFacade</ejb-link>
-    </ejb-local-ref>
 </web-app>

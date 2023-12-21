@@ -1,5 +1,6 @@
 package com.fivecafe.providers;
 
+import com.fivecafe.enums.HardRoles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,8 @@ public class UrlProvider {
         public static final String ALL_MY_SALARIES = "/all-my-salaries";
         public static final String ALL_MY_OUTBOUNDS = "/all-my-outbounds";
         
+        public static final String NAV = "/nav";
+        
         @Override
         public List<String> signInUrls() {
             ArrayList<String> signInUrls = new ArrayList<>();
@@ -55,6 +58,10 @@ public class UrlProvider {
             signInUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_PRO_OF_BILL)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(DELETE_PRO_OF_BILL)));
             signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_OUTBOUNDS)));
+            
+            // Nav
+            signInUrls.add(addApiPrefix(addEmployeePrefix(NAV)));
+            
             return signInUrls;
         }
         
@@ -64,7 +71,66 @@ public class UrlProvider {
 
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(SEARCH)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(DELETE)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(LOGOUT)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(INFO)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(ORDERING)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(CREATE_OUTBOUND)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_BILLS)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_MY_BILL)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_PRO_OF_BILL)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(ADD_PRO_OF_BILL)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(DELETE_PRO_OF_BILL)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_ETK)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_OUTBOUNDS)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_SALARIES)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(NAV)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(LOGOUT)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(INFO)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(ORDERING)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(CREATE_OUTBOUND)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_BILLS)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_MY_BILL)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_PRO_OF_BILL)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(ADD_PRO_OF_BILL)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(DELETE_PRO_OF_BILL)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_ETK)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_OUTBOUNDS)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_SALARIES)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(NAV)));
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            servingStaffUrls.add(addApiPrefix(addEmployeePrefix(LOGOUT)));
+            servingStaffUrls.add(addApiPrefix(addEmployeePrefix(INFO)));
+            servingStaffUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_BILLS)));
+            servingStaffUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_MY_BILL)));
+            servingStaffUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_PRO_OF_BILL)));
+            servingStaffUrls.add(addApiPrefix(addEmployeePrefix(ADD_PRO_OF_BILL)));
+            servingStaffUrls.add(addApiPrefix(addEmployeePrefix(DELETE_PRO_OF_BILL)));
+            servingStaffUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_ETK)));
+            servingStaffUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_OUTBOUNDS)));
+            servingStaffUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_SALARIES)));
+            servingStaffUrls.add(addApiPrefix(addEmployeePrefix(NAV)));
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
@@ -92,7 +158,26 @@ public class UrlProvider {
 
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addStatisticPrefix(REVENUE)));
+            ownerUrls.add(addApiPrefix(addStatisticPrefix(COST)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
@@ -115,23 +200,40 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addRolePrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addRolePrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addRolePrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addRolePrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addRolePrefix(DELETE)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
     public class Product implements AuthUrl{
         public static final String PREFIX = "/product";
         
-        public static final String INDEX1 = "/index";
-        public static final String INDEX2 = "/";
-        public static final String INDEX3 = "";
-        
         public static final String ALL = "/all";
         public static final String STORE = "/store";
         public static final String UPDATE = "/update";
@@ -145,23 +247,41 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addProductPrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addProductPrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addProductPrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addProductPrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addProductPrefix(DELETE)));
+            ownerUrls.add(addApiPrefix(addProductPrefix(SEARCH)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
     public class ProductCategory implements AuthUrl{
         public static final String PREFIX = "/pro-category";
         
-        public static final String INDEX1 = "/index";
-        public static final String INDEX2 = "/";
-        public static final String INDEX3 = "";
-        
         public static final String ALL = "/all";
         public static final String STORE = "/store";
         public static final String UPDATE = "/update";
@@ -175,22 +295,40 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addProCatePrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addProCatePrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addProCatePrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addProCatePrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addProCatePrefix(DELETE)));
+            ownerUrls.add(addApiPrefix(addProCatePrefix(SEARCH)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
     public class Outbound implements AuthUrl{
         public static final String PREFIX = "/outbound";
-        
-        public static final String INDEX1 = "/index";
-        public static final String INDEX2 = "/";
-        public static final String INDEX3 = "";
         
         public static final String ALL = "/all";
         public static final String STORE = "/store";
@@ -207,22 +345,42 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addOutboundPrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addOutboundPrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addOutboundPrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addOutboundPrefix(STORE_MAT_ITEM)));
+            ownerUrls.add(addApiPrefix(addOutboundPrefix(DELETE_MAT_ITEM)));
+            ownerUrls.add(addApiPrefix(addOutboundPrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addOutboundPrefix(DELETE)));
+            ownerUrls.add(addApiPrefix(addOutboundPrefix(SEARCH)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
     public class Supplier implements AuthUrl{
         public static final String PREFIX = "/supplier";
-        
-        public static final String INDEX1 = "/index";
-        public static final String INDEX2 = "/";
-        public static final String INDEX3 = "";
         
         public static final String ALL = "/all";
         public static final String STORE = "/store";
@@ -237,24 +395,40 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addSupplierPrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addSupplierPrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addSupplierPrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addSupplierPrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addSupplierPrefix(DELETE)));
+            ownerUrls.add(addApiPrefix(addSupplierPrefix(SEARCH)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
-    //Nhu Code O Day:
     public class MaterialCategory implements AuthUrl{
         public static final String PREFIX ="/mat-category";
-        
-        // NONE SIGN IN
-        public static final String INDEX1 = "/index";
-        public static final String INDEX2 = "/";
-        public static final String INDEX3 = "";
         
         // NEED TO SIGN IN
         public static final String ALL ="/all";
@@ -270,24 +444,41 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addMatCatePrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addMatCatePrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addMatCatePrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addMatCatePrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addMatCatePrefix(DELETE)));
+            ownerUrls.add(addApiPrefix(addMatCatePrefix(SEARCH)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
     public class Material implements AuthUrl{
         public static final String PREFIX ="/material";
-        
-        // NONE SIGN IN
-        public static final String INDEX1 = "/index";
-        public static final String INDEX2 = "/";
-        public static final String INDEX3 = "";
         
         // NEED TO SIGN IN
         public static final String ALL ="/all";
@@ -297,8 +488,6 @@ public class UrlProvider {
         public static final String SEARCH = "/search";
         public static final String GETQUANTITYINSTOCK = "/get-the-quantityinstock-below-five";
         
-        
-        
         @Override
         public List<String> signInUrls() {
             ArrayList<String> signInUrls = new ArrayList<>();
@@ -306,23 +495,41 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addMaterialPrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addMaterialPrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addMaterialPrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addMaterialPrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addMaterialPrefix(DELETE)));
+            ownerUrls.add(addApiPrefix(addMaterialPrefix(SEARCH)));
+            ownerUrls.add(addApiPrefix(addMaterialPrefix(GETQUANTITYINSTOCK)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
     public class BillStatus implements AuthUrl{
         public static final String PREFIX ="/bill-sts";
-        
-        // NONE SIGN IN
-        public static final String INDEX1 = "/index";
-        public static final String INDEX2 = "/";
-        public static final String INDEX3 = "";
         
         // NEED TO SIGN IN
         public static final String ALL ="/all";
@@ -338,24 +545,41 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addBillStatusPrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addBillStatusPrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addBillStatusPrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addBillStatusPrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addBillStatusPrefix(DELETE)));
+            ownerUrls.add(addApiPrefix(addBillStatusPrefix(SEARCH)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
     public class Bills implements AuthUrl{
         public static final String PREFIX ="/bill";
-        
-        // NONE SIGN IN
-        public static final String INDEX1 = "/index";
-        public static final String INDEX2 = "/";
-        public static final String INDEX3 = "";
         
         // NEED TO SIGN IN
         public static final String ALL ="/all";
@@ -373,14 +597,38 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addBillPrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addBillPrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addBillPrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addBillPrefix(STORE_PRO_ITEM)));
+            ownerUrls.add(addApiPrefix(addBillPrefix(UPDATE_PRO_ITEM)));
+            ownerUrls.add(addApiPrefix(addBillPrefix(DELETE_PRO_ITEM)));
+            ownerUrls.add(addApiPrefix(addBillPrefix(DELETE_BILL)));
+            ownerUrls.add(addApiPrefix(addBillPrefix(SEARCH)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
@@ -391,7 +639,6 @@ public class UrlProvider {
         
         // NEED TO SIGN IN
         public static final String STORE = "/store";
-        public static final String TEST = "/test";
         
         @Override
         public List<String> signInUrls() {
@@ -401,14 +648,33 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addOrderingPrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addOrderingPrefix(STORE)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            counterStaffUrls.add(addApiPrefix(addOrderingPrefix(STORE)));
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
@@ -434,24 +700,43 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addImportPrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addImportPrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addImportPrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addImportPrefix(STORE_MAT_ITEM)));
+            ownerUrls.add(addApiPrefix(addImportPrefix(UPDATE_MAT_ITEM)));
+            ownerUrls.add(addApiPrefix(addImportPrefix(DELETE_MAT_ITEM)));
+            ownerUrls.add(addApiPrefix(addImportPrefix(DELETE_IMPORT)));
+            ownerUrls.add(addApiPrefix(addImportPrefix(SEARCH)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
     public class Shift implements AuthUrl{
         public static final String PREFIX ="/shift";
         
-        // NONE SIGN IN
-        public static final String INDEX1 = "/index";
-        public static final String INDEX2 = "/";
-        public static final String INDEX3 = "";
-        
         // NEED TO SIGN IN
         public static final String ALL ="/all";
         public static final String STORE = "/store";
@@ -466,24 +751,41 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addShiftPrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addShiftPrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addShiftPrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addShiftPrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addShiftPrefix(DELETE)));
+            ownerUrls.add(addApiPrefix(addShiftPrefix(SEARCH)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
     public class EmployeeTimeKeeping implements AuthUrl{
         public static final String PREFIX ="/etk";
         
-        // NONE SIGN IN
-        public static final String INDEX1 = "/index";
-        public static final String INDEX2 = "/";
-        public static final String INDEX3 = "";
-        
         // NEED TO SIGN IN
         public static final String ALL ="/all";
         public static final String STORE = "/store";
@@ -498,23 +800,40 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addETKPrefix(final String PATH) {
             return PREFIX + PATH;
         }
         
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addETKPrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addETKPrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addETKPrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addETKPrefix(DELETE)));
+            ownerUrls.add(addApiPrefix(addETKPrefix(SEARCH)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
     public class EmployeeSalaries implements AuthUrl{
         public static final String PREFIX ="/salary";
-        
-        // NONE SIGN IN
-        public static final String INDEX1 = "/index";
-        public static final String INDEX2 = "/";
-        public static final String INDEX3 = "";
         
         // NEED TO SIGN IN
         public static final String ALL ="/all";
@@ -533,24 +852,44 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addEmpSalaryPrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addEmpSalaryPrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addEmpSalaryPrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addEmpSalaryPrefix(ADD_DETAILS)));
+            ownerUrls.add(addApiPrefix(addEmpSalaryPrefix(UPDATE_DETAIL_ITEM)));
+            ownerUrls.add(addApiPrefix(addEmpSalaryPrefix(DELETE_DETAIL_ITEM)));
+            ownerUrls.add(addApiPrefix(addEmpSalaryPrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addEmpSalaryPrefix(DELETE)));
+            ownerUrls.add(addApiPrefix(addEmpSalaryPrefix(SEARCH)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     
     public class MatToPro implements AuthUrl{
         public static final String PREFIX ="/mat-to-pro";
-        
-        // NONE SIGN IN
-        public static final String INDEX1 = "/index";
-        public static final String INDEX2 = "/";
-        public static final String INDEX3 = "";
         
         // NEED TO SIGN IN
         public static final String ALL ="/all";
@@ -567,14 +906,37 @@ public class UrlProvider {
             return signInUrls;
         }
         
-        private String addUserPrefix(final String PATH) {
+        private String addMatToProPrefix(final String PATH) {
             return PREFIX + PATH;
         }
 
         
         @Override
         public HashMap<String, List<String>> roleUrls() {
-            return null;
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            // Owner urls
+            List<String> ownerUrls = new ArrayList<>();
+            ownerUrls.add(addApiPrefix(addMatToProPrefix(ALL)));
+            ownerUrls.add(addApiPrefix(addMatToProPrefix(BY_PRODUCT_ID)));
+            ownerUrls.add(addApiPrefix(addMatToProPrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addMatToProPrefix(UPDATE)));
+            ownerUrls.add(addApiPrefix(addMatToProPrefix(DELETE)));
+            ownerUrls.add(addApiPrefix(addMatToProPrefix(SEARCH)));
+            
+            roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
+            
+            // Counter staff
+            List<String> counterStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
+            
+            // Serving staff
+            List<String> servingStaffUrls = new ArrayList<>();
+            
+            roleUrls.put(HardRoles.SERVING_STAFF.toString(), servingStaffUrls);
+            
+            return roleUrls;
         }
     }
     

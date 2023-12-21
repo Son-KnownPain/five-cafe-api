@@ -34,8 +34,21 @@
                     <form id="create-form" class="p-4 md:p-5">
                         <div class="grid gap-4 mb-4 grid-cols-2">
                             <div class="col-span-2 form-gr">
+                                <label for="billStatusID" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bill Status ID</label>
+                                <input type="number" name="billStatusID" id="billStatusID" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Enter value">
+                                <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
+                            </div>
+                            <div class="col-span-2 form-gr">
                                 <label for="billStatusValue" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bill status value</label>
                                 <input type="text" name="billStatusValue" id="billStatusValue" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Enter value">
+                                <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
+                            </div>
+                            <div class="col-span-2 form-gr">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="toCheck" value="yes" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                    <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">To check ordering</span>
+                                </label>
                                 <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
                             </div>
                         </div>
@@ -80,9 +93,17 @@
                                 <input type="text" name="billStatusValue" id="billStatusValueEdit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Enter bill status value">
                                 <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
                             </div>
+                            <div class="col-span-2 form-gr">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="toCheckEdit" name="toCheck" value="yes" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                    <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">To check ordering</span>
+                                </label>
+                                <span class="text-base font-normal text-red-500 mt-1 form-message"></span>
+                            </div>
                         </div>
                         <div class="flex justify-end items-center">
-                            <button type="submit" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            <button type="submit" class="text-white inline-flex items-center bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
                                 <i class="fa-solid fa-pen mr-2"></i>
                                 Update
                             </button>
@@ -167,6 +188,9 @@
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Bill status value
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                To Check
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 <span class="sr-only">Edit</span>

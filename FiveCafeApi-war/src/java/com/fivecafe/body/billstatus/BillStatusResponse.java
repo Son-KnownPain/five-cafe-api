@@ -13,6 +13,6 @@ import lombok.Setter;
 @Builder
 public class BillStatusResponse {
     private int billStatusID;
-    
     private String billStatusValue;
+    private boolean toCheck;
 }

@@ -28,5 +28,7 @@ public interface BillStatusesFacadeLocal {
     List<BillStatuses> findRange(int[] range);
 
     int count();
+
+    public boolean hasAnyToCheckTrue();
     
 }

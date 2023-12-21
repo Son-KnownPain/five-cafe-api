@@ -8,6 +8,7 @@ import com.fivecafe.body.employee.CreateOutboundReq;
 import com.fivecafe.body.employee.EmpInfoRes;
 import com.fivecafe.body.employee.EmpLoginCredentials;
 import com.fivecafe.body.employee.EmployeeRes;
+import com.fivecafe.body.employee.NavRes;
 import com.fivecafe.body.employee.UpdEmpReq;
 import com.fivecafe.body.employee.OrderingReq;
 import com.fivecafe.body.employee.UpdateMyBillReq;
@@ -31,6 +32,7 @@ import com.fivecafe.entities.OutboundDetailsPK;
 import com.fivecafe.entities.Outbounds;
 import com.fivecafe.entities.Products;
 import com.fivecafe.entities.Roles;
+import com.fivecafe.enums.HardRoles;
 import com.fivecafe.enums.RequestAttributeKeys;
 import com.fivecafe.enums.TokenNames;
 import com.fivecafe.exceptions.UnauthorizedException;
@@ -116,6 +118,86 @@ public class EmployeeApiController {
     RolesFacadeLocal rolesFacade = lookupRolesFacadeLocal();
 
     EmployeesFacadeLocal employeesFacade = lookupEmployeesFacadeLocal();
+    
+    @GetMapping(""+UrlProvider.Employee.NAV)
+    public ResponseEntity<?> nav(HttpServletRequest request) {
+        // Trích xuất tên ứng dụng từ đường dẫn URL
+        String contextPath = request.getContextPath();
+        
+        String userID = (String) request.getAttribute(RequestAttributeKeys.USER_ID.toString());
+        int employeeIDInt = 0;
+        try {
+            employeeIDInt = Integer.parseInt(userID);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        Employees emp = employeesFacade.find(employeeIDInt);
+        if (emp == null) {
+            StandardResponse res = new StandardResponse();
+            res.setSuccess(false);
+            res.setStatus(401);
+            res.setMessage("Cannot found your information");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+        }
+        
+        DataResponse<List<NavRes>> res = new DataResponse<>();
+        
+        List<NavRes> data = new ArrayList<>();
+        
+        // For you
+            NavRes forYouSection = new NavRes();
+            forYouSection.setSectionLabel("For you");
+            List<NavRes.NavItem> forYouItems = new ArrayList<>();
+            forYouItems.add(new NavRes.NavItem("Home page", "/"));
+            forYouItems.add(new NavRes.NavItem("Ordering", "/ordering"));
+            forYouItems.add(new NavRes.NavItem("Create outbound", "/create-outbound"));
+            forYouSection.setItems(forYouItems);
+        // Management
+            NavRes mangementSection = new NavRes();
+            mangementSection.setSectionLabel("Management");
+            List<NavRes.NavItem> managementItems = new ArrayList<>();
+            managementItems.add(new NavRes.NavItem("Roles", "/role"));
+            managementItems.add(new NavRes.NavItem("Employees", "/employee"));
+            managementItems.add(new NavRes.NavItem("Suppliers", "/supplier"));
+            managementItems.add(new NavRes.NavItem("Bill statuses", "/bill-status"));
+            managementItems.add(new NavRes.NavItem("Shifts", "/shift"));
+            managementItems.add(new NavRes.NavItem("Product categories", "/pro-category"));
+            managementItems.add(new NavRes.NavItem("Products", "/product"));
+            managementItems.add(new NavRes.NavItem("Material categories", "/mat-category"));
+            managementItems.add(new NavRes.NavItem("Materials", "/material"));
+            managementItems.add(new NavRes.NavItem("Timekeepings", "/timekeeping"));
+            managementItems.add(new NavRes.NavItem("Salaries", "/salary"));
+            managementItems.add(new NavRes.NavItem("Imports", "/import"));
+            managementItems.add(new NavRes.NavItem("Outbounds", "/outbound"));
+            managementItems.add(new NavRes.NavItem("Bills", "/bill"));
+            mangementSection.setItems(managementItems);
+        // Statistic
+            NavRes statisticSection = new NavRes();
+            statisticSection.setSectionLabel("Statistic");
+            List<NavRes.NavItem> statisticItems = new ArrayList<>();
+            statisticItems.add(new NavRes.NavItem("View statistic", "/cost-statistic"));
+            statisticSection.setItems(statisticItems);
+        
+        switch (emp.getRoleID().getRoleID()) {
+            case "owner":
+                data.add(forYouSection);
+                data.add(mangementSection);
+                data.add(statisticSection);
+                break;
+            case "counter-staff":
+                data.add(forYouSection);
+                break;
+            default:
+        }
+        
+        res.setStatus(200);
+        res.setSuccess(true);
+        res.setMessage("Sucessfully get navigation of you");
+        res.setData(data);
+        
+        return ResponseEntity.ok(res);
+    }
     
     @GetMapping(""+UrlProvider.Employee.ALL)
     public ResponseEntity<DataResponse<List<EmployeeRes>>> all(HttpServletRequest request) {

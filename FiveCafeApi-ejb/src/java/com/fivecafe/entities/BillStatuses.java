@@ -5,22 +5,16 @@
 package com.fivecafe.entities;
 
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,13 +26,14 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "BillStatuses.findAll", query = "SELECT b FROM BillStatuses b"),
     @NamedQuery(name = "BillStatuses.findByBillStatusID", query = "SELECT b FROM BillStatuses b WHERE b.billStatusID = :billStatusID"),
-    @NamedQuery(name = "BillStatuses.findByBillStatusValue", query = "SELECT b FROM BillStatuses b WHERE b.billStatusValue = :billStatusValue")})
+    @NamedQuery(name = "BillStatuses.findByBillStatusValue", query = "SELECT b FROM BillStatuses b WHERE b.billStatusValue = :billStatusValue"),
+    @NamedQuery(name = "BillStatuses.findByToCheck", query = "SELECT b FROM BillStatuses b WHERE b.toCheck = :toCheck")})
 public class BillStatuses implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
+    @NotNull
     @Column(name = "BillStatusID")
     private Integer billStatusID;
     @Basic(optional = false)
@@ -46,8 +41,10 @@ public class BillStatuses implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "BillStatusValue")
     private String billStatusValue;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "billStatusID")
-    private Collection<Bills> billsCollection;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "ToCheck")
+    private boolean toCheck;
 
     public BillStatuses() {
     }
@@ -56,9 +53,10 @@ public class BillStatuses implements Serializable {
         this.billStatusID = billStatusID;
     }
 
-    public BillStatuses(Integer billStatusID, String billStatusValue) {
+    public BillStatuses(Integer billStatusID, String billStatusValue, boolean toCheck) {
         this.billStatusID = billStatusID;
         this.billStatusValue = billStatusValue;
+        this.toCheck = toCheck;
     }
 
     public Integer getBillStatusID() {
@@ -77,13 +75,12 @@ public class BillStatuses implements Serializable {
         this.billStatusValue = billStatusValue;
     }
 
-    @XmlTransient
-    public Collection<Bills> getBillsCollection() {
-        return billsCollection;
+    public boolean getToCheck() {
+        return toCheck;
     }
 
-    public void setBillsCollection(Collection<Bills> billsCollection) {
-        this.billsCollection = billsCollection;
+    public void setToCheck(boolean toCheck) {
+        this.toCheck = toCheck;
     }
 
     @Override

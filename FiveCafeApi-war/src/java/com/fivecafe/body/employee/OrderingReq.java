@@ -20,9 +20,6 @@ public class OrderingReq {
     @Valid
     @NotEmpty(message = "Details can't empty")
     private List<OrderingDetail> details;
-    
-    @NotNull(message = "Bill status ID is required")
-    private int billStatusID;
 
     @NotEmpty(message = "Card code cannot be empty")
     private String cardCode;

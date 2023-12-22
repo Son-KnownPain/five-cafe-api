@@ -88,7 +88,7 @@ public class StatisticApiController {
                 LocalDate localStartDate = LocalDate.parse(startDateQueryParam, dtf);
                 LocalDate localEndDate = LocalDate.parse(endDateQueryParam, dtf);
                 
-                if (startDate.before(endDate) && localStartDate.isAfter(localEndDate.minusDays(15))) {
+                if (startDate.before(endDate) && localStartDate.isAfter(localEndDate.minusDays(30))) {
                     // Thêm 1 ngày cho end date
                     calendar.setTime(endDate);
                     calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -175,7 +175,7 @@ public class StatisticApiController {
                 LocalDate localStartDate = LocalDate.parse(startDateQueryParam, dtf);
                 LocalDate localEndDate = LocalDate.parse(endDateQueryParam, dtf);
                 
-                if (startDate.before(endDate) && localStartDate.isAfter(localEndDate.minusDays(15))) {
+                if (startDate.before(endDate) && localStartDate.isAfter(localEndDate.minusDays(30))) {
                     // Thêm 1 ngày cho end date
                     calendar.setTime(endDate);
                     calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -188,9 +188,6 @@ public class StatisticApiController {
                 // Catch exception here
             }
         }
-            
-        System.out.println("START DATE: " + startDateString);
-        System.out.println("END DATE: " + endDateString);
         
         // Response
         DataResponse<List<CostRes>> res = new DataResponse<>();

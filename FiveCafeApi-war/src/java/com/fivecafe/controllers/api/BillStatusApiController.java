@@ -1,8 +1,7 @@
 package com.fivecafe.controllers.api;
 
 import com.fivecafe.body.billstatus.BillStatusResponse;
-import com.fivecafe.body.billstatus.CreateBillStatus;
-import com.fivecafe.body.billstatus.UpdateAndDeleteBillStatus;
+import com.fivecafe.body.billstatus.CUBillStatusReq;
 import com.fivecafe.entities.BillStatuses;
 import com.fivecafe.models.responses.DataResponse;
 import com.fivecafe.models.responses.StandardResponse;
@@ -41,7 +40,11 @@ public class BillStatusApiController {
         List<BillStatusResponse> data = new ArrayList<>();
         
         for(BillStatuses billStatus : allBillStatuses){
-            data.add(BillStatusResponse.builder().billStatusID(billStatus.getBillStatusID()).billStatusValue(billStatus.getBillStatusValue()).build()); 
+            data.add(BillStatusResponse.builder()
+                    .billStatusID(billStatus.getBillStatusID())
+                    .billStatusValue(billStatus.getBillStatusValue())
+                    .toCheck(billStatus.getToCheck())
+                    .build()); 
         }
         
         DataResponse<List<BillStatusResponse>> res = new DataResponse<>();
@@ -54,14 +57,40 @@ public class BillStatusApiController {
     }
     
     @PostMapping(""+UrlProvider.BillStatus.STORE)
-    public ResponseEntity<StandardResponse> store(@Valid @RequestBody CreateBillStatus reqBody, BindingResult br) throws MethodArgumentNotValidException{
-        if(br.hasErrors()){
+    public ResponseEntity<StandardResponse> store(
+            @Valid @RequestBody CUBillStatusReq reqBody, 
+            BindingResult br
+    ) 
+            throws MethodArgumentNotValidException
+    {
+        if (br.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, br);
+        }
+        
+        if (billStatusesFacade.find(reqBody.getBillStatusID()) != null) {
+            br.rejectValue("billStatusID", "error.billStatusID", "Bill Status ID is current existing");
+        }
+        
+        // Kiểm tra xem toCheck gửi lên có phải là true không
+        // Nếu có thì xem DB có record nào true chưa
+        // Nếu DB có rồi thì invalid
+        if (reqBody.isToCheck()) {
+            boolean hasAnyRecordTrue = billStatusesFacade.hasAnyToCheckTrue();
+            
+            if (hasAnyRecordTrue) {
+                br.rejectValue("toCheck", "error.toCheck", "Only one bill status record has \"To Check\" is TRUE");
+            }
+        }
+        
+        if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
         
         BillStatuses billStatusAdd = new BillStatuses();
         
+        billStatusAdd.setBillStatusID(reqBody.getBillStatusID());
         billStatusAdd.setBillStatusValue(reqBody.getBillStatusValue());
+        billStatusAdd.setToCheck(reqBody.isToCheck());
         
         billStatusesFacade.create(billStatusAdd);
         
@@ -74,19 +103,39 @@ public class BillStatusApiController {
     }
     
     @PutMapping(""+UrlProvider.BillStatus.UPDATE)
-    public ResponseEntity<StandardResponse> update(@Valid @RequestBody UpdateAndDeleteBillStatus reqBody, BindingResult br) throws MethodArgumentNotValidException{
-        if(br.hasErrors()){
+    public ResponseEntity<StandardResponse> update(
+            @Valid @RequestBody CUBillStatusReq reqBody, 
+            BindingResult br
+    ) 
+            throws MethodArgumentNotValidException
+    {
+        if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
+        }
+        
+        // Kiểm tra xem toCheck gửi lên có phải là true không
+        // Nếu có thì xem DB có record nào true chưa
+        // Nếu DB có rồi thì invalid
+        if (reqBody.isToCheck()) {
+            boolean hasAnyRecordTrue = billStatusesFacade.hasAnyToCheckTrue();
+            
+            if (hasAnyRecordTrue) {
+                br.rejectValue("toCheck", "error.toCheck", "Only one bill status record has \"To Check\" is TRUE");
+            }
         }
         
         BillStatuses billStatusUpdate = billStatusesFacade.find(reqBody.getBillStatusID());
         
-        if(billStatusUpdate == null){
-            br.rejectValue("billStatusID", "error.billStatusID", "The bill status ID does not exist");
+        if (billStatusUpdate == null) {
+            br.rejectValue("billStatusID", "error.billStatusID", "The bill status does not exist");
+        }
+        
+        if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
         
         billStatusUpdate.setBillStatusValue(reqBody.getBillStatusValue());
+        billStatusUpdate.setToCheck(reqBody.isToCheck());
         
         billStatusesFacade.edit(billStatusUpdate);
         

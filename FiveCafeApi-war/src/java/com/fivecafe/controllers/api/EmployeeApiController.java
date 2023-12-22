@@ -8,6 +8,7 @@ import com.fivecafe.body.employee.CreateOutboundReq;
 import com.fivecafe.body.employee.EmpInfoRes;
 import com.fivecafe.body.employee.EmpLoginCredentials;
 import com.fivecafe.body.employee.EmployeeRes;
+import com.fivecafe.body.employee.NavRes;
 import com.fivecafe.body.employee.UpdEmpReq;
 import com.fivecafe.body.employee.OrderingReq;
 import com.fivecafe.body.employee.UpdateMyBillReq;
@@ -54,6 +55,7 @@ import com.fivecafe.supports.FileSupport;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -116,6 +118,86 @@ public class EmployeeApiController {
     RolesFacadeLocal rolesFacade = lookupRolesFacadeLocal();
 
     EmployeesFacadeLocal employeesFacade = lookupEmployeesFacadeLocal();
+    
+    @GetMapping(""+UrlProvider.Employee.NAV)
+    public ResponseEntity<?> nav(HttpServletRequest request) {
+        // Trích xuất tên ứng dụng từ đường dẫn URL
+        String contextPath = request.getContextPath();
+        
+        String userID = (String) request.getAttribute(RequestAttributeKeys.USER_ID.toString());
+        int employeeIDInt = 0;
+        try {
+            employeeIDInt = Integer.parseInt(userID);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        Employees emp = employeesFacade.find(employeeIDInt);
+        if (emp == null) {
+            StandardResponse res = new StandardResponse();
+            res.setSuccess(false);
+            res.setStatus(401);
+            res.setMessage("Cannot found your information");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+        }
+        
+        DataResponse<List<NavRes>> res = new DataResponse<>();
+        
+        List<NavRes> data = new ArrayList<>();
+        
+        // For you
+            NavRes forYouSection = new NavRes();
+            forYouSection.setSectionLabel("For you");
+            List<NavRes.NavItem> forYouItems = new ArrayList<>();
+            forYouItems.add(new NavRes.NavItem("Home page", "/"));
+            forYouItems.add(new NavRes.NavItem("Ordering", "/ordering"));
+            forYouItems.add(new NavRes.NavItem("Create outbound", "/create-outbound"));
+            forYouSection.setItems(forYouItems);
+        // Management
+            NavRes mangementSection = new NavRes();
+            mangementSection.setSectionLabel("Management");
+            List<NavRes.NavItem> managementItems = new ArrayList<>();
+            managementItems.add(new NavRes.NavItem("Roles", "/role"));
+            managementItems.add(new NavRes.NavItem("Employees", "/employee"));
+            managementItems.add(new NavRes.NavItem("Suppliers", "/supplier"));
+            managementItems.add(new NavRes.NavItem("Bill statuses", "/bill-status"));
+            managementItems.add(new NavRes.NavItem("Bills", "/bill"));
+            managementItems.add(new NavRes.NavItem("Shifts", "/shift"));
+            managementItems.add(new NavRes.NavItem("Product categories", "/pro-category"));
+            managementItems.add(new NavRes.NavItem("Products", "/product"));
+            managementItems.add(new NavRes.NavItem("Material categories", "/mat-category"));
+            managementItems.add(new NavRes.NavItem("Materials", "/material"));
+            managementItems.add(new NavRes.NavItem("Timekeepings", "/timekeeping"));
+            managementItems.add(new NavRes.NavItem("Salaries", "/salary"));
+            managementItems.add(new NavRes.NavItem("Imports", "/import"));
+            managementItems.add(new NavRes.NavItem("Outbounds", "/outbound"));
+            mangementSection.setItems(managementItems);
+        // Statistic
+            NavRes statisticSection = new NavRes();
+            statisticSection.setSectionLabel("Statistic");
+            List<NavRes.NavItem> statisticItems = new ArrayList<>();
+            statisticItems.add(new NavRes.NavItem("View statistic", "/cost-statistic"));
+            statisticSection.setItems(statisticItems);
+        
+        switch (emp.getRoleID().getRoleID()) {
+            case "owner":
+                data.add(forYouSection);
+                data.add(mangementSection);
+                data.add(statisticSection);
+                break;
+            case "counter-staff":
+                data.add(forYouSection);
+                break;
+            default:
+        }
+        
+        res.setStatus(200);
+        res.setSuccess(true);
+        res.setMessage("Sucessfully get navigation of you");
+        res.setData(data);
+        
+        return ResponseEntity.ok(res);
+    }
     
     @GetMapping(""+UrlProvider.Employee.ALL)
     public ResponseEntity<DataResponse<List<EmployeeRes>>> all(HttpServletRequest request) {
@@ -459,8 +541,8 @@ public class EmployeeApiController {
                 br.rejectValue("forError", "error.forError", "Product ID you provided is not exist");
                 break;
             }
-
         }
+        
         String userID = (String) request.getAttribute(RequestAttributeKeys.USER_ID.toString());
         int employeeIDInt = 0;
         try {
@@ -470,13 +552,23 @@ public class EmployeeApiController {
         }
         Employees employees = employeesFacade.find(employeeIDInt);
         if (employees == null) {
-            br.rejectValue("employeeID", "error.employeeID", "Employee ID is not exist");
+            br.rejectValue("forError", "error.forError", "Employee ID is not exist");
         }
 
-        BillStatuses billStatuses = billStatusesFacade.find(reqBody.getBillStatusID());
+        BillStatuses billStatuses = billStatusesFacade.getFirstBillStatus();
         if (billStatuses == null) {
-            br.rejectValue("billStatusID", "error.billStatusID", "billStatus ID is not exist");
+            br.rejectValue("forError", "error.forError", "Bill Status ID is not exist");
         }
+        
+        // Validate card code
+        // Get bill status has ToCheck is TRUE
+        BillStatuses billStatusesToCheck = billStatusesFacade.getToCheckBillStatuses();
+        if (billStatusesToCheck != null && billsFacade.hasBillNotServedByCardCode(reqBody.getCardCode(), billStatusesToCheck)) {
+            br.rejectValue("cardCode", "error.cardCode", "The card code has not been returned to the counter.");
+        } else if (billStatusesToCheck == null) {
+            br.rejectValue("forError", "error.forError", "No any bill status to check card code, please edit any one bill status with to check is TRUE");
+        }
+        
         if (br.hasErrors()) {
             throw new MethodArgumentNotValidException(null, br);
         }
@@ -520,6 +612,131 @@ public class EmployeeApiController {
                 .build();
 
         return ResponseEntity.ok(res);
+    }
+    
+    @GetMapping(""+UrlProvider.Employee.NOT_SERVED_BILLS)
+    public ResponseEntity<?> notServedBills(HttpServletRequest request) {
+        BillStatuses notServedStatus = billStatusesFacade.getToCheckBillStatuses();
+        
+        String userID = (String) request.getAttribute(RequestAttributeKeys.USER_ID.toString());
+        int employeeIDInt = 0;
+        try {
+            employeeIDInt = Integer.parseInt(userID);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        Employees emp = employeesFacade.find(employeeIDInt);
+        if (emp == null) {
+            StandardResponse res = new StandardResponse();
+            res.setSuccess(false);
+            res.setStatus(401);
+            res.setMessage("Cannot found your information");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+        }
+        
+        List<Bills> bills = billsFacade.getNotServedBillsByEmp(emp, notServedStatus);
+        
+        List<BillResponse> data = new ArrayList<>();
+        for (Bills billItem : bills) {
+            // Handle bills details
+            List<BillDetailsResponse> listDetail = new ArrayList<>();
+
+            for (BillDetails billDetail : billDetailsFacade.findByBillID(billItem.getBillID())) {
+                listDetail.add(
+                        BillDetailsResponse.builder()
+                                .productID(billDetail.getProducts().getProductID())
+                                .name(billDetail.getProducts().getName())
+                                .image(FileSupport.perfectImg(request, "products", billDetail.getProducts().getImage()))
+                                .unitPrice(billDetail.getUnitPrice())
+                                .quantity(billDetail.getQuantity())
+                                .build()
+                );
+            }
+
+            // Add item
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            data.add(
+                    BillResponse.builder()
+                            .billID(billItem.getBillID())
+                            .employeeID(billItem.getEmployeeID().getEmployeeID())
+                            .employeeName(billItem.getEmployeeID().getName())
+                            .billStatusID(billItem.getBillStatusID().getBillStatusID())
+                            .billStatusValue(billItem.getBillStatusID().getBillStatusValue())
+                            .createDate(formatter.format(billItem.getCreatedDate()))
+                            .cardCode(billItem.getCardCode())
+                            .details(listDetail)
+                            .build()
+            );
+        }
+        
+        DataResponse<List<BillResponse>> res = new DataResponse<>();
+        res.setStatus(200);
+        res.setSuccess(true);
+        res.setMessage("Successfully get all not served bills");
+        res.setData(data);
+        
+        return ResponseEntity.ok(res);
+    }
+    
+    @GetMapping(""+UrlProvider.Employee.SERVED_BILL)
+    public ResponseEntity<?> servedBill(@RequestParam("billID") int billID, HttpServletRequest request) {
+        String userID = (String) request.getAttribute(RequestAttributeKeys.USER_ID.toString());
+        int employeeIDInt = 0;
+        try {
+            employeeIDInt = Integer.parseInt(userID);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        Employees emp = employeesFacade.find(employeeIDInt);
+        if (emp == null) {
+            StandardResponse res = new StandardResponse();
+            res.setSuccess(false);
+            res.setStatus(401);
+            res.setMessage("Cannot found your information");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+        }
+        
+        Bills bill = billsFacade.find(billID);
+        
+        List<BillStatuses> billStatuses = billStatusesFacade.findAll();
+        billStatuses.sort(new BillStatusesComparator());
+        
+        if (bill != null && bill.getEmployeeID().getEmployeeID().compareTo(employeeIDInt) == 0) {
+            BillStatuses currentStatus = bill.getBillStatusID();
+            boolean isNextStatus = false;
+            for (BillStatuses billStatus : billStatuses) {
+                if (isNextStatus) {
+                    bill.setBillStatusID(billStatus);
+                    billsFacade.edit(bill);
+                    
+                    StandardResponse res = new StandardResponse();
+                    res.setSuccess(true);
+                    res.setStatus(200);
+                    res.setMessage("Successfully served bill");
+                    
+                    return ResponseEntity.ok(res);
+                }
+                if (billStatus.getBillStatusID().compareTo(currentStatus.getBillStatusID()) == 0) {
+                    isNextStatus = true;
+                }
+            }
+        }
+        
+        StandardResponse res = new StandardResponse();
+        res.setSuccess(false);
+        res.setStatus(400);
+        res.setMessage("Something went wrong");
+
+        return ResponseEntity.badRequest().body(res);
+    }
+    
+    private static class BillStatusesComparator implements Comparator<BillStatuses> {
+        @Override
+        public int compare(BillStatuses o1, BillStatuses o2) {
+            return Integer.compare(o1.getBillStatusID(), o2.getBillStatusID());
+        }
     }
         
     // ---- Ordering: /api/employee/create-outbound

@@ -18,6 +18,9 @@ function fetchTableData() {
                             <td class="px-6 py-4">
                                 ${item.billStatusValue}
                             </td>
+                            <td class="px-6 py-4">
+                                ${item.toCheck ? 'Yes' : 'No'}
+                            </td>
                             <td class="px-6 py-4 text-right">
                                 <a data-edit-id="${item.billStatusID}" data-modal-target="update-modal" data-modal-toggle="update-modal" class="cursor-pointer font-medium text-yellow-400 dark:text-yellow-400 hover:underline">
                                     <i class="fa-solid fa-pen"></i>
@@ -81,11 +84,12 @@ function fetchTableData() {
 
                     document.getElementById('billStatusIDEdit').value = billStatus.billStatusID;
                     document.getElementById('billStatusValueEdit').value = billStatus.billStatusValue;
+                    document.getElementById('toCheckEdit').checked = billStatus.toCheck;
                 }
             })
         }
     })
-    .catch(res => { })
+    .catch(_res => { })
 }
 fetchTableData();
 
@@ -126,7 +130,7 @@ function hideWarningAlert() {
     wrapper.classList.add('hidden');
 }
 
-// Validate create role
+// Validate create
 Validator({
     form: '#create-form',
     formGroup: '.form-gr',
@@ -143,7 +147,9 @@ Validator({
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                billStatusID: data.billStatusID,
                 billStatusValue: data.billStatusValue,
+                toCheck: typeof data.toCheck === 'string' ? false : data.toCheck.includes('yes'),
             })
         })
         .then(res => res.json())
@@ -154,6 +160,7 @@ Validator({
                 showSuccessAlert('Successfully create new bill status value');
                 fetchTableData();
                 resetForm({
+                    billStatusID: '',
                     billStatusValue: '',
                 })
             } else if (res.status == 400 && res.invalid) {
@@ -185,6 +192,7 @@ Validator({
             body: JSON.stringify({
                 billStatusID: data.billStatusID,
                 billStatusValue: data.billStatusValue,
+                toCheck: typeof data.toCheck === 'string' ? false : data.toCheck.includes('yes'),
             })
         })
         .then(res => res.json())

@@ -93,7 +93,9 @@ function resetChosenProduct() {
 }
 
 function renderChooseProducts() {
-    document.getElementById('chosen-product').innerHTML = chosenProducts.map(product => `
+    document.getElementById('chosen-product').innerHTML = !chosenProducts?.length 
+    ? '<h1 class="text-base font-normal text-center text-gray-900 dark:text-white">Choose product to order</h1>' 
+    : chosenProducts.map(product => `
         <div class="flex gap-4 mt-2">
             <img id="detail-image" class="w-32 h-32 rounded object-cover" src="${product.image}" alt="">
             <div class="font-medium dark:text-white">
@@ -194,7 +196,6 @@ Validator({
     formGroup: '.form-gr',
     errorSelector: '.form-message',
     rules: [
-        Validator.isRequired('#billStatusID', 'Bill status is required'),
         Validator.isRequired('#cardCode', 'Card code is required'),
     ],
     onSubmit: function(data, { resetForm }) {
@@ -213,7 +214,6 @@ Validator({
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                billStatusID: data.billStatusID,
                 cardCode: data.cardCode,
                 details,
             })
@@ -227,6 +227,7 @@ Validator({
                     cardCode: '',
                 })
                 resetChosenProduct();
+                fetchNotServedBills();
             } else if (res.status == 400 && res.invalid) {
                 showWarningAlert('Invalid some fields', res.errors);
             }
@@ -250,25 +251,53 @@ Validator({
     }
 });
 
-function fetchBillStatus(selectsID) {
-    const fetchPath = window.APP_NAME + '/api/bill-sts/all';
+
+// NOT SERVED BILLS
+function fetchNotServedBills() {
+    const fetchPath = window.APP_NAME + '/api/employee/not-served-bills'
     fetch(fetchPath)
     .then(res => res.json())
     .then(res => {
         if (res.status == 200) {
-            selectsID.forEach(selectID => {
-                document.getElementById(selectID).innerHTML = 
-                res.data.map(item => {
-                    return `
-                        <option value="${item.billStatusID}">${item.billStatusValue}</option>
-                    `
-                }).join('');
+            document.getElementById('not-served-bills-table').innerHTML = res.data.reverse().map(bill => `
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td class="px-6 py-4">
+                        ${bill.createDate}
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="p-2 text-white rounded-full border border-white w-8 h-8 flex items-center justify-center">
+                            ${bill.cardCode}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <button data-served-bill-id="${bill.billID}" class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800">
+                            <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                                Serve
+                            </span>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Handle click served
+            Array.from(document.querySelectorAll('button[data-served-bill-id]')).forEach(btn => {
+                btn.onclick = () => {
+                    const billID = btn.dataset.servedBillId;
+
+                    fetch(`${window.APP_NAME}/api/employee/served-bill?billID=${billID}`)
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.status == 200) {
+                            btn.innerHTML = `
+                                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                                    <i class="fa-solid fa-circle-check text-xl text-green-500"></i>
+                                </span>
+                            `
+                        }
+                    })
+                }
             })
         }
     })
-    .catch(_res => { })
 }
-
-fetchBillStatus([
-    'billStatusID',
-]);
+fetchNotServedBills();

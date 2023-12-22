@@ -14,6 +14,7 @@ import lombok.Setter;
 public class MatToProResponse {
     private int materialID;
     private String materialName;
+    private String image;
     private int productID;
     private String description;
 }

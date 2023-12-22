@@ -13,6 +13,7 @@ import com.fivecafe.providers.UrlProvider;
 import com.fivecafe.session_beans.MaterialToProductsFacadeLocal;
 import com.fivecafe.session_beans.MaterialsFacadeLocal;
 import com.fivecafe.session_beans.ProductsFacadeLocal;
+import com.fivecafe.supports.FileSupport;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -55,6 +56,7 @@ public class MatToProApiController {
             data.add(MatToProResponse.builder()
                     .materialID(matToPro.getMaterials().getMaterialID())
                     .materialName(matToPro.getMaterials().getName())
+                    .image(FileSupport.perfectImg(request, "material", matToPro.getMaterials().getImage()))
                     .productID(matToPro.getProducts().getProductID())
                     .description(matToPro.getDescription())
                     .build());

@@ -219,7 +219,7 @@
                                         Add
                                     </button>
                                 </div>
-                            </form>
+                            </form> 
                         </div>
                         <!-- Update product -->
                         <div id="detail-update-form" class="hidden py-4 border-y border-solid border-gray-200">

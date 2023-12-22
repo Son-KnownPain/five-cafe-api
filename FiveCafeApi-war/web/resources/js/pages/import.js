@@ -332,6 +332,7 @@ Validator({
                 hideWarningAlert();
                 showSuccessAlert('Successfully create import');
                 fetchTableData();
+                fetchImport();
             } else if (res.status == 400 && res.invalid) {
                 showWarningAlert('Invalid some fields', res.errors);
                 document.getElementById('close-create-modal-btn').click();
@@ -545,3 +546,42 @@ fetchSuppliers([
         selectedID:  0,
     },
 ]);
+
+// Thông báo material <5
+function fetchImport() {
+    const fetchPath = window.APP_NAME + '/api/material/get-the-quantityinstock-below-five';
+    fetch(fetchPath)
+    .then(res => res.json())
+    .then(res => {
+        if (res.status == 200) {
+            if (res.data?.length) {
+                document.getElementById('product-out-quantityinstock-content').innerHTML = 
+                    res.data.reverse().map(item => {
+                        return `
+                            <div class="flex items-center justify-between mt-3 bg-slate-300 p-2 rounded-md text-base font-normal">
+                                "${item.name}" material with quantity in stock is ${item.quantityInStock} ${item.unit}
+                                <button data-mat-id="${item.materialID}" type="button" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Import now</button>
+                            </div>
+                        `
+                    }
+                ).join('');
+                Array.from(document.querySelectorAll('button[data-mat-id]')).forEach(btn => {
+                    btn.onclick = () => {
+                        const matID = btn.dataset.matId;
+
+
+                        document.getElementById('materialID').value = matID;
+
+
+                        document.getElementById('create-btn').click();
+                    }
+                })
+            } else {
+                document.getElementById('product-out-quantityinstock-box').classList.add('hidden')
+            }
+        }
+    })
+    .catch(_res => { })
+}
+
+fetchImport();

@@ -267,7 +267,7 @@ public class BillApiController {
         return ResponseEntity.ok(res);
     }
 
-    @PutMapping("" + UrlProvider.Bills.UPDATE)
+    @PutMapping("" + UrlProvider.Bills.UPDATE_BILL)
     public ResponseEntity<?> updateBill(@Valid @RequestBody UpdateBill reqBody, BindingResult br
     ) throws MethodArgumentNotValidException {
         // Validate
@@ -292,7 +292,6 @@ public class BillApiController {
         
         bills.setEmployeeID(employees);
         bills.setBillStatusID(billStatuses);
-        bills.setCreatedDate(new Date());
         bills.setCardCode(reqBody.getCardCode());
         
         billsFacade.edit(bills);

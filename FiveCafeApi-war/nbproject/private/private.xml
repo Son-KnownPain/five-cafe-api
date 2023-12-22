@@ -1,30 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="3">
-        <file>
-            <url>src/java/com/fivecafe/providers/UrlProvider.java</url>
-            <bookmark id="3">
-                <name/>
-                <line>27</line>
-                <key/>
-            </bookmark>
-            <bookmark id="2">
-                <name/>
-                <line>77</line>
-                <key/>
-            </bookmark>
-        </file>
-    </editor-bookmarks>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-<<<<<<< HEAD
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/BillStatusApiController.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/body/billstatus/CUBillStatusReq.java</file>
-            <file>file:/D:/==%20ProjectBasic/JavaWeb/Spring/Enterprise/FiveCafeApi/FiveCafeApi-war/src/java/com/fivecafe/providers/WebUrlProvider.java</file>
-=======
-            <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/EmployeeSalariesApiController.java</file>
-            <file>file:/D:/Project-Sem4/five-cafe-api/FiveCafeApi-war/src/java/com/fivecafe/controllers/api/EmployeeTimeKeepingApiController.java</file>
->>>>>>> main
-        </group>
+        <group/>
     </open-files>
 </project-private>

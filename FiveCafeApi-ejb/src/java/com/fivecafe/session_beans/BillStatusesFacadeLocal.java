@@ -30,5 +30,9 @@ public interface BillStatusesFacadeLocal {
     int count();
 
     public boolean hasAnyToCheckTrue();
+
+    public BillStatuses getFirstBillStatus();
+
+    public BillStatuses getToCheckBillStatuses();
     
 }

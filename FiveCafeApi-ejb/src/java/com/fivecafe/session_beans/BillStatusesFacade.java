@@ -7,6 +7,7 @@ package com.fivecafe.session_beans;
 import com.fivecafe.entities.BillStatuses;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -49,5 +50,42 @@ public class BillStatusesFacade extends AbstractFacade<BillStatuses> implements 
         Long count = em.createQuery(criteriaQuery).getSingleResult();
         
         return count > 0;
+    }
+    
+    @Override
+    public BillStatuses getFirstBillStatus() {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<BillStatuses> criteriaQuery = criteriaBuilder.createQuery(BillStatuses.class);
+        
+        Root<BillStatuses> root = criteriaQuery.from(BillStatuses.class);
+        
+        criteriaQuery.select(root);
+        criteriaQuery.orderBy(criteriaBuilder.asc(root.get("billStatusID")));
+        
+        try {
+            return em.createQuery(criteriaQuery).setMaxResults(1).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    @Override
+    public BillStatuses getToCheckBillStatuses() {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<BillStatuses> criteriaQuery = criteriaBuilder.createQuery(BillStatuses.class);
+        
+        Root<BillStatuses> root = criteriaQuery.from(BillStatuses.class);
+        
+        Path<Boolean> toCheckPath = root.get("toCheck");
+        
+        Predicate toCheckPredicate = criteriaBuilder.isTrue(toCheckPath);
+        
+        criteriaQuery.where(toCheckPredicate);
+        
+        try {
+            return em.createQuery(criteriaQuery).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }

@@ -1,4 +1,4 @@
-<aside id="sidebar" class="p-2">
+<aside id="sidebar" class="px-2 pb-4">
     <!-- <section class="section">
         <p class="section-title">For you</p>
         <ul class="pl-1 m-0">

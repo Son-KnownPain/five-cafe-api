@@ -1,6 +1,7 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.dto.DailyRevenueDTO;
+import com.fivecafe.entities.BillStatuses;
 import com.fivecafe.entities.Bills;
 import com.fivecafe.entities.Employees;
 import java.text.ParseException;
@@ -77,4 +78,41 @@ public class BillsFacade extends AbstractFacade<Bills> implements BillsFacadeLoc
         return result;
     }
 
+    @Override
+    public boolean hasBillNotServedByCardCode(String cardCode, BillStatuses billStatusNotServed) {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        
+        Root<Bills> billRoot = criteriaQuery.from(Bills.class);
+        
+        Predicate cardCodePredicate = criteriaBuilder.equal(billRoot.get("cardCode"), cardCode);
+        
+        Predicate billStatusPredicate = criteriaBuilder.equal(billRoot.get("billStatusID"), billStatusNotServed);
+        
+        Predicate combinedPredicate = criteriaBuilder.and(cardCodePredicate, billStatusPredicate);
+        
+        criteriaQuery.select(criteriaBuilder.count(billRoot)).where(combinedPredicate);
+        
+        Long count = em.createQuery(criteriaQuery).getSingleResult();
+        
+        return count > 0;
+    }
+    
+    @Override
+    public List<Bills> getNotServedBillsByEmp(Employees emp, BillStatuses billStatusNotServed) {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<Bills> criteriaQuery = criteriaBuilder.createQuery(Bills.class);
+        
+        Root<Bills> billRoot = criteriaQuery.from(Bills.class);
+        
+        Predicate empPredicate = criteriaBuilder.equal(billRoot.get("employeeID"), emp);
+        
+        Predicate billStatusPredicate = criteriaBuilder.equal(billRoot.get("billStatusID"), billStatusNotServed);
+        
+        Predicate combinedPredicate = criteriaBuilder.and(empPredicate, billStatusPredicate);
+        
+        criteriaQuery.where(combinedPredicate);
+        
+        return em.createQuery(criteriaQuery).getResultList();
+    }
 }

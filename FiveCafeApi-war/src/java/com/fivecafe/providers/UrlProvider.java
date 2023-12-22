@@ -40,27 +40,12 @@ public class UrlProvider {
         public static final String ALL_MY_OUTBOUNDS = "/all-my-outbounds";
         
         public static final String NAV = "/nav";
+        public static final String NOT_SERVED_BILLS = "/not-served-bills";
+        public static final String SERVED_BILL = "/served-bill";
         
         @Override
         public List<String> signInUrls() {
             ArrayList<String> signInUrls = new ArrayList<>();
-            signInUrls.add(addApiPrefix(addEmployeePrefix(INFO)));
-            signInUrls.add(addApiPrefix(addEmployeePrefix(LOGOUT)));
-            
-            // Employee interactive
-            signInUrls.add(addApiPrefix(addEmployeePrefix(ORDERING)));
-            signInUrls.add(addApiPrefix(addEmployeePrefix(CREATE_OUTBOUND)));
-            signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_BILLS)));
-            signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_ETK)));
-            signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_SALARIES)));
-            signInUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_MY_BILL)));
-            signInUrls.add(addApiPrefix(addEmployeePrefix(ADD_PRO_OF_BILL)));
-            signInUrls.add(addApiPrefix(addEmployeePrefix(UPDATE_PRO_OF_BILL)));
-            signInUrls.add(addApiPrefix(addEmployeePrefix(DELETE_PRO_OF_BILL)));
-            signInUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_OUTBOUNDS)));
-            
-            // Nav
-            signInUrls.add(addApiPrefix(addEmployeePrefix(NAV)));
             
             return signInUrls;
         }
@@ -93,6 +78,8 @@ public class UrlProvider {
             ownerUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_OUTBOUNDS)));
             ownerUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_SALARIES)));
             ownerUrls.add(addApiPrefix(addEmployeePrefix(NAV)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(NOT_SERVED_BILLS)));
+            ownerUrls.add(addApiPrefix(addEmployeePrefix(SERVED_BILL)));
             
             roleUrls.put(HardRoles.OWNER.toString(), ownerUrls);
             
@@ -111,6 +98,8 @@ public class UrlProvider {
             counterStaffUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_OUTBOUNDS)));
             counterStaffUrls.add(addApiPrefix(addEmployeePrefix(ALL_MY_SALARIES)));
             counterStaffUrls.add(addApiPrefix(addEmployeePrefix(NAV)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(NOT_SERVED_BILLS)));
+            counterStaffUrls.add(addApiPrefix(addEmployeePrefix(SERVED_BILL)));
             
             roleUrls.put(HardRoles.COUNTER_STAFF.toString(), counterStaffUrls);
             
@@ -584,7 +573,7 @@ public class UrlProvider {
         // NEED TO SIGN IN
         public static final String ALL ="/all";
         public static final String STORE = "/store";
-        public static final String UPDATE = "/update";
+        public static final String UPDATE_BILL = "/update-bill";
         public static final String STORE_PRO_ITEM = "/store-pro-item";
         public static final String UPDATE_PRO_ITEM = "/update-pro-item";
         public static final String DELETE_PRO_ITEM = "/delete-pro-item";
@@ -611,6 +600,7 @@ public class UrlProvider {
             List<String> ownerUrls = new ArrayList<>();
             ownerUrls.add(addApiPrefix(addBillPrefix(ALL)));
             ownerUrls.add(addApiPrefix(addBillPrefix(STORE)));
+            ownerUrls.add(addApiPrefix(addBillPrefix(UPDATE_BILL)));
             ownerUrls.add(addApiPrefix(addBillPrefix(STORE_PRO_ITEM)));
             ownerUrls.add(addApiPrefix(addBillPrefix(UPDATE_PRO_ITEM)));
             ownerUrls.add(addApiPrefix(addBillPrefix(DELETE_PRO_ITEM)));

@@ -5,6 +5,7 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.MaterialToProducts;
+import com.fivecafe.entities.Materials;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -50,5 +51,18 @@ public class MaterialToProductsFacade extends AbstractFacade<MaterialToProducts>
         } catch (Exception e) {
             return new ArrayList<>();
         }
+    }
+    
+    @Override
+    public List<MaterialToProducts> findByMaterialID(Materials materialID) {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<MaterialToProducts> criteriaQuery = criteriaBuilder.createQuery(MaterialToProducts.class);
+        Root<MaterialToProducts> root = criteriaQuery.from(MaterialToProducts.class);
+        
+        Predicate materialIPredicate = criteriaBuilder.equal(root.get("materials"), materialID);
+        
+        criteriaQuery.where(materialIPredicate);
+        
+        return em.createQuery(criteriaQuery).getResultList();
     }
 }

@@ -130,7 +130,8 @@
         <!-- Page head introduction -->
         <div class="mb-4">
             <h1 class="font-semibold text-3xl text-gray-800">Product categories management</h1>
-            <p class="font-normala text-gray-500 text-base mt-3">In software systems, "Roles Management" is a crucial feature that enables administrators to control and oversee user permissions within the system. This functionality allows administrators to create, modify, and delete various roles, assigning them to corresponding users.</p>
+            <p class="font-normala text-gray-500 text-base mt-3">
+                In software systems, "Product Categories Management" is a crucial feature that assists administrators in controlling and tracking the existing product categories within the system. This functionality allows administrators to create, edit, and delete the current product categories.</p>
         </div>
         <!-- Alerts -->
             <!-- Success alert -->

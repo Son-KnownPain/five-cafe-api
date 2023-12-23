@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -38,29 +39,15 @@ public class MaterialsFacade extends AbstractFacade<Materials> implements Materi
 
     @Override
     public List<Materials> searchMaterialByCategoryAndName(MaterialCategories materialCategoriesId, String matName) {
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<Materials> criteriaQuery = criteriaBuilder.createQuery(Materials.class);
-        Root<Materials> root = criteriaQuery.from(Materials.class);
-
-        // Tạo đối tượng Predicate để thêm điều kiện tìm kiếm
-        Predicate predicate = criteriaBuilder.conjunction();
-
-        // Thêm điều kiện tìm kiếm theo danh mục nguyên liệu
+        String sqlQuery = "SELECT * FROM Materials WHERE ";
         if (materialCategoriesId != null) {
-            Predicate whereProCatID = criteriaBuilder.equal(root.get("materialCategoryID"), materialCategoriesId);
-            predicate = criteriaBuilder.and(predicate, whereProCatID);
+            sqlQuery += "MaterialCategoryID = " + materialCategoriesId.getMaterialCategoryID() + " AND ";
         }
+        sqlQuery += "[Name] COLLATE Latin1_General_CI_AI LIKE N'%" + matName + "%'";
 
-        // Thêm điều kiện tìm kiếm theo tên nguyên liệu
-        if (matName != null && !matName.isEmpty()) {
-            Path<String> namePath = root.get("name");
-            Predicate likePredicate = criteriaBuilder.like(namePath, "%" + matName + "%");
-            predicate = criteriaBuilder.and(predicate, likePredicate);
-        }
+        Query query = em.createNativeQuery(sqlQuery, Materials.class);
 
-        criteriaQuery.where(predicate);
-        List<Materials> resultList = em.createQuery(criteriaQuery).getResultList();
-
+        List<Materials> resultList = query.getResultList();
         return resultList;
     }
 

@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
@@ -36,26 +37,17 @@ public class SuppliersFacade extends AbstractFacade<Suppliers> implements Suppli
     
     @Override
     public List<Suppliers> searchSuppliers(String keyword) {
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<Suppliers> criteriaQuery = criteriaBuilder.createQuery(Suppliers.class);
-        Root<Suppliers> root = criteriaQuery.from(Suppliers.class);
-        
-        Predicate combinedPredicate = criteriaBuilder.conjunction();
-
-        if (!keyword.matches("^[0-9]{10}$")) {
-            Path<String> namePath = root.get("contactName");
-            Predicate likePredicate = criteriaBuilder.like(namePath, "%" + keyword + "%");
-            combinedPredicate = criteriaBuilder.and(combinedPredicate, likePredicate);
+        String sqlQuery = "SELECT * FROM Suppliers WHERE ";
+        if (!keyword.matches("^[0-9]{1,10}$")) {
+            sqlQuery += "[ContactName] COLLATE Latin1_General_CI_AI LIKE N'%" + keyword + "%'";
         } else {
-            Predicate phonePredicate = criteriaBuilder.equal(root.get("contactNumber"), keyword);
-            combinedPredicate = criteriaBuilder.and(combinedPredicate, phonePredicate);
+            sqlQuery += "[ContactNumber] LIKE '%" + keyword + "%'";
         }
-    
-        criteriaQuery.where(combinedPredicate);
 
-        // Execute the query
-        List<Suppliers> resultList = em.createQuery(criteriaQuery).getResultList();
+        Query query = em.createNativeQuery(sqlQuery, Suppliers.class);
 
+        List<Suppliers> resultList = query.getResultList();
+        
         return resultList;
     }
 }

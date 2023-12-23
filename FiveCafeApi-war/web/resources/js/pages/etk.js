@@ -13,7 +13,7 @@ function fetchTableData(prop = {}) {
     .then(res => {
         if (res.status == 200) {
             document.getElementById('table-body').innerHTML = 
-                res.data.map(item => {
+                res.data.reverse().map(item => {
                     return `
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">

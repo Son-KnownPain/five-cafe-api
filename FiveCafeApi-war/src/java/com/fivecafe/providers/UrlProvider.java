@@ -931,10 +931,32 @@ public class UrlProvider {
         }
     }
     
+    public class Menu {
+        public static final String PREFIX = "/menu";
+        
+        // NEED TO SIGN IN
+        public static final String SELLING = "/selling"; 
+    }
+    
     public List<AuthUrl> getAllAuthUrl() {
         ArrayList<AuthUrl> result = new ArrayList<>();
-        result.add(new Employee());
         result.add(new Role());
+        result.add(new Employee());
+        result.add(new Supplier());
+        result.add(new BillStatus());
+        result.add(new Bills());
+        result.add(new Shift());
+        result.add(new ProductCategory());
+        result.add(new Product());
+        result.add(new MaterialCategory());
+        result.add(new Material());
+        result.add(new EmployeeTimeKeeping());
+        result.add(new EmployeeSalaries());
+        result.add(new Import());
+        result.add(new Outbound());
+        result.add(new Statistic());
+        result.add(new MatToPro());
+        result.add(new Ordering());
 
         return result;
     }

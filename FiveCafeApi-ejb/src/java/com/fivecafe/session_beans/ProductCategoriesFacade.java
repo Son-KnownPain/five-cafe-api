@@ -44,21 +44,12 @@ public class ProductCategoriesFacade extends AbstractFacade<ProductCategories> i
 
     @Override
     public List<ProductCategories> searchProductCategory(String keyword) {
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<ProductCategories> criteriaQuery = criteriaBuilder.createQuery(ProductCategories.class);
-        Root<ProductCategories> root = criteriaQuery.from(ProductCategories.class);
+        String sqlQuery = "SELECT * FROM ProductCategories "
+                + "WHERE [Name] COLLATE Latin1_General_CI_AI LIKE N'%" + keyword + "%'";
+        
+        Query query = em.createNativeQuery(sqlQuery, ProductCategories.class);
 
-        Predicate combinedPredicate = criteriaBuilder.conjunction();
-
-        Path<String> namePath = root.get("name");
-        Predicate likePredicate = criteriaBuilder.like(namePath, "%" + keyword + "%");
-        combinedPredicate = criteriaBuilder.and(combinedPredicate, likePredicate);
-
-        criteriaQuery.where(combinedPredicate);
-
-        List<ProductCategories> resultList = em.createQuery(criteriaQuery).getResultList();
-
-        return resultList;
+        return query.getResultList();
     }
 
 }

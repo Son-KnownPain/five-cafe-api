@@ -4,7 +4,7 @@
  */
 package com.fivecafe.models.poductcategory;
 
-import com.fivecafe.models.product.ProductResponse;
+import com.fivecafe.body.product.ProductResponse;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

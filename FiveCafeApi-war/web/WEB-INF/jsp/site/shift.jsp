@@ -150,7 +150,7 @@
         <!-- Page head introduction -->
         <div class="mb-4">
             <h1 class="font-semibold text-3xl text-gray-800">Shift management</h1>
-            <p class="font-normala text-gray-500 text-base mt-3">In software systems, "Roles Management" is a crucial feature that enables administrators to control and oversee user permissions within the system. This functionality allows administrators to create, modify, and delete various roles, assigning them to corresponding users.</p>
+            <p class="font-normala text-gray-500 text-base mt-3">In software systems, "Shift Management" is a critical feature that aids administrators in controlling and monitoring the existing work shifts within the system. This functionality allows administrators to create, edit, and delete different work shifts.</p>
         </div>
         <!-- Alerts -->
             <!-- Success alert -->

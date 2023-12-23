@@ -296,7 +296,7 @@
               </div>
             </div>
         </form>
-
+ 
         <!-- Table -->
         <div>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -324,4 +324,4 @@
             </div>
         </div>
     </jsp:body>
-</t:admin_layout>
+</t:admin_layout> 

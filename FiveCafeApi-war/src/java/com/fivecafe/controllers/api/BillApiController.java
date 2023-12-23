@@ -387,12 +387,12 @@ public class BillApiController {
                 return ResponseEntity.badRequest().body(res);
             }
 
-            if (dateFrom.compareTo(dateTo) > 0) {
-                res.setSuccess(false);
-                res.setStatus(400);
-                res.setMessage("dateForm cannot be greater than dateTo");
-                return ResponseEntity.badRequest().body(res);
-            }
+//            if (dateFrom.compareTo(dateTo) > 0) {
+//                res.setSuccess(false);
+//                res.setStatus(400);
+//                res.setMessage("dateForm cannot be greater than dateTo");
+//                return ResponseEntity.badRequest().body(res);
+//            }
 
             // Add one day to dateTo using the Calendar class
             Calendar calendar = Calendar.getInstance();

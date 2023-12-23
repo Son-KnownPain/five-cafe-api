@@ -198,10 +198,7 @@
                     <!-- Page head introduction -->
                     <div class="mb-4">
                         <h1 class="font-semibold text-3xl text-gray-800">Suppliers management</h1>
-                        <p class="font-normala text-gray-500 text-base mt-3">In software systems, "Roles Management" is
-                            a crucial feature that enables administrators to control and oversee user permissions within
-                            the system. This functionality allows administrators to create, modify, and delete various
-                            roles, assigning them to corresponding users.</p>
+                        <p class="font-normala text-gray-500 text-base mt-3">In software systems, "Supplier Management" is one of the critical features that enable administrators to monitor and manage suppliers providing materials for their stores. This functionality allows administrators to view, add, edit, and delete information pertaining to suppliers.</p>
                     </div>
                     <!-- Alerts -->
                     <!-- Success alert -->

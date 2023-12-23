@@ -4,12 +4,16 @@ import com.fivecafe.body.material.CreateMaterial;
 import com.fivecafe.body.material.MaterialResponse;
 import com.fivecafe.body.material.UpdateAndDeleteMaterial;
 import com.fivecafe.entities.MaterialCategories;
+import com.fivecafe.entities.MaterialToProducts;
 import com.fivecafe.entities.Materials;
+import com.fivecafe.entities.Products;
 import com.fivecafe.models.responses.DataResponse;
 import com.fivecafe.models.responses.StandardResponse;
 import com.fivecafe.providers.UrlProvider;
 import com.fivecafe.session_beans.MaterialCategoriesFacadeLocal;
+import com.fivecafe.session_beans.MaterialToProductsFacadeLocal;
 import com.fivecafe.session_beans.MaterialsFacadeLocal;
+import com.fivecafe.session_beans.ProductsFacadeLocal;
 import com.fivecafe.supports.FileSupport;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +41,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping(UrlProvider.API_PREFIX + UrlProvider.Material.PREFIX + "")
 public class MaterialApiController {
+
+    MaterialToProductsFacadeLocal materialToProductsFacade = lookupMaterialToProductsFacadeLocal();
 
     MaterialCategoriesFacadeLocal materialCategoriesFacade = lookupMaterialCategoriesFacadeLocal();
     MaterialsFacadeLocal materialsFacade = lookupMaterialsFacadeLocal();
@@ -71,11 +77,20 @@ public class MaterialApiController {
     @GetMapping(""+UrlProvider.Material.GETQUANTITYINSTOCK)
     public ResponseEntity<DataResponse<List<MaterialResponse>>> allQuantityInStockBelowFive(HttpServletRequest request){
         List<Materials> allMaterial = materialsFacade.getMaterialsBelowStockQuantity(5);
-
+        
         List<MaterialResponse> data = new ArrayList<>();
-
-        for (Materials materials : allMaterial) {
-            data.add(MaterialResponse.builder()
+        
+        // Lập qua tất cả nguyên liệu có số lượng thấp (<5)
+        for(Materials materials : allMaterial) {
+            // Lấy tất các sản phẩm có dùng nguyên liệu này
+            List<MaterialToProducts> matToPros = materialToProductsFacade.findByMaterialID(materials);
+            
+            // Kiểm tra từng sản phẩm
+            // Miễn có 1 sản phẩm còn bán có dùng nguyên liệu này thì đủ điều kiện thông báo
+            for (MaterialToProducts matToPro : matToPros) {
+                // Nếu đã hợp lệ thì thêm nguyên liệu vào dữ liệu trả về và thoát khỏi vòng lặp kiểm tra
+                if (matToPro.getProducts().getIsSelling()) {
+                    data.add(MaterialResponse.builder()
                     .materialID(materials.getMaterialID())
                     .materialCategoryID(materials.getMaterialCategoryID().getMaterialCategoryID())
                     .materialCategoryName(materials.getMaterialCategoryID().getName())
@@ -84,6 +99,11 @@ public class MaterialApiController {
                     .quantityInStock(materials.getQuantityInStock())
                     .image(FileSupport.perfectImg(request, "material", materials.getImage()))
                     .build());
+                    // Thoát khỏi vòng lặp kiểm tra sản phảm
+                    break;
+                }
+                
+            }
         }
         
         DataResponse<List<MaterialResponse>> res = new DataResponse<>();
@@ -289,4 +309,15 @@ public class MaterialApiController {
         }
     }
 
+    private MaterialToProductsFacadeLocal lookupMaterialToProductsFacadeLocal() {
+        try {
+            Context c = new InitialContext();
+            return (MaterialToProductsFacadeLocal) c.lookup("java:global/FiveCafeApi/FiveCafeApi-ejb/MaterialToProductsFacade!com.fivecafe.session_beans.MaterialToProductsFacadeLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+  
 }

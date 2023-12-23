@@ -5,6 +5,7 @@
 package com.fivecafe.session_beans;
 
 import com.fivecafe.entities.MaterialToProducts;
+import com.fivecafe.entities.Materials;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -30,5 +31,7 @@ public interface MaterialToProductsFacadeLocal {
     int count();
 
     public List<MaterialToProducts> findByProductID(int productID);
+
+    public List<MaterialToProducts> findByMaterialID(Materials materialID);
     
 }

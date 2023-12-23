@@ -1,5 +1,16 @@
 // Fetch table data
-function fetchTableData(searching = null) {
+
+// function fetchTableData(searching = null) {
+//     let fetchPath = window.APP_NAME;
+//     if (searching) {
+//         fetchPath += `/api/product/search?name=${searching.name}${searching.productCategoryID ? `&productCategoryID=${searching.productCategoryID}` : ""}`
+//     } else {
+//         fetchPath += '/api/product/all';
+//     }
+function fetchTableData(prop = {}) {
+    const {
+        detailClickID = null, searching = null } = prop;
+
     let fetchPath = window.APP_NAME;
     if (searching) {
         fetchPath += `/api/product/search?name=${searching.name}${searching.productCategoryID ? `&productCategoryID=${searching.productCategoryID}` : ""}`
@@ -110,18 +121,71 @@ function fetchTableData(searching = null) {
                     btn.onclick = () => {
                         const product = res.data.find(item => item.productID == btn.dataset.detailId);
 
+                        document.getElementById('productIDAdd').value = product.productID
+
                         document.getElementById("detail-image").src = product.image;
                         document.getElementById("detail-name").textContent = product.name;
                         document.getElementById("detail-price").textContent = product.price;
                         document.getElementById("detail-status").textContent = product.selling ? 'Selling' : 'Stop selling';
                         document.getElementById("detail-category").textContent = product.productCategoryName;
+
+                        // Hiển thị mat to pro ở đây, code here
+                        renderMatToPro(product.productID)
                     }
                 })
+                // Handle auto click
+                if (detailClickID) {
+                    document.querySelector(`a[data-detail-id='${detailClickID}']`).click();
+                }
+
             }
         })
         .catch(res => { })
 }
 fetchTableData();
+
+Validator({
+    form: '#create-mtp-form',
+    formGroup: '.form-gr',
+    errorSelector: '.form-message',
+    rules: [
+        Validator.isRequired('#materialIDAdd', 'Material ID is required'),
+        Validator.isRequired('#descriptionMTP', 'Description is required'),
+    ],
+    onSubmit: function (data, { resetForm }) {
+
+        const storeMTP = window.APP_NAME + `/api/mat-to-pro/store`;
+        fetch(storeMTP, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                productID: data.productID,
+                materialID: data.materialID,
+                description: data.description,
+            }),
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status == 200) {
+                    document.getElementById('cancel-add-mtp-btn').click();
+                    hideWarningAlert();
+                    showSuccessAlert(res.message);
+                    showDetailSuccessAlert('Successfully create new material to product');
+                    fetchMatToProData(data.productID);
+                    resetForm({
+                        description: '',
+                    })
+                } else if (res.status == 400 && res.invalid) {
+                    showWarningAlert('Invalid some fields', res.errors);
+                    document.getElementById('cancel-add-mtp-btn').click();
+                }
+            })
+            .catch(_err => { })
+    }
+})
 
 // Handle searching
 function renderProCatFilter() {
@@ -173,6 +237,17 @@ function showSuccessAlert(content) {
 
     sAContentElm.textContent = content;
 
+    sAElm.classList.remove('hidden');
+    sAElm.classList.add('flex');
+}
+
+function showDetailSuccessAlert(content) {
+    const sAElm = document.getElementById('detail-success-alert');
+    const sAContentElm = document.getElementById('detail-success-alert-content');
+
+    sAContentElm.textContent = content;
+
+    sAElm.classList.remove('opacity-0');
     sAElm.classList.remove('hidden');
     sAElm.classList.add('flex');
 }
@@ -383,6 +458,150 @@ function fetchProductCategoryName() {
         .catch(_res => { })
 }
 fetchProductCategoryName();
+
+// Fetch mat to pro data
+var matToProData = []
+
+function fetchMatToProData(productID = null) {
+    const fetchPath = window.APP_NAME + '/api/mat-to-pro/all';
+    fetch(fetchPath)
+        .then(res => res.json())
+        .then(res => {
+            if (res.status == 200) {
+                matToProData = res.data;
+                if (productID) {
+                    renderMatToPro(productID)
+                }
+            }
+        })
+        .catch(_res => { })
+
+}
+fetchMatToProData();
+
+
+
+function fetchMats(selectsID) {
+    const fetchPath = window.APP_NAME + '/api/material/all';
+    fetch(fetchPath)
+        .then(res => res.json())
+        .then(res => {
+            if (res.status == 200) {
+                selectsID.forEach(selectID => {
+                    document.getElementById(selectID).innerHTML =
+                        res.data.map(item => {
+                            return `
+                                    <option value="${item.materialID}">${item.name}</option>
+                                `
+                        }).join('');
+                })
+            }
+        })
+        .catch(_res => { })
+}
+fetchMats([
+    'materialIDAdd'
+]);
+
+var matToPro = [];
+function insertMTPItem({ materialID, description }) {
+    matToPro.push({
+        materialID: materialID,
+        description: description,
+    })
+    renderMatToPro();
+}
+
+
+/////Render mat to pro 
+function renderMatToPro(productID) {
+    document.getElementById("mat-to-pro").innerHTML =
+        matToProData.filter(mtp => mtp.productID == productID).map(mtp => `
+            <div class="col-span-1 flex items-center gap-4">
+                <img id="detail-image-mat" class="w-12 h-12 rounded object-cover"
+                    src="${mtp.image}">
+                <div class="flex flex-col justify-between px-4 leading-normal">
+                <h5 class="mb-2 text-base font-semibold tracking-tight text-gray-900 dark:text-white">
+                    <div id="detail-name-mat" class="text-xs">${mtp.materialName}
+                        <button data-delete-mtp-id="${mtp.materialID}" class="ml-2 text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800 dark:hover:bg-red-500">
+                        <i class="fa-regular fa-trash-can"></i>
+                            </button>
+
+                        <div data-confirmation-toggle-id="${mtp.materialID}" class="hidden">
+                            <button data-yes-dc-mat-id="${mtp.materialID}" class="text-cyan-700 border border-cyan-700 hover:bg-cyan-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-cyan-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-cyan-500 dark:text-cyan-500 dark:hover:text-white dark:focus:ring-cyan-800 dark:hover:bg-cyan-500">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                            <button data-no-dc-mat-id="${mtp.materialID}" class="ml-2 text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800 dark:hover:bg-red-500">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </h5>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        <span>Description:</span>
+                        <span id="detail-des">${mtp.description}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('')
+
+    //Add material to product:
+    const addMTPBtn = document.getElementById('add-mtp-btn');
+
+    addMTPBtn.onclick = () => {
+        document.getElementById('add-mtp-btn').classList.add('hidden');
+        document.getElementById('detail-add-form').classList.remove('hidden');
+    };
+
+    // Handle click "Cancel" trong form Add Material
+    document.getElementById('cancel-add-mtp-btn').onclick = () => {
+        document.getElementById('detail-add-form').classList.add('hidden');
+        document.getElementById('add-mtp-btn').classList.remove('hidden');
+    };
+
+    // //Delete mat to pro:
+    const deleteMTPBtns = document.querySelectorAll('button[data-delete-mtp-id]');
+    Array.from(deleteMTPBtns).forEach(btn => {
+        btn.onclick = () => {
+            const matID = btn.dataset.deleteMtpId;
+
+            // Hide trash icon btn
+            btn.classList.add('hidden')
+            // Show confirmation
+            document.querySelector(`div[data-confirmation-toggle-id='${matID}']`).classList.remove('hidden')
+
+            // When click yes
+            document.querySelector(`button[data-yes-dc-mat-id='${matID}']`).onclick = () => {
+                const deleteMTPPath = `${window.APP_NAME}/api/mat-to-pro/delete?productID=${productID}&materialID=${matID}`;
+                fetch(deleteMTPPath, {
+                    method: 'DELETE',
+                    credentials: 'same-origin',
+                })
+                    .then(res => res.json())
+                    .then(res => {
+                        if (res.status == 200) {
+                            hideWarningAlert();
+                            showSuccessAlert(res.message);
+                            showDetailSuccessAlert("Delete success")
+                            fetchMatToProData(productID)
+                        } else if (res.status == 400 && res.invalid) {
+                            showWarningAlert('Invalid some fields', res.errors);
+                            document.getElementById('close-mtp-detail-modal-btn').click();
+                        }
+                    })
+                    .catch(_res => { })
+            }
+            // When click no
+            document.querySelector(`button[data-no-dc-mat-id='${matID}']`).onclick = () => {
+                // Show trash icon btn
+                document.querySelector(`button[data-delete-mtp-id='${matID}']`).classList.remove('hidden')
+                // Hide confirmation
+                document.querySelector(`div[data-confirmation-toggle-id='${matID}']`).classList.add('hidden')
+            }
+        }
+    });
+}
+
+
 function renderProductCategorySelects(selectsID) {
     selectsID.forEach(selectID => {
         document.getElementById(selectID).innerHTML =

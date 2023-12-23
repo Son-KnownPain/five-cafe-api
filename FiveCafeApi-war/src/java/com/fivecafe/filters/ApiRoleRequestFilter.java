@@ -106,9 +106,9 @@ public class ApiRoleRequestFilter implements Filter {
     }
     
     private HashMap<String, List<String>> getRoleUrls() {
-        UrlProvider webUrlProvider = new UrlProvider();
+        UrlProvider urlProvider = new UrlProvider();
         
-        List<AuthUrl> webAuthUrls = webUrlProvider.getAllAuthUrl();
+        List<AuthUrl> webAuthUrls = urlProvider.getAllAuthUrl();
         
         HashMap<String, List<String>> mergedMap = new HashMap<>();
         

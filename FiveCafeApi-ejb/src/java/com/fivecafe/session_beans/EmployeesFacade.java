@@ -42,31 +42,20 @@ public class EmployeesFacade extends AbstractFacade<Employees> implements Employ
     
     @Override
     public List<Employees> searchEmployees(String keyword, Roles role) {
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<Employees> criteriaQuery = criteriaBuilder.createQuery(Employees.class);
-        Root<Employees> root = criteriaQuery.from(Employees.class);
+        String sqlQuery = "SELECT * FROM Employees WHERE ";
         
-        Predicate combinedPredicate = criteriaBuilder.conjunction();
-
-        if (!keyword.matches("^[0-9]{10}$")) {
-            Path<String> namePath = root.get("name");
-            Predicate likePredicate = criteriaBuilder.like(namePath, "%" + keyword + "%");
-            combinedPredicate = criteriaBuilder.and(combinedPredicate, likePredicate);
+        if (!keyword.matches("^[0-9]{1,10}$")) {
+            sqlQuery += "[Name] COLLATE Latin1_General_CI_AI LIKE N'%" + keyword + "%'";
         } else {
-            Predicate phonePredicate = criteriaBuilder.equal(root.get("phone"), keyword);
-            combinedPredicate = criteriaBuilder.and(combinedPredicate, phonePredicate);
+            sqlQuery += "[Phone] LIKE '%" + keyword + "%'";
         }
         
         if (role != null) {
-            Predicate whereRoleID = criteriaBuilder.equal(root.get("roleID"), role);
-            combinedPredicate = criteriaBuilder.and(combinedPredicate, whereRoleID);
+            sqlQuery += " AND [RoleID] = '" + role.getRoleID() + "'";
         }
         
-        criteriaQuery.where(combinedPredicate);
+        Query query = em.createNativeQuery(sqlQuery, Employees.class);
 
-        // Execute the query
-        List<Employees> resultList = em.createQuery(criteriaQuery).getResultList();
-
-        return resultList;
+        return query.getResultList();
     }
 }

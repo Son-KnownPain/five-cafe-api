@@ -2,9 +2,9 @@ package com.fivecafe.controllers.api;
 
 import com.fivecafe.entities.ProductCategories;
 import com.fivecafe.entities.Products;
-import com.fivecafe.models.product.CreateProductReq;
-import com.fivecafe.models.product.ProductResponse;
-import com.fivecafe.models.product.UpdateProductReq;
+import com.fivecafe.body.product.CreateProductReq;
+import com.fivecafe.body.product.ProductResponse;
+import com.fivecafe.body.product.UpdateProductReq;
 import com.fivecafe.models.responses.DataResponse;
 import com.fivecafe.models.responses.StandardResponse;
 import com.fivecafe.providers.UrlProvider;

@@ -11,13 +11,53 @@ window.addEventListener("load", function () {
             if (res.status == 200) {
                 const revenueResponse = res.data;
 
-                // Render chart in here
                 let options = {
-                    chart: {
-                        height: "100%",
-                        maxWidth: "100%",
-                        type: "area",
+                    // set the labels option to true to show the labels on the X and Y axis
+                    xaxis: {
+                    show: true,
+                    categories: Array.from(revenueResponse).map(item => item.date),
+                    labels: {
+                        show: true,
+                        style: {
                         fontFamily: "'Noto Sans', sans-serif",
+                        cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+                        }
+                    },
+                    axisBorder: {
+                        show: false,
+                    },
+                    axisTicks: {
+                        show: false,
+                    },
+                    },
+                    yaxis: {
+                    show: true,
+                    labels: {
+                        show: true,
+                        style: {
+                        fontFamily: "Inter, sans-serif",
+                        cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+                        },
+                        formatter: function (value) {
+                            return window.currencyOutput(value);
+                        }
+                    }
+                    },
+                    series: [
+                        {
+                            name: "Revenue",
+                            data: Array.from(revenueResponse).map(item => item.revenue),
+                            color: "#1A56DB",
+                        },
+                    ],
+                    chart: {
+                        sparkline: {
+                            enabled: false
+                        },
+                        height: "100%",
+                        width: "100%",
+                        type: "area",
+                        fontFamily: "Inter, sans-serif",
                         dropShadow: {
                             enabled: false,
                         },
@@ -29,6 +69,11 @@ window.addEventListener("load", function () {
                         enabled: true,
                         x: {
                             show: false,
+                        },
+                        y: {
+                            formatter: function (val) {
+                                return window.currencyOutput(val);
+                            }
                         },
                     },
                     fill: {
@@ -46,46 +91,10 @@ window.addEventListener("load", function () {
                     stroke: {
                         width: 6,
                     },
+                    legend: {
+                        show: false
+                    },
                     grid: {
-                        show: false,
-                        strokeDashArray: 4,
-                        padding: {
-                            left: 2,
-                            right: 2,
-                            top: 0
-                        },
-                    },
-                    series: [
-                        {
-                            name: "Revenue",
-                            data: Array.from(revenueResponse).map(item => item.revenue),
-                            color: "#1A56DB",
-                        },
-                    ],
-                    tooltip: {
-                        enabled: true,
-                        x: {
-                            show: false,
-                        },
-                        y: {
-                            formatter: function (val) {
-                                return window.currencyOutput(val);
-                            }
-                        },
-                    },
-                    xaxis: {
-                        categories: Array.from(revenueResponse).map(item => item.date),
-                        labels: {
-                            show: false,
-                        },
-                        axisBorder: {
-                            show: false,
-                        },
-                        axisTicks: {
-                            show: false,
-                        },
-                    },
-                    yaxis: {
                         show: false,
                     },
                 }
@@ -97,6 +106,12 @@ window.addEventListener("load", function () {
                     // Handle change last days
                     Array.from(document.querySelectorAll('a[data-revenue-by-days]')).forEach(btn => {
                         btn.onclick = () => {
+                            document.getElementById('revenueByDaysDropdown').innerHTML = `
+                                ${btn.textContent}
+                                <svg class="w-2.5 m-2.5 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                </svg>
+                            `;
                             const fetchPath = window.APP_NAME + `/api/statistic/revenue?last-days=${btn.dataset.lastDays}`;
                             fetch(fetchPath)
                             .then(res => res.json())
@@ -171,13 +186,53 @@ window.addEventListener("load", function () {
             if (res.status == 200) {
                 const costResponse = res.data;
 
-                // Render chart in here
                 let options = {
+                    // set the labels option to true to show the labels on the X and Y axis
+                    xaxis: {
+                    show: true,
+                    categories: Array.from(costResponse).map(item => item.date),
+                    labels: {
+                        show: true,
+                        style: {
+                        fontFamily: "Inter, sans-serif",
+                        cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+                        }
+                    },
+                    axisBorder: {
+                        show: false,
+                    },
+                    axisTicks: {
+                        show: false,
+                    },
+                    },
+                    yaxis: {
+                    show: true,
+                    labels: {
+                        show: true,
+                        style: {
+                        fontFamily: "Inter, sans-serif",
+                        cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+                        },
+                        formatter: function (value) {
+                            return window.currencyOutput(value);
+                        }
+                    }
+                    },
+                    series: [
+                        {
+                            name: "Cost",
+                            data: Array.from(costResponse).map(item => item.cost),
+                            color: "#1A56DB",
+                        },
+                    ],
                     chart: {
+                        sparkline: {
+                            enabled: false
+                        },
                         height: "100%",
-                        maxWidth: "100%",
+                        width: "100%",
                         type: "area",
-                        fontFamily: "'Noto Sans', sans-serif",
+                        fontFamily: "Inter, sans-serif",
                         dropShadow: {
                             enabled: false,
                         },
@@ -189,6 +244,11 @@ window.addEventListener("load", function () {
                         enabled: true,
                         x: {
                             show: false,
+                        },
+                        y: {
+                            formatter: function (val) {
+                                return window.currencyOutput(val);
+                            }
                         },
                     },
                     fill: {
@@ -206,46 +266,10 @@ window.addEventListener("load", function () {
                     stroke: {
                         width: 6,
                     },
+                    legend: {
+                        show: false
+                    },
                     grid: {
-                        show: false,
-                        strokeDashArray: 4,
-                        padding: {
-                            left: 2,
-                            right: 2,
-                            top: 0
-                        },
-                    },
-                    series: [
-                        {
-                            name: "Cost",
-                            data: Array.from(costResponse).map(item => item.cost),
-                            color: "#1A56DB",
-                        },
-                    ],
-                    tooltip: {
-                        enabled: true,
-                        x: {
-                            show: false,
-                        },
-                        y: {
-                            formatter: function (val) {
-                                return window.currencyOutput(val);
-                            }
-                        },
-                    },
-                    xaxis: {
-                        categories: Array.from(costResponse).map(item => item.date),
-                        labels: {
-                            show: false,
-                        },
-                        axisBorder: {
-                            show: false,
-                        },
-                        axisTicks: {
-                            show: false,
-                        },
-                    },
-                    yaxis: {
                         show: false,
                     },
                 }
@@ -257,6 +281,12 @@ window.addEventListener("load", function () {
                     // Handle change last days
                     Array.from(document.querySelectorAll('a[data-cost-by-days]')).forEach(btn => {
                         btn.onclick = () => {
+                            document.getElementById('costDayChoiceDropdown').innerHTML = `
+                                ${btn.textContent}
+                                <svg class="w-2.5 m-2.5 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                </svg>
+                            `;
                             const fetchPath = window.APP_NAME + `/api/statistic/cost?last-days=${btn.dataset.lastDays}`;
                             fetch(fetchPath)
                             .then(res => res.json())

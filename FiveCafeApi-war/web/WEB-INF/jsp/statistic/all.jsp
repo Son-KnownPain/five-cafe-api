@@ -40,7 +40,7 @@
                             <div class="flex justify-between items-center pt-5">
                                 <!-- Button -->
                                 <button
-                                    id="dropdownDefaultButton"
+                                    id="revenueByDaysDropdown"
                                     data-dropdown-toggle="chooseRevenueStatistic"
                                     data-dropdown-placement="bottom"
                                     class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 text-center inline-flex items-center dark:hover:text-white"
@@ -53,7 +53,7 @@
                                 </button>
                                 <!-- Dropdown menu -->
                                 <div id="chooseRevenueStatistic" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-                                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="revenueByDaysDropdown">
                                         <li>
                                             <a data-revenue-by-days data-last-days="3" class="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Last 3 days</a>
                                         </li>

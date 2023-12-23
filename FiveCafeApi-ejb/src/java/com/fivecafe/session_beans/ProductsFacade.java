@@ -13,7 +13,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -70,5 +69,24 @@ public class ProductsFacade extends AbstractFacade<Products> implements Products
         query.setParameter("isSelling", true);
 
         return query.getResultList();
+    }
+    
+    @Override
+    public List<Products> findByCategory(ProductCategories category) {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<Products> criteriaQuery = criteriaBuilder.createQuery(Products.class);
+        
+        Root<Products> root = criteriaQuery.from(Products.class);
+        
+        Predicate categoryPredicate = criteriaBuilder.equal(root.get("productCategoryID"), category);
+        
+        Path<Boolean> isSellingPath = root.get("isSelling");
+        Predicate sellingPredicate = criteriaBuilder.isTrue(isSellingPath);
+        
+        Predicate combinedPredicate = criteriaBuilder.and(categoryPredicate, sellingPredicate);
+        
+        criteriaQuery.where(combinedPredicate);
+        
+        return em.createQuery(criteriaQuery).getResultList();
     }
 }

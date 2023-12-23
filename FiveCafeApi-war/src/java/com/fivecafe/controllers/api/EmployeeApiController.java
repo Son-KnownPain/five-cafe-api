@@ -168,7 +168,7 @@ public class EmployeeApiController {
             managementItems.add(new NavRes.NavItem("Material categories", "/mat-category"));
             managementItems.add(new NavRes.NavItem("Materials", "/material"));
             managementItems.add(new NavRes.NavItem("Timekeepings", "/timekeeping"));
-            managementItems.add(new NavRes.NavItem("Salaries", "/salary"));
+            managementItems.add(new NavRes.NavItem("Salaries", "/emp-salary"));
             managementItems.add(new NavRes.NavItem("Imports", "/import"));
             managementItems.add(new NavRes.NavItem("Outbounds", "/outbound"));
             mangementSection.setItems(managementItems);

@@ -104,6 +104,25 @@ public class WebUrlProvider {
         
     }
     
+    public class Menu implements WebAuthUrl {
+        public static final String MENU = "/menu";
+
+        @Override
+        public List<String> signInUrls() {
+            ArrayList<String> signInUrls = new ArrayList<>();
+            
+            return signInUrls;
+        }
+
+        @Override
+        public HashMap<String, List<String>> roleUrls() {
+            HashMap<String, List<String>> roleUrls = new HashMap<>();
+            
+            return roleUrls;
+        }
+        
+    }
+    
     public List<WebAuthUrl> getAllAuthUrl() {
         ArrayList<WebAuthUrl> result = new ArrayList<>();
         result.add(new Site());

@@ -1,8 +1,15 @@
 <header id="header">
     <img src="${pageContext.request.contextPath}/resources/images/layout/FiveCafeLogo.png" alt="Logo" class="logo" />
-    <button data-drawer-target="header-user-drawer" data-drawer-show="header-user-drawer" aria-controls="header-user-drawer" class="hover:bg-sky-500 bg-sky-700 duration-200 ease-in-out transition text-white p-2 rounded-full flex items-center justify-center">
-        <i class="fa-solid fa-user"></i>
-    </button>
+    <div class="flex items-center">
+        <a href="/FiveCafeApi-war/menu" class="mr-4 relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
+            <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                Customer Menu
+            </span>
+        </a>
+        <button data-drawer-target="header-user-drawer" data-drawer-show="header-user-drawer" aria-controls="header-user-drawer" class="hover:bg-sky-500 bg-sky-700 duration-200 ease-in-out transition text-white p-2 rounded-full flex items-center justify-center">
+            <i class="fa-solid fa-user"></i>
+        </button>
+    </div>
 </header>
  
  <!-- drawer component -->

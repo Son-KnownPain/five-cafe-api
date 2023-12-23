@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
@@ -36,20 +37,11 @@ public class MaterialCategoriesFacade extends AbstractFacade<MaterialCategories>
     
     @Override
     public List<MaterialCategories> searchMaterialCategory(String keyword) {
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<MaterialCategories> criteriaQuery = criteriaBuilder.createQuery(MaterialCategories.class);
-        Root<MaterialCategories> root = criteriaQuery.from(MaterialCategories.class);
+        String sqlQuery = "SELECT * FROM MaterialCategories "
+                + "WHERE [Name] COLLATE Latin1_General_CI_AI LIKE N'%" + keyword + "%'";
+        
+        Query query = em.createNativeQuery(sqlQuery, MaterialCategories.class);
 
-        Predicate combinedPredicate = criteriaBuilder.conjunction();
-
-        Path<String> namePath = root.get("name");
-        Predicate likePredicate = criteriaBuilder.like(namePath, "%" + keyword + "%");
-        combinedPredicate = criteriaBuilder.and(combinedPredicate, likePredicate);
-
-        criteriaQuery.where(combinedPredicate);
-
-        List<MaterialCategories> resultList = em.createQuery(criteriaQuery).getResultList();
-
-        return resultList;
+        return query.getResultList();
     }
 }

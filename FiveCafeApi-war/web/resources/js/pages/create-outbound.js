@@ -3,7 +3,7 @@ var products = [];
 function fetchProducts({ searching }) {
     let fetchPath = window.APP_NAME + '/api/material/all';
     if (searching) {
-        fetchPath = window.APP_NAME + `/api/material/search?name=${searching.name}`;
+        fetchPath = window.APP_NAME + `/api/material/search?name=${window.removeVietnameseDiacritics(searching.name)}`;
     } else {
         fetchPath = window.APP_NAME + '/api/material/all';
     }

@@ -2,7 +2,7 @@
 function fetchTableData(searching = null) {
     let fetchPath = window.APP_NAME;
     if (searching) {
-        fetchPath += `/api/mat-category/search?keyword=${searching.keyword}`
+        fetchPath += `/api/mat-category/search?keyword=${window.removeVietnameseDiacritics(searching.keyword)}`
     } else  {
         fetchPath += '/api/mat-category/all';
     }

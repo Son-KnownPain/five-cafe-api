@@ -20,3 +20,4 @@ window.currencyOutput = function(value, separate = ".", subfix = "VNĐ") {
 
     return `${result.split('').reverse().join('')} ${subfix}`;
 }
+window.removeVietnameseDiacritics = str => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');

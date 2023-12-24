@@ -230,6 +230,24 @@ document.getElementById('search-form').onsubmit = e => {
     e.preventDefault();
     const dateForm = document.getElementById('dateForm').value;
     const dateTo = document.getElementById('dateTo').value;
+
+    if (dateForm.trim() === '' || dateTo.trim() === '') {
+        showWarningAlert('Please enter the complete start date and end date information.');
+        return;
+    }
+ 
+    const dateFormParts = dateForm.split('/');
+    const dateToParts = dateTo.split('/');
+
+    const startDate = new Date(dateFormParts[2], dateFormParts[1] - 1, dateFormParts[0]);
+    const endDate = new Date(dateToParts[2], dateToParts[1] - 1, dateToParts[0]);
+
+    
+    if (startDate > endDate) {
+        showWarningAlert('Start date cannot be greater than the end date.')
+        return;
+    }
+
     fetchTableData({
         searching: {
             dateForm: dateForm,

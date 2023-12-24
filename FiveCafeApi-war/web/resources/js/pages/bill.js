@@ -909,7 +909,7 @@ document.getElementById('search-form').onsubmit = e => {
         showWarningAlert('Please enter the complete start date and end date information.');
         return;
     }
-
+ 
     const dateFormParts = dateForm.split('/');
     const dateToParts = dateTo.split('/');
 

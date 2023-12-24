@@ -366,7 +366,7 @@ public class BillApiController {
             HttpServletRequest request) throws java.text.ParseException {
 
         DataResponse<List<BillResponse>> res = new DataResponse<>();
-
+ 
         // Format date
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 

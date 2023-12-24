@@ -141,7 +141,8 @@
         <!-- Page head introduction -->
         <div class="mb-4">
             <h1 class="font-semibold text-3xl text-gray-800">Bill statuses management</h1>
-            <p class="font-normala text-gray-500 text-base mt-3">In software systems, "Roles Management" is a crucial feature that enables administrators to control and oversee user permissions within the system. This functionality allows administrators to create, modify, and delete various roles, assigning them to corresponding users.</p>
+            <p class="font-normala text-gray-500 text-base mt-3">
+                In a software system, "Bill Status Management" is a crucial feature facilitating easy monitoring and tracking of a venue's bill statuses. Moreover, the bill status function is essential for creating orders for customers when they place menu item requests. This feature enables administrators to add, edit, and remove existing bill statuses within the system.</p>
         </div>
         <!-- Alerts -->
             <!-- Success alert -->

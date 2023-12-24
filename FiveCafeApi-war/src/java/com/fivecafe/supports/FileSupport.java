@@ -37,7 +37,7 @@ public class FileSupport {
              */
             
             // ->> UPLOAD TO DEV NOT AT DIST
-            String subDirectoryPath = "C:\\Users\\PC HP\\OneDrive\\Documents\\GitHub\\five-cafe-api\\FiveCafeApi-war\\web\\resources\\images";
+            String subDirectoryPath = "D:\\Project-Sem4\\five-cafe-api\\FiveCafeApi-war\\web\\resources\\images";
             if (part != null) {
                 subDirectoryPath += File.separator + part;
             }
@@ -94,7 +94,7 @@ public class FileSupport {
         Path pathToDelete = Paths.get(pathString);
         
         // ->> DELETE FILE NOT AT DIST
-        String subDirectoryPath = "C:\\Users\\PC HP\\OneDrive\\Documents\\GitHub\\five-cafe-api\\FiveCafeApi-war\\web\\resources\\images";
+        String subDirectoryPath = "D:\\Project-Sem4\\five-cafe-api\\FiveCafeApi-war\\web\\resources\\images";
         if (part != null) {
             subDirectoryPath += File.separator + part;
         }

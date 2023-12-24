@@ -91,6 +91,9 @@ function fetchTableData(prop = {}) {
             if (!document.getElementById('detail-add-form').classList.contains('hidden')) {
                 document.getElementById('detail-add-form').classList.add('hidden');
             }
+            if (document.getElementById('add-mat-item-btn-box').classList.contains('hidden')) {
+                document.getElementById('add-mat-item-btn-box').classList.remove('hidden');
+            }
             document.getElementById('cancel-update-mat-btn').onclick = () => {
                 document.getElementById('detail-update-form').classList.add('hidden');
             }
@@ -351,6 +354,7 @@ Validator({
                 showSuccessAlert('Successfully create import');
                 fetchTableData();
                 fetchImport();
+                clearMaterialImports();
             } else if (res.status == 400 && res.invalid) {
                 showWarningAlert('Invalid some fields', res.errors);
                 document.getElementById('close-create-modal-btn').click();
@@ -398,7 +402,7 @@ Validator({
                 document.getElementById('close-import-detail-modal-btn').click();
             }
         })
-        .res(_err => {})
+        .catch(_err => {})
     }
 });
 
@@ -496,6 +500,11 @@ function renderMaterials() {
 function removeMaterialItem(materialID) {
     materialsImport = materialsImport.filter(item => item.materialID != materialID);
 
+    renderMaterials();
+}
+
+function clearMaterialImports() {
+    materialsImport = [];
     renderMaterials();
 }
 

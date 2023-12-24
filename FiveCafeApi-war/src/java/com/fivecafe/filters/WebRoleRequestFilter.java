@@ -147,10 +147,6 @@ public class WebRoleRequestFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
         
-        if (debug) {
-            log("WebRoleRequestFilter:doFilter()");
-        }
-        
         Throwable problem = null;
         try {
             // ->> Logic code at here ------------------------

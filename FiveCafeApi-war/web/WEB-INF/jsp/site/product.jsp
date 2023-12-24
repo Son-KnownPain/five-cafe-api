@@ -367,11 +367,7 @@
                     <!-- Page head introduction -->
                     <div class="mb-4">
                         <h1 class="font-semibold text-3xl text-gray-800">Products management</h1>
-                        <p class="font-normala text-gray-500 text-base mt-3">The function of managing raw materials
-                            involves overseeing the acquisition, storage, usage, and tracking of materials that are
-                            fundamental to a production or manufacturing process. This function plays a crucial role in
-                            ensuring the availability of necessary inputs for the production of goods or the provision
-                            of services. Here's a description of the key aspects of raw material management.</p>
+                        <p class="font-normala text-gray-500 text-base mt-3">In a software system, "Product Management" is a crucial feature that facilitates easy monitoring and tracking of existing products within a venue. Moreover, it aids administrators in effortlessly overseeing, adding, modifying, and identifying products currently available or discontinued in the establishment. This function allows administrators to add, edit, and remove existing products within the system.</p>
                     </div>
                     <!-- Alerts -->
                     <!-- Success alert -->

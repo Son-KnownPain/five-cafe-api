@@ -1,19 +1,11 @@
 // Fetch table data
-
-// function fetchTableData(searching = null) {
-//     let fetchPath = window.APP_NAME;
-//     if (searching) {
-//         fetchPath += `/api/product/search?name=${searching.name}${searching.productCategoryID ? `&productCategoryID=${searching.productCategoryID}` : ""}`
-//     } else {
-//         fetchPath += '/api/product/all';
-//     }
 function fetchTableData(prop = {}) {
     const {
         detailClickID = null, searching = null } = prop;
 
     let fetchPath = window.APP_NAME;
     if (searching) {
-        fetchPath += `/api/product/search?name=${searching.name}${searching.productCategoryID ? `&productCategoryID=${searching.productCategoryID}` : ""}`
+        fetchPath += `/api/product/search?name=${window.removeVietnameseDiacritics(searching.name)}${searching.productCategoryID ? `&productCategoryID=${searching.productCategoryID}` : ""}`
     } else {
         fetchPath += '/api/product/all';
     }
@@ -223,8 +215,10 @@ document.getElementById('search-form').onsubmit = e => {
     const productCategoryID = document.getElementById('productCategoryIDSearch').value;
     const name = document.getElementById('nameSearch').value;
     fetchTableData({
-        productCategoryID: productCategoryID,
-        name: name
+        searching: {
+            productCategoryID: productCategoryID,
+            name: name
+        }
     })
 }
 

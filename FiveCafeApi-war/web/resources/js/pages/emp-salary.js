@@ -1,3 +1,8 @@
+// Websocket
+var wsURI = "wss://" + document.location.host + "/FiveCafeApi-war/salary";
+
+var websocket = new WebSocket(wsURI);
+
 // Fetch table data
 function fetchTableData(prop = {}) {
     const { detailClickID = null, searching = null } = prop;
@@ -352,6 +357,7 @@ Validator({
                 hideWarningAlert();
                 showSuccessAlert('Successfully create new employee salary');
                 fetchTableData();
+                websocket.send('refetch')
                 document.getElementById('employeeID').value = 0;
                 document.getElementById('etkBox').innerHTML = '<p class="text-base font-normal text-gray-500">Select employee first</p>';
             } else if (res.status == 400 && res.invalid) {
@@ -488,7 +494,7 @@ function fetchETK(boxs) {
         if (res.status == 200) {
             etks = res.data;
             boxs.forEach(box => {
-                document.getElementById(box.boxID).innerHTML = 
+                document.getElementById(box.boxID).innerHTML = !etks.filter(etk => etk.employeeID == box.employeeID && !etk.paid)?.length ? '<h1 class="text-center font-semibold text-base text-white">Need to add timekeeping for this employee before create new salary</h1>' :
                 etks.filter(etk => etk.employeeID == box.employeeID && !etk.paid).map(etk => {
                     return `
                         <div class="flex items-center mb-3">

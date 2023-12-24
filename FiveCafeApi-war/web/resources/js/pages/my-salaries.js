@@ -75,3 +75,15 @@ function fetchTableData() {
     .catch(_res => { })
 }
 fetchTableData();
+
+// WEBSOCKET
+
+var wsURI = "wss://" + document.location.host + "/FiveCafeApi-war/salary";
+
+var websocket = new WebSocket(wsURI);
+
+websocket.onmessage = function(event) {
+    if (event.data == 'refetch') {
+        fetchTableData()
+    }
+}
